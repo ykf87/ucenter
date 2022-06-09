@@ -8,7 +8,7 @@ import (
 
 //注册
 func Sigin(c *gin.Context) {
-
+	controllers.Error(c, nil, "注册失败", 0)
 }
 
 //登录
