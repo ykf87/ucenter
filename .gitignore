@@ -1,2 +1,3 @@
 cmd/*.exe
 cmd/cmd
+.DS_Store
