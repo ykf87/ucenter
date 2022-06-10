@@ -3,6 +3,7 @@ package app
 import (
 	"ucenter/app/controllers"
 	"ucenter/app/controllers/user"
+	"ucenter/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +19,7 @@ func (this *AppClient) WebRouter() {
 		authorized.POST("", user.Index)
 	}
 	this.Engine.POST("/user/login", user.Login)
-	this.Engine.POST("/user/sigin", user.Sigin)
+	this.Engine.POST("/user/sign", user.Sign)
 }
 
 func Auth() gin.HandlerFunc {
@@ -31,6 +32,13 @@ func Auth() gin.HandlerFunc {
 		if token == "" {
 			controllers.Error(c, nil, &controllers.Msg{Str: "Please Login"})
 			c.Abort()
+		} else {
+			user := models.UnToken(token)
+			if user == nil {
+				controllers.Error(c, nil, &controllers.Msg{Str: "Please Login"})
+				c.Abort()
+			}
+			c.Set("_user", user)
 		}
 		c.Next()
 	}

@@ -1,7 +1,7 @@
 package passwordhash
 
 import (
-	"fmt"
+	// "fmt"
 
 	"golang.org/x/crypto/bcrypt"
 )

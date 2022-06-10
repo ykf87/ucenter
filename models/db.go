@@ -2,6 +2,9 @@ package models
 
 import (
 	"errors"
+	"fmt"
+	"math/big"
+	"net"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
@@ -30,4 +33,15 @@ func Init(dbtype, dsn, dbfile string) (err error) {
 	}
 
 	return
+}
+
+func InetNtoA(ip int64) string {
+	return fmt.Sprintf("%d.%d.%d.%d",
+		byte(ip>>24), byte(ip>>16), byte(ip>>8), byte(ip))
+}
+
+func InetAtoN(ip string) int64 {
+	ret := big.NewInt(0)
+	ret.SetBytes(net.ParseIP(ip).To4())
+	return ret.Int64()
 }

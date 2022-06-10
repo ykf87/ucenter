@@ -35,10 +35,12 @@ func Resp(c *gin.Context, data interface{}, msg *Msg, code int) {
 	}
 
 	var msgStr template.HTML
-	if msg.Args == nil {
-		msgStr = i18n.T(lang, msg.Str)
-	} else {
-		msgStr = i18n.T(lang, msg.Str, msg.Args...)
+	if msg != nil {
+		if msg.Args == nil {
+			msgStr = i18n.T(lang, msg.Str)
+		} else {
+			msgStr = i18n.T(lang, msg.Str, msg.Args...)
+		}
 	}
 
 	c.JSON(200, map[string]interface{}{
