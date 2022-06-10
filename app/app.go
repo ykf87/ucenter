@@ -15,6 +15,7 @@ type AppClient struct {
 var App *AppClient
 
 func init() {
+	gin.SetMode(gin.ReleaseMode)
 	App = new(AppClient)
 	App.Ch = make(chan bool)
 	App.Engine = gin.Default()

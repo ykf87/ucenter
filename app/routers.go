@@ -1,7 +1,7 @@
 package app
 
 import (
-	"fmt"
+	"ucenter/app/controllers"
 	"ucenter/app/controllers/user"
 
 	"github.com/gin-gonic/gin"
@@ -23,8 +23,15 @@ func (this *AppClient) WebRouter() {
 
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		fmt.Println("prev")
+		var token string
+		token = c.GetHeader("token")
+		if token == "" {
+			token = c.GetString("token")
+		}
+		if token == "" {
+			controllers.Error(c, nil, &controllers.Msg{Str: "Please Login"})
+			c.Abort()
+		}
 		c.Next()
-		fmt.Println("next")
 	}
 }

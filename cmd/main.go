@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"ucenter/app"
+	"ucenter/app/safety/rsautil"
 	"ucenter/models"
 )
 
@@ -25,6 +25,15 @@ func main() {
 		log.Println(err)
 		return
 	}
+	rsautil.Generate()
+	// aaec, _ := rsautil.RsaEncrypt("aaaaaa")
+	// bbec, _ := rsautil.RsaDecrypt(aaec)
+	// log.Println(aaec, bbec)
+
+	// ssac, _ := rsautil.Sign("yyyykkf", crypto.MD5)
+	// ssbc := rsautil.Verify("aawer", ssac, crypto.MD5)
+	// ssbz := rsautil.Verify("yyyykkf", ssac, crypto.MD5)
+	// log.Println(ssac, ssbc, ssbz)
 	app.App.Static(*staticPath).Run(*port)
-	fmt.Println(models.DB)
+	// fmt.Println(models.DB)
 }
