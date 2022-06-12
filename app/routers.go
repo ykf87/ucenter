@@ -17,6 +17,7 @@ func (this *AppClient) WebRouter() {
 	authorized := this.Engine.Group("/user").Use(Auth())
 	{
 		authorized.POST("", user.Index)
+		authorized.POST("/editer", user.Editer)
 	}
 	this.Engine.POST("/user/login", user.Login)
 	this.Engine.POST("/user/sign", user.Sign)

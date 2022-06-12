@@ -36,6 +36,15 @@ type UserModel struct {
 	Emotion   int     `json:"emotion"`
 	Star      int     `json:"star"`
 	Ip        int64   `json:"ip"`
+	Edinfo    Editers
+}
+
+//账号修改器
+type Editers int64
+
+func (this Editers) Account(args ...interface{}) {
+	fmt.Println(args)
+	fmt.Println(this)
 }
 
 //创建新用户
@@ -70,6 +79,7 @@ func MakeUser(account, email, phone, pwd, ip string) (user *UserModel, err error
 		err = rs.Error
 	}
 	user = new(UserModel)
+	user.Edinfo = Editers(user.Id)
 	DB.Table("users").Where(insertData).First(user)
 	return
 }
@@ -89,6 +99,8 @@ func GetUser(id int64, account, email, phone string) *UserModel {
 	if user.Id < 1 {
 		user = nil
 	}
+
+	user.Edinfo = Editers(user.Id)
 	return user
 }
 

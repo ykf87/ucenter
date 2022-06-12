@@ -1,6 +1,8 @@
 package user
 
 import (
+	"fmt"
+	"reflect"
 	"ucenter/app/controllers"
 	"ucenter/app/safety/passwordhash"
 	"ucenter/models"
@@ -76,4 +78,33 @@ func Index(c *gin.Context) {
 	rs, _ := c.Get("_user")
 	user, _ := rs.(*models.UserModel)
 	controllers.Success(c, user.Info(), nil)
+}
+
+//编辑信息
+func Editer(c *gin.Context) {
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
+	key := c.PostForm("k")
+	val := c.PostForm("v")
+
+	inputs := make([]reflect.Value, 1)
+	inputs[0] = reflect.ValueOf(val)
+	tf := reflect.TypeOf(user.Edinfo)
+	vl := reflect.ValueOf(user.Edinfo)
+	mth, ok := tf.MethodByName(key)
+	if ok == true {
+		vl.Method(mth.Index).Call(inputs)
+		// tf.Method(mth.Index)
+	} else {
+		controllers.Error(c, nil, &controllers.Msg{Str: "No modification allowed"})
+	}
+	fmt.Println("================")
+	// fmt.Println(mth, ok, "===========")
+	// fmt.Println(vl.Method(0).Name)
+
+	// mthlen := vl.Elem().NumMethod()
+	// fmt.Println(mthlen, "======")
+	// for i := 0; i < mthlen; i++ {
+	// 	fmt.Println(vl.Elem().Method(i))
+	// }
 }
