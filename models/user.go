@@ -282,10 +282,6 @@ func (this Editers) SetHeight(user *UserModel, args ...interface{}) error {
 	if changeto == "" {
 		return errors.New("Please set the content to be modified")
 	}
-	if changeto != "0" && changeto != "1" && changeto != "2" {
-		changeto = "0"
-	}
-	cgt, _ := strconv.Atoi(changeto)
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("height", cgt)
 	if rs.Error != nil {
 		return rs.Error
