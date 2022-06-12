@@ -1,8 +1,8 @@
 package user
 
 import (
-	"fmt"
 	"reflect"
+	"strings"
 	"ucenter/app/controllers"
 	"ucenter/app/safety/passwordhash"
 	"ucenter/models"
@@ -86,25 +86,33 @@ func Editer(c *gin.Context) {
 	user, _ := rs.(*models.UserModel)
 	key := c.PostForm("k")
 	val := c.PostForm("v")
+	if key == "" || val == "" {
+		controllers.Error(c, nil, &controllers.Msg{Str: "Missing editorial content"})
+		return
+	}
 
-	inputs := make([]reflect.Value, 1)
-	inputs[0] = reflect.ValueOf(val)
+	inputs := make([]reflect.Value, 2)
+	inputs[0] = reflect.ValueOf(user)
+	inputs[1] = reflect.ValueOf(val)
 	tf := reflect.TypeOf(user.Edinfo)
 	vl := reflect.ValueOf(user.Edinfo)
-	mth, ok := tf.MethodByName(key)
+	key = strings.ToUpper(string(key[0])) + key[1:]
+	mth, ok := tf.MethodByName("Set" + key)
 	if ok == true {
-		vl.Method(mth.Index).Call(inputs)
-		// tf.Method(mth.Index)
+		rs := vl.Method(mth.Index).Call(inputs)
+		err := rs[0].Interface()
+		if err != nil {
+			controllers.Error(c, nil, &controllers.Msg{Str: err.(error).Error()})
+		} else {
+			var dt map[string]interface{}
+			if len(rs) > 1 {
+				if rs[1].CanInterface() == true {
+					dt = rs[1].Interface().(map[string]interface{})
+				}
+			}
+			controllers.Success(c, dt, &controllers.Msg{Str: "Success"})
+		}
 	} else {
 		controllers.Error(c, nil, &controllers.Msg{Str: "No modification allowed"})
 	}
-	fmt.Println("================")
-	// fmt.Println(mth, ok, "===========")
-	// fmt.Println(vl.Method(0).Name)
-
-	// mthlen := vl.Elem().NumMethod()
-	// fmt.Println(mthlen, "======")
-	// for i := 0; i < mthlen; i++ {
-	// 	fmt.Println(vl.Elem().Method(i))
-	// }
 }

@@ -37,15 +37,11 @@ type UserModel struct {
 	Star      int     `json:"star"`
 	Ip        int64   `json:"ip"`
 	Edinfo    Editers
+	Singleid  int64
 }
 
 //账号修改器
 type Editers int64
-
-func (this Editers) Account(args ...interface{}) {
-	fmt.Println(args)
-	fmt.Println(this)
-}
 
 //创建新用户
 func MakeUser(account, email, phone, pwd, ip string) (user *UserModel, err error) {
@@ -110,7 +106,7 @@ func (this *UserModel) Token() string {
 		log.Println("UserModel Token - 用户实例id为0")
 		return ""
 	}
-	token, err := rsautil.RsaEncrypt(fmt.Sprintf("%d", this.Id))
+	token, err := rsautil.RsaEncrypt(fmt.Sprintf(`{"id":%d,"time":%d,"sid":%d}`, this.Id, time.Now().Unix(), this.Singleid))
 	if err != nil {
 		log.Println("UserModel Token - ", err)
 		return ""
@@ -124,11 +120,20 @@ func UnToken(token string) *UserModel {
 	if err != nil {
 		return nil
 	}
-	id, err := strconv.Atoi(idstr)
-	if err != nil {
+	ts := gjson.Get(idstr, "time").Int()
+	id := gjson.Get(idstr, "id").Int()
+	sid := gjson.Get(idstr, "sid").Int()
+	if id < 1 || ts < 1 {
 		return nil
 	}
-	return GetUser(int64(id), "", "", "")
+	if time.Now().Unix()-ts >= 86400*365 {
+		return nil
+	}
+	user := GetUser(int64(id), "", "", "")
+	if sid != user.Singleid {
+		return nil
+	}
+	return user
 }
 
 //返回用户信息
@@ -139,10 +144,151 @@ func (this *UserModel) Info() map[string]interface{} {
 	data := make(map[string]interface{})
 	b, _ := json.Marshal(this)
 	for k, v := range gjson.ParseBytes(b).Map() {
-		if k == "pwd" || k == "status" {
+		if k == "pwd" || k == "status" || k == "singleid" {
 			continue
 		}
 		data[k] = v.String()
 	}
 	return data
+}
+
+//账号名称修改
+func (this Editers) SetAccount(user *UserModel, args ...interface{}) error {
+	newAccount := args[0].(string)
+	if newAccount == "" {
+		return errors.New("Please set the account name")
+	}
+	if user.Account == newAccount {
+		return errors.New("No account changes")
+	}
+	u := new(UserModel)
+	DB.Table("users").Where("account = ?", newAccount).First(u)
+	if u.Id > 0 {
+		return errors.New("Account name already exists, please use another one")
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("account", newAccount)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
+}
+
+//邮箱修改,未接入邮箱验证码
+func (this Editers) SetEmail(user *UserModel, args ...interface{}) error {
+	newAccount := args[0].(string)
+	if newAccount == "" {
+		return errors.New("Please set the Email")
+	}
+	if user.Mail == newAccount {
+		return errors.New("No email changes")
+	}
+	u := new(UserModel)
+	DB.Table("users").Where("mail = ?", newAccount).First(u)
+	if u.Id > 0 {
+		return errors.New("Email already exists, please use another one")
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("mail", newAccount)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
+}
+
+//手机号修改,未接入手机证码
+func (this Editers) SetPhone(user *UserModel, args ...interface{}) error {
+	newAccount := args[0].(string)
+	if newAccount == "" {
+		return errors.New("Please set the Phone")
+	}
+	if user.Mail == newAccount {
+		return errors.New("No phone changes")
+	}
+	u := new(UserModel)
+	DB.Table("users").Where("phone = ?", newAccount).First(u)
+	if u.Id > 0 {
+		return errors.New("Phone already exists, please use another one")
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("phone", newAccount)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
+}
+
+//修改密码
+func (this Editers) SetPassword(user *UserModel, args ...interface{}) (error, map[string]interface{}) {
+	changeto := args[0].(string)
+	if changeto == "" {
+		return errors.New("Please set the content to be modified"), nil
+	}
+	npwd, _ := passwordhash.PasswordHash(changeto)
+	dt := &map[string]interface{}{
+		"pwd":      npwd,
+		"singleid": user.Singleid + 1,
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Updates(dt)
+	if rs.Error != nil {
+		return rs.Error, nil
+	}
+	return nil, map[string]interface{}{"token": user.Token()}
+}
+
+//修改昵称
+func (this Editers) SetNickname(user *UserModel, args ...interface{}) error {
+	changeto := args[0].(string)
+	if changeto == "" {
+		return errors.New("Please set the content to be modified")
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("nickname", changeto)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
+}
+
+//修改头像
+func (this Editers) SetAvatar(user *UserModel, args ...interface{}) error {
+	changeto := args[0].(string)
+	if changeto == "" {
+		return errors.New("Please set the content to be modified")
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("avatar", changeto)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
+}
+
+//修改性别
+func (this Editers) SetSex(user *UserModel, args ...interface{}) error {
+	changeto := args[0].(string)
+	if changeto == "" {
+		return errors.New("Please set the content to be modified")
+	}
+	if changeto != "0" && changeto != "1" && changeto != "2" {
+		changeto = "0"
+	}
+	cgt, _ := strconv.Atoi(changeto)
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("sex", cgt)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
+}
+
+//修改身高
+func (this Editers) SetHeight(user *UserModel, args ...interface{}) error {
+	changeto := args[0].(string)
+	if changeto == "" {
+		return errors.New("Please set the content to be modified")
+	}
+	if changeto != "0" && changeto != "1" && changeto != "2" {
+		changeto = "0"
+	}
+	cgt, _ := strconv.Atoi(changeto)
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("height", cgt)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
 }
