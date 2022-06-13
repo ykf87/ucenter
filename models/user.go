@@ -282,7 +282,45 @@ func (this Editers) SetHeight(user *UserModel, args ...interface{}) error {
 	if changeto == "" {
 		return errors.New("Please set the content to be modified")
 	}
+	cgt, _ := strconv.Atoi(changeto)
+	if cgt < 1 || cgt >= 300 {
+		return errors.New("Please set the height reasonably")
+	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("height", cgt)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
+}
+
+//修改体重
+func (this Editers) SetWeight(user *UserModel, args ...interface{}) error {
+	changeto := args[0].(string)
+	if changeto == "" {
+		return errors.New("Please set the content to be modified")
+	}
+	cgt, _ := strconv.ParseFloat(changeto, 64)
+	if cgt < 1.0 || cgt >= 500000.0 {
+		return errors.New("Please set your weight wisely")
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("weight", cgt)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
+}
+
+//修改生日
+func (this Editers) SetBirth(user *UserModel, args ...interface{}) error {
+	changeto := args[0].(string)
+	if changeto == "" {
+		return errors.New("Please set the content to be modified")
+	}
+	cgt, _ := strconv.ParseFloat(changeto, 64)
+	if cgt < 1.0 || cgt >= 500000.0 {
+		return errors.New("Please set your weight wisely")
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("weight", cgt)
 	if rs.Error != nil {
 		return rs.Error
 	}
