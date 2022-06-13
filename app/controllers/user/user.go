@@ -19,9 +19,14 @@ func Sign(c *gin.Context) {
 	invite := c.PostForm("invite")
 	// code := c.PostForm("code")
 
-	user, err := models.MakeUser(account, email, phone, pwd, invite, c.ClientIP())
+	ip := c.ClientIP()
+	user, err := models.MakeUser(account, email, phone, pwd, invite, ip)
 	if err != nil {
 		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
+		return
+	}
+	if user == nil {
+		controllers.Error(c, nil, &controllers.Msg{Str: "System error, please try again later"})
 		return
 	}
 	token := user.Token()

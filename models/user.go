@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net"
 	"strconv"
 	"time"
 	"ucenter/app/safety/base34"
@@ -13,6 +14,7 @@ import (
 	"ucenter/app/safety/rsautil"
 
 	carbon "github.com/golang-module/carbon/v2"
+	"github.com/oschwald/geoip2-golang"
 	"github.com/tidwall/gjson"
 )
 
@@ -86,6 +88,31 @@ func MakeUser(account, email, phone, pwd, invite, ip string) (user *UserModel, e
 			insertData["chain"] = addChain + fmt.Sprintf("%d", inviteUser.Id)
 		}
 	}
+
+	//根据ip获取国家和城市
+	geodb, errs := geoip2.Open("./GeoLite2-City.mmdb")
+	if errs == nil {
+		defer geodb.Close()
+		ip := net.ParseIP(ip)
+		record, errs := geodb.City(ip)
+		if errs == nil && record.Country.IsoCode != "" {
+			countryObj, errs := GetCountryByIso(record.Country.IsoCode)
+			if errs == nil {
+				insertData["country"] = countryObj.Id
+				if cv, ok := record.City.Names["en"]; ok {
+					province, errs := GetProvinceByNameAndCountry(countryObj.Id, cv, "en")
+					if errs == nil {
+						insertData["province"] = province.Id
+					}
+					city, err := GetCityByNameAndCountryId(cv, countryObj.Id, "en")
+					if err == nil {
+						insertData["city"] = city.Id
+					}
+				}
+			}
+		}
+	}
+
 	insertData["status"] = 1
 	insertData["ip"] = InetAtoN(ip)
 	insertData["addtime"] = time.Now().Unix()
