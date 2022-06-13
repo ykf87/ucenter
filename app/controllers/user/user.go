@@ -16,9 +16,10 @@ func Sign(c *gin.Context) {
 	phone := c.PostForm("phone")
 	email := c.PostForm("email")
 	pwd := c.PostForm("password")
+	invite := c.PostForm("invite")
 	// code := c.PostForm("code")
 
-	user, err := models.MakeUser(account, email, phone, pwd, c.ClientIP())
+	user, err := models.MakeUser(account, email, phone, pwd, invite, c.ClientIP())
 	if err != nil {
 		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
 		return

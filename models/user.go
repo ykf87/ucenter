@@ -1,5 +1,6 @@
 package models
 
+//uid 从39350开始,邀请码后4位有效,前方2位补0
 import (
 	"encoding/json"
 	"errors"
@@ -7,15 +8,19 @@ import (
 	"log"
 	"strconv"
 	"time"
+	"ucenter/app/safety/base34"
 	"ucenter/app/safety/passwordhash"
 	"ucenter/app/safety/rsautil"
 
+	carbon "github.com/golang-module/carbon/v2"
 	"github.com/tidwall/gjson"
 )
 
 type UserModel struct {
 	Id        int64   `json:"id"`
 	Pid       int64   `json:"pid"`
+	Invite    string  `json:"invite"`
+	Chain     string  `json:"chain"`
 	Account   string  `json:"account"`
 	Mail      string  `json:"mail"`
 	Phone     string  `json:"phone"`
@@ -36,15 +41,17 @@ type UserModel struct {
 	Emotion   int     `json:"emotion"`
 	Star      int     `json:"star"`
 	Ip        int64   `json:"ip"`
-	Edinfo    Editers
+	Country   int64   `json:"country"`
+	City      int64   `json:"city"`
 	Singleid  int64
+	Edinfo    Editers
 }
 
 //账号修改器
 type Editers int64
 
 //创建新用户
-func MakeUser(account, email, phone, pwd, ip string) (user *UserModel, err error) {
+func MakeUser(account, email, phone, pwd, invite, ip string) (user *UserModel, err error) {
 	hadUser := new(UserModel)
 	insertData := make(map[string]interface{})
 	if account != "" {
@@ -67,6 +74,18 @@ func MakeUser(account, email, phone, pwd, ip string) (user *UserModel, err error
 			return
 		}
 	}
+	if invite != "" {
+		inviteUser := new(UserModel)
+		DB.Table("users").Where("invite = ?", invite).First(inviteUser)
+		if inviteUser.Id > 0 {
+			insertData["pid"] = inviteUser.Id
+			var addChain string
+			if inviteUser.Chain != "" {
+				addChain = inviteUser.Chain + ","
+			}
+			insertData["chain"] = addChain + fmt.Sprintf("%d", inviteUser.Id)
+		}
+	}
 	insertData["status"] = 1
 	insertData["ip"] = InetAtoN(ip)
 	insertData["addtime"] = time.Now().Unix()
@@ -76,7 +95,10 @@ func MakeUser(account, email, phone, pwd, ip string) (user *UserModel, err error
 	}
 	user = new(UserModel)
 	user.Edinfo = Editers(user.Id)
-	DB.Table("users").Where(insertData).First(user)
+	if DB.Table("users").Where(insertData).First(user).Error == nil && user.Id > 0 {
+		DB.Table("users").Where("id = ?", user.Id).Update("invite", string(base34.Base34(uint64(user.Id))))
+	}
+
 	return
 }
 
@@ -88,15 +110,16 @@ func GetUser(id int64, account, email, phone string) *UserModel {
 	} else if account != "" {
 		DB.Table("users").Where("account = ?", account).First(user)
 	} else if email != "" {
-		DB.Table("users").Where("mail = ? and mailvery = 1", email).First(user)
+		DB.Table("users").Where("mail = ?", email).First(user) // and mailvery = 1
 	} else if phone != "" {
-		DB.Table("users").Where("phone = ? and phonevery = 1", phone).First(user)
+		DB.Table("users").Where("phone = ?", phone).First(user) // and phonevery = 1
 	}
 	if user.Id < 1 {
 		user = nil
+	} else {
+		user.Edinfo = Editers(user.Id)
 	}
 
-	user.Edinfo = Editers(user.Id)
 	return user
 }
 
@@ -144,7 +167,7 @@ func (this *UserModel) Info() map[string]interface{} {
 	data := make(map[string]interface{})
 	b, _ := json.Marshal(this)
 	for k, v := range gjson.ParseBytes(b).Map() {
-		if k == "pwd" || k == "status" || k == "singleid" {
+		if k == "pwd" || k == "status" || k == "singleid" || k == "chain" {
 			continue
 		}
 		data[k] = v.String()
@@ -316,11 +339,11 @@ func (this Editers) SetBirth(user *UserModel, args ...interface{}) error {
 	if changeto == "" {
 		return errors.New("Please set the content to be modified")
 	}
-	cgt, _ := strconv.ParseFloat(changeto, 64)
-	if cgt < 1.0 || cgt >= 500000.0 {
-		return errors.New("Please set your weight wisely")
+	cgt := carbon.Parse(changeto).Timestamp()
+	if cgt == 0 {
+		return errors.New("Wrong date format")
 	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("weight", cgt)
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("birth", cgt)
 	if rs.Error != nil {
 		return rs.Error
 	}
