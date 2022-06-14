@@ -28,9 +28,6 @@ func main() {
 		return
 	}
 
-	// s := smtps.Client(config.Config.Smtp.Host, config.Config.Smtp.Email, config.Config.Smtp.Pass, config.Config.APPName, config.Config.Smtp.Port)
-	// s.SetSender("blandal@foxmail.com").SetAtta("1.txt").SetSubject("subject111").SetGeter("blandal.com@gmail.com").SetGeter("1603601628@qq.com").SetMessage("收到反馈尽快答复").Send()
-
 	rsautil.Generate()
 	app.App.Static(config.Config.Static).Run(config.Config.Port)
 }
