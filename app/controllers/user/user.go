@@ -3,12 +3,33 @@ package user
 import (
 	"reflect"
 	"strings"
+	"ucenter/app/coder/mailcode"
+	"ucenter/app/config"
 	"ucenter/app/controllers"
 	"ucenter/app/safety/passwordhash"
 	"ucenter/models"
 
 	"github.com/gin-gonic/gin"
 )
+
+//获取邮箱验证码
+func Emailcode(c *gin.Context) {
+	email := c.PostForm("email")
+
+	var lang string
+	langos, exits := c.Get("_lang")
+	if !exits {
+		lang = config.Config.Lang
+	} else {
+		lang = langos.(string)
+	}
+	err := models.GetEmailCode(email, lang)
+	if err != nil {
+		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
+		return
+	}
+	controllers.Success(c, nil, &controllers.Msg{Str: "Captcha sent successfully, please check your email"})
+}
 
 //注册
 func Sign(c *gin.Context) {
@@ -17,10 +38,10 @@ func Sign(c *gin.Context) {
 	email := c.PostForm("email")
 	pwd := c.PostForm("password")
 	invite := c.PostForm("invite")
-	// code := c.PostForm("code")
+	code := c.PostForm("code")
 
 	ip := c.ClientIP()
-	user, err := models.MakeUser(account, email, phone, pwd, invite, ip)
+	user, err := models.MakeUser(account, email, phone, pwd, code, invite, ip)
 	if err != nil {
 		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
 		return
@@ -46,11 +67,32 @@ func Login(c *gin.Context) {
 	phone := c.PostForm("phone")
 	email := c.PostForm("email")
 	pwd := c.PostForm("password")
+	code := c.PostForm("code")
+	veried := false
+
+	if email != "" && code != "" {
+		err := mailcode.Verify(email, code)
+		if err != nil {
+			controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
+			return
+		}
+		veried = true
+	}
 
 	user := models.GetUser(0, account, email, phone)
 	var msg string
 	if user != nil {
-		if user.Pwd != "" {
+		if veried == true {
+			token := user.Token()
+			if token != "" {
+				controllers.Success(c, map[string]interface{}{
+					"token": token,
+				}, nil)
+				return
+			} else {
+				msg = "Voucher generation failed, please try again later"
+			}
+		} else if user.Pwd != "" {
 			if passwordhash.PasswordVerify(pwd, user.Pwd) != true {
 				msg = "Password error"
 			} else {
@@ -121,4 +163,42 @@ func Editer(c *gin.Context) {
 	} else {
 		controllers.Error(c, nil, &controllers.Msg{Str: "No modification allowed"})
 	}
+}
+
+//忘记密码
+func Forgot(c *gin.Context) {
+	email := c.PostForm("email")
+	code := c.PostForm("code")
+	pwd := c.PostForm("password")
+	msg := "System error, please try again later"
+
+	if email == "" {
+		msg = "Please set the Email"
+	} else if code == "" {
+		msg = "Please input your Captcha"
+	} else if pwd == "" {
+		msg = "Please set a password"
+	} else {
+		err := mailcode.Verify(email, code)
+		if err != nil {
+			msg = err.Error()
+		} else {
+			user := models.GetUser(0, "", email, "")
+			if user == nil {
+				msg = "Account not found"
+			} else {
+				err := user.ChangePwd(pwd)
+				if err != nil {
+					msg = err.Error()
+				} else {
+					token := user.Token()
+					if token != "" {
+						controllers.Success(c, map[string]interface{}{"token": token}, &controllers.Msg{Str: "Success"})
+						return
+					}
+				}
+			}
+		}
+	}
+	controllers.Error(c, nil, &controllers.Msg{Str: msg})
 }

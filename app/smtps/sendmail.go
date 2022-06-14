@@ -1,0 +1,90 @@
+package smtps
+
+import (
+	"fmt"
+	"os"
+	"strings"
+
+	"gopkg.in/gomail.v2"
+)
+
+type Stmp struct {
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
+	Email    string `json:"email"`
+	Pass     string `json:"pass"`
+	Appname  string
+	Nickname string
+	Sender   string
+	Geter    []string
+	Message  string
+	Attaches []string
+	Subject  string
+}
+
+func Client(host, email, pass, appname string, port int) *Stmp {
+	cli := &Stmp{
+		Host:    host,
+		Port:    port,
+		Email:   email,
+		Pass:    pass,
+		Appname: appname,
+	}
+	return cli
+}
+
+func (this *Stmp) SetSender(mail string) *Stmp {
+	this.Sender = mail
+	return this
+}
+
+func (this *Stmp) SetGeter(mail string) *Stmp {
+	this.Geter = append(this.Geter, mail)
+	return this
+}
+func (this *Stmp) SetAtta(attache string) *Stmp {
+	if _, err := os.Stat(attache); err == nil {
+		this.Attaches = append(this.Attaches, attache)
+	}
+	return this
+}
+func (this *Stmp) SetNickname(nickname string) *Stmp {
+	this.Nickname = nickname
+	return this
+}
+
+func (this *Stmp) SetMessage(content string) *Stmp {
+	this.Message = this.Message + content
+	return this
+}
+func (this *Stmp) SetSubject(title string) *Stmp {
+	this.Subject = title
+	return this
+}
+
+func (this *Stmp) Send() error {
+	m := gomail.NewMessage()
+	if this.Sender == "" {
+		this.Sender = this.Email
+	}
+	if this.Nickname == "" {
+		this.Nickname = this.Appname
+	}
+	if this.Subject == "" {
+		tmp := strings.Split(this.Sender, "@")
+		this.Subject = "From " + tmp[0]
+	}
+	m.SetHeader("Subject", this.Subject)
+	m.SetHeader("From", fmt.Sprintf("%s<%s>", this.Nickname, this.Sender))
+	m.SetHeader("To", this.Geter...)
+	m.SetBody("text/html", this.Message)
+	if this.Attaches != nil {
+		for _, v := range this.Attaches {
+			m.Attach(v)
+		}
+	}
+
+	d := gomail.NewDialer(this.Host, this.Port, this.Email, this.Pass)
+	err := d.DialAndSend(m)
+	return err
+}

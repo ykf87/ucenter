@@ -14,13 +14,32 @@ func Init() {
 
 //web的路由
 func (this *AppClient) WebRouter() {
-	authorized := this.Engine.Group("/user").Use(Auth())
+	mainGroup := this.Engine.Use(Middle())
 	{
-		authorized.POST("", user.Index)
-		authorized.POST("/editer", user.Editer)
+		authorized := mainGroup.Use(Auth())
+		{
+			authorized.POST("", user.Index)
+			authorized.POST("/editer", user.Editer)
+		}
+		mainGroup.POST("/login", user.Login)
+		mainGroup.POST("/sign", user.Sign)
+		mainGroup.POST("/forgot", user.Forgot)
+		mainGroup.POST("/emailcode", user.Emailcode)
 	}
-	this.Engine.POST("/user/login", user.Login)
-	this.Engine.POST("/user/sign", user.Sign)
+
+}
+
+func Middle() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var lang string
+		if c.GetHeader("lang") != "" {
+			lang = c.GetHeader("lang")
+		} else if cc, err := c.Cookie("lang"); err == nil {
+			lang = cc
+		}
+		c.Set("_lang", lang)
+		c.Next()
+	}
 }
 
 func Auth() gin.HandlerFunc {
@@ -40,6 +59,9 @@ func Auth() gin.HandlerFunc {
 				c.Abort()
 			}
 			c.Set("_user", user)
+			if user.Lang != "" {
+				c.Set("_lang", user.Lang)
+			}
 		}
 		c.Next()
 	}

@@ -2,59 +2,35 @@ package main
 
 import (
 	"flag"
-	// "fmt"
 	"log"
-	// "net"
 	"ucenter/app"
+	"ucenter/app/config"
 	"ucenter/app/safety/rsautil"
 	"ucenter/models"
-	// "github.com/oschwald/geoip2-golang"
 )
 
-var port = flag.Int("port", 18998, "开启的端口号")
-var dsn = flag.String("dsn", "", "mysql配置,ex: \"root:111111@tcp(127.0.0.1:3306)/dome\"")
-var db = flag.String("db", "mysql", "使用哪种数据库")
-var dbfile = flag.String("dbfile", "", "sqlite文件路径,含文件名的完全路径")
-var staticPath = flag.String("path", "", "静态目录路径,不存在则会尝试创建,如: ./static")
+var configFile = flag.String("c", "config.yaml", "配置文件路径")
 
 func main() {
-	// dbs, e := geoip2.Open("./GeoLite2-City.mmdb")
-	// if e == nil {
-	// 	defer dbs.Close()
-	// 	ip := net.ParseIP("112.49.212.193")
-	// 	record, _ := dbs.City(ip)
-	// 	fmt.Println(record.City)
-	// 	fmt.Printf("Portuguese (BR) city name: %v\n", record.City.Names["zh-CN"])
-	// 	if len(record.Subdivisions) > 0 {
-	// 		fmt.Printf("English subdivision name: %v\n", record.Subdivisions[0].Names["en"])
-	// 	}
-	// 	fmt.Printf("Russian country name: %v\n", record.Country.Names["ru"])
-	// 	fmt.Printf("ISO country code: %v\n", record.Country.IsoCode)
-	// 	fmt.Printf("Time zone: %v\n", record.Location.TimeZone)
-	// 	fmt.Printf("Coordinates: %v, %v\n", record.Location.Latitude, record.Location.Longitude)
-	// } else {
-	// 	fmt.Println(e)
-	// }
-
 	flag.Parse()
-	if *dsn == "" {
-		log.Println("请填写数据库配置")
+	if *configFile == "" {
+		log.Println("请指定配置文件")
 		return
 	}
-	err := models.Init(*db, *dsn, *dbfile)
+	err := config.Init(*configFile)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	rsautil.Generate()
-	// aaec, _ := rsautil.RsaEncrypt("aaaaaa")
-	// bbec, _ := rsautil.RsaDecrypt(aaec)
-	// log.Println(aaec, bbec)
+	err = models.Init(config.Config.DB[0].Type, config.Config.DB[0].Dsn, config.Config.DB[0].Path)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-	// ssac, _ := rsautil.Sign("yyyykkf", crypto.MD5)
-	// ssbc := rsautil.Verify("aawer", ssac, crypto.MD5)
-	// ssbz := rsautil.Verify("yyyykkf", ssac, crypto.MD5)
-	// log.Println(ssac, ssbc, ssbz)
-	app.App.Static(*staticPath).Run(*port)
-	// fmt.Println(models.DB)
+	// s := smtps.Client(config.Config.Smtp.Host, config.Config.Smtp.Email, config.Config.Smtp.Pass, config.Config.APPName, config.Config.Smtp.Port)
+	// s.SetSender("blandal@foxmail.com").SetAtta("1.txt").SetSubject("subject111").SetGeter("blandal.com@gmail.com").SetGeter("1603601628@qq.com").SetMessage("收到反馈尽快答复").Send()
+
+	rsautil.Generate()
+	app.App.Static(config.Config.Static).Run(config.Config.Port)
 }

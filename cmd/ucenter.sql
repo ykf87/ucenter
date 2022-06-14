@@ -3,15 +3,15 @@
 
  Source Server         : 127.0.0.1
  Source Server Type    : MySQL
- Source Server Version : 50731
- Source Host           : localhost:3306
+ Source Server Version : 50734
+ Source Host           : 127.0.0.1:3306
  Source Schema         : ucenter
 
  Target Server Type    : MySQL
- Target Server Version : 50731
+ Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 13/06/2022 21:51:56
+ Date: 14/06/2022 17:48:17
 */
 
 SET NAMES utf8mb4;
@@ -21,21 +21,20 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- Table structure for cities_en
 -- ----------------------------
 DROP TABLE IF EXISTS `cities_en`;
-CREATE TABLE `cities_en` (
-  `id` mediumint(1) unsigned NOT NULL AUTO_INCREMENT,
-  `country_id` smallint(1) unsigned NOT NULL,
-  `province_id` mediumint(1) unsigned NOT NULL,
-  `name` varchar(200) NOT NULL,
+CREATE TABLE `cities_en`  (
+  `id` mediumint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `country_id` smallint(1) UNSIGNED NOT NULL,
+  `province_id` mediumint(1) UNSIGNED NOT NULL,
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `country_id` (`country_id`) USING BTREE,
-  KEY `states_id` (`province_id`) USING BTREE,
-  KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=340 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+  INDEX `country_id`(`country_id`) USING BTREE,
+  INDEX `states_id`(`province_id`) USING BTREE,
+  INDEX `name`(`name`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 340 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of cities_en
 -- ----------------------------
-BEGIN;
 INSERT INTO `cities_en` VALUES (1, 1, 3, 'Shijiazhuang City');
 INSERT INTO `cities_en` VALUES (2, 1, 3, 'Tangshan');
 INSERT INTO `cities_en` VALUES (3, 1, 3, 'Qinhuangdao');
@@ -370,26 +369,24 @@ INSERT INTO `cities_en` VALUES (335, 1, 31, 'Hotan area');
 INSERT INTO `cities_en` VALUES (336, 1, 31, 'Ili Kazakh Autonomous Prefecture');
 INSERT INTO `cities_en` VALUES (337, 1, 31, 'Tacheng area');
 INSERT INTO `cities_en` VALUES (338, 1, 31, 'Altay Region');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for cities_zh-cn
 -- ----------------------------
 DROP TABLE IF EXISTS `cities_zh-cn`;
-CREATE TABLE `cities_zh-cn` (
-  `id` mediumint(1) unsigned NOT NULL AUTO_INCREMENT,
-  `country_id` smallint(1) unsigned NOT NULL,
-  `province_id` mediumint(1) unsigned NOT NULL,
-  `name` varchar(200) NOT NULL,
+CREATE TABLE `cities_zh-cn`  (
+  `id` mediumint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `country_id` smallint(1) UNSIGNED NOT NULL,
+  `province_id` mediumint(1) UNSIGNED NOT NULL,
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `country_id` (`country_id`) USING BTREE,
-  KEY `states_id` (`province_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=340 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+  INDEX `country_id`(`country_id`) USING BTREE,
+  INDEX `states_id`(`province_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 340 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of cities_zh-cn
 -- ----------------------------
-BEGIN;
 INSERT INTO `cities_zh-cn` VALUES (1, 1, 3, '石家庄市');
 INSERT INTO `cities_zh-cn` VALUES (2, 1, 3, '唐山市');
 INSERT INTO `cities_zh-cn` VALUES (3, 1, 3, '秦皇岛市');
@@ -724,33 +721,31 @@ INSERT INTO `cities_zh-cn` VALUES (335, 1, 31, '和田地区');
 INSERT INTO `cities_zh-cn` VALUES (336, 1, 31, '伊犁哈萨克自治州');
 INSERT INTO `cities_zh-cn` VALUES (337, 1, 31, '塔城地区');
 INSERT INTO `cities_zh-cn` VALUES (338, 1, 31, '阿勒泰地区');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for countries
 -- ----------------------------
 DROP TABLE IF EXISTS `countries`;
-CREATE TABLE `countries` (
-  `id` smallint(1) unsigned NOT NULL AUTO_INCREMENT,
-  `iso` char(2) DEFAULT NULL,
-  `iso3` char(3) DEFAULT NULL,
-  `phonecode` varchar(20) DEFAULT NULL,
-  `timezone` varchar(32) DEFAULT NULL COMMENT '时区 ',
-  `lat` varchar(64) DEFAULT NULL,
-  `lon` varchar(64) DEFAULT NULL,
-  `emoji` varchar(100) DEFAULT NULL,
-  `currency` varchar(32) DEFAULT NULL COMMENT '默认货币',
-  `fmt` varchar(64) DEFAULT NULL COMMENT '时间格式化格式.年月日时分秒',
-  `fmt_date` varchar(32) DEFAULT NULL COMMENT '日期格式化格式,年月日',
-  `fmt_time` varchar(32) DEFAULT NULL COMMENT '时间格式化格式,时分秒',
+CREATE TABLE `countries`  (
+  `id` smallint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `iso` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `iso3` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `phonecode` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `timezone` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '时区 ',
+  `lat` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `lon` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `emoji` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  `currency` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '默认货币',
+  `fmt` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '时间格式化格式.年月日时分秒',
+  `fmt_date` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '日期格式化格式,年月日',
+  `fmt_time` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '时间格式化格式,时分秒',
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `iso` (`iso`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=237 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+  INDEX `iso`(`iso`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 237 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of countries
 -- ----------------------------
-BEGIN;
 INSERT INTO `countries` VALUES (1, 'CN', 'CHN', '86', 'Asia/Shanghai', '35.00000000', '105.00000000', '🇨🇳', 'CNY', NULL, NULL, NULL);
 INSERT INTO `countries` VALUES (2, 'AL', 'ALB', '355', 'Europe/Tirane', '41.00000000', '20.00000000', '🇦🇱', 'ALL', NULL, NULL, NULL);
 INSERT INTO `countries` VALUES (3, 'DZ', 'DZA', '213', 'Africa/Algiers', '28.00000000', '3.00000000', '🇩🇿', 'DZD', NULL, NULL, NULL);
@@ -987,22 +982,20 @@ INSERT INTO `countries` VALUES (233, 'TD', 'TCD', '235', 'Africa/Ndjamena', '15.
 INSERT INTO `countries` VALUES (234, 'GI', 'GIB', '350', 'Europe/Gibraltar', '36.13333333', '-5.35000000', '🇬🇮', 'GIP', NULL, NULL, NULL);
 INSERT INTO `countries` VALUES (235, 'CL', 'CHL', '56', 'America/Punta_Arenas', '-30.00000000', '-71.00000000', '🇨🇱', 'CLP', NULL, NULL, NULL);
 INSERT INTO `countries` VALUES (236, 'CF', 'CAF', '236', 'Africa/Bangui', '7.00000000', '21.00000000', '🇨🇫', 'XAF', NULL, NULL, NULL);
-COMMIT;
 
 -- ----------------------------
 -- Table structure for countries_en
 -- ----------------------------
 DROP TABLE IF EXISTS `countries_en`;
-CREATE TABLE `countries_en` (
-  `id` smallint(1) unsigned NOT NULL,
-  `name` varchar(200) NOT NULL,
+CREATE TABLE `countries_en`  (
+  `id` smallint(1) UNSIGNED NOT NULL,
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of countries_en
 -- ----------------------------
-BEGIN;
 INSERT INTO `countries_en` VALUES (1, 'China');
 INSERT INTO `countries_en` VALUES (2, 'Albania');
 INSERT INTO `countries_en` VALUES (3, 'Algeria');
@@ -1239,22 +1232,20 @@ INSERT INTO `countries_en` VALUES (233, 'Chad');
 INSERT INTO `countries_en` VALUES (234, 'Gibraltar');
 INSERT INTO `countries_en` VALUES (235, 'Chile');
 INSERT INTO `countries_en` VALUES (236, 'Central African Republic');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for countries_zh-cn
 -- ----------------------------
 DROP TABLE IF EXISTS `countries_zh-cn`;
-CREATE TABLE `countries_zh-cn` (
-  `id` smallint(1) unsigned NOT NULL,
-  `name` varchar(200) NOT NULL,
+CREATE TABLE `countries_zh-cn`  (
+  `id` smallint(1) UNSIGNED NOT NULL,
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of countries_zh-cn
 -- ----------------------------
-BEGIN;
 INSERT INTO `countries_zh-cn` VALUES (1, '中国');
 INSERT INTO `countries_zh-cn` VALUES (2, '阿尔巴尼亚');
 INSERT INTO `countries_zh-cn` VALUES (3, '阿尔及利亚');
@@ -1491,26 +1482,24 @@ INSERT INTO `countries_zh-cn` VALUES (233, '乍得');
 INSERT INTO `countries_zh-cn` VALUES (234, '直布罗陀');
 INSERT INTO `countries_zh-cn` VALUES (235, '智利');
 INSERT INTO `countries_zh-cn` VALUES (236, '中非共和国');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for currencies
 -- ----------------------------
 DROP TABLE IF EXISTS `currencies`;
-CREATE TABLE `currencies` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `code` varchar(5) NOT NULL,
-  `symbol` varchar(50) NOT NULL DEFAULT '',
-  `default` tinyint(1) DEFAULT '0' COMMENT '是否默认币种',
-  `rate` double(20,10) DEFAULT NULL COMMENT '对于default币种的汇率',
+CREATE TABLE `currencies`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `code` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `symbol` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `default` tinyint(1) NULL DEFAULT 0 COMMENT '是否默认币种',
+  `rate` double(20, 10) NULL DEFAULT NULL COMMENT '对于default币种的汇率',
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `code` (`code`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=159 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+  INDEX `code`(`code`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 159 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of currencies
 -- ----------------------------
-BEGIN;
 INSERT INTO `currencies` VALUES (1, 'AWG', 'ƒ', 0, NULL);
 INSERT INTO `currencies` VALUES (2, 'AFN', '؋', 0, NULL);
 INSERT INTO `currencies` VALUES (3, 'AOA', 'Kz', 0, NULL);
@@ -1669,22 +1658,20 @@ INSERT INTO `currencies` VALUES (155, 'SHP', '£', 0, NULL);
 INSERT INTO `currencies` VALUES (156, 'CDF', 'FC', 0, NULL);
 INSERT INTO `currencies` VALUES (157, 'BYN', 'Br', 0, NULL);
 INSERT INTO `currencies` VALUES (158, 'AAD', '$', 0, NULL);
-COMMIT;
 
 -- ----------------------------
 -- Table structure for currencies_en
 -- ----------------------------
 DROP TABLE IF EXISTS `currencies_en`;
-CREATE TABLE `currencies_en` (
+CREATE TABLE `currencies_en`  (
   `id` smallint(1) NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of currencies_en
 -- ----------------------------
-BEGIN;
 INSERT INTO `currencies_en` VALUES (1, 'Arubin florin');
 INSERT INTO `currencies_en` VALUES (2, 'Afghan Afghani');
 INSERT INTO `currencies_en` VALUES (3, 'Angolan Kwanza');
@@ -1843,22 +1830,20 @@ INSERT INTO `currencies_en` VALUES (155, 'Saint Helena pound');
 INSERT INTO `currencies_en` VALUES (156, 'Congolese Franc');
 INSERT INTO `currencies_en` VALUES (157, 'Belarusian ruble');
 INSERT INTO `currencies_en` VALUES (158, 'Antarctican dollar');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for currencies_zh-cn
 -- ----------------------------
 DROP TABLE IF EXISTS `currencies_zh-cn`;
-CREATE TABLE `currencies_zh-cn` (
+CREATE TABLE `currencies_zh-cn`  (
   `id` smallint(1) NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of currencies_zh-cn
 -- ----------------------------
-BEGIN;
 INSERT INTO `currencies_zh-cn` VALUES (1, '阿鲁宾弗洛林');
 INSERT INTO `currencies_zh-cn` VALUES (2, '阿富汗阿富汗尼');
 INSERT INTO `currencies_zh-cn` VALUES (3, '安哥拉宽扎');
@@ -2017,25 +2002,23 @@ INSERT INTO `currencies_zh-cn` VALUES (155, '圣赫勒拿镑');
 INSERT INTO `currencies_zh-cn` VALUES (156, '刚果法郎');
 INSERT INTO `currencies_zh-cn` VALUES (157, '白俄罗斯卢布');
 INSERT INTO `currencies_zh-cn` VALUES (158, '南极元');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for languages
 -- ----------------------------
 DROP TABLE IF EXISTS `languages`;
-CREATE TABLE `languages` (
-  `id` smallint(1) unsigned NOT NULL AUTO_INCREMENT,
-  `iso` varchar(16) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `sort` smallint(1) unsigned DEFAULT '0',
+CREATE TABLE `languages`  (
+  `id` smallint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `iso` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `sort` smallint(1) UNSIGNED NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `iso` (`iso`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+  UNIQUE INDEX `iso`(`iso`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of languages
 -- ----------------------------
-BEGIN;
 INSERT INTO `languages` VALUES (1, 'en', 'English', 999);
 INSERT INTO `languages` VALUES (2, 'zh-CN', '简体中文', 998);
 INSERT INTO `languages` VALUES (3, 'zh-TW', '繁体中文', 0);
@@ -2044,24 +2027,22 @@ INSERT INTO `languages` VALUES (5, 'it', 'Italiano', 0);
 INSERT INTO `languages` VALUES (6, 'fr', 'Français', 0);
 INSERT INTO `languages` VALUES (7, 'de', 'Deutsch', 0);
 INSERT INTO `languages` VALUES (8, 'ru', 'Русский', 0);
-COMMIT;
 
 -- ----------------------------
 -- Table structure for provinces_en
 -- ----------------------------
 DROP TABLE IF EXISTS `provinces_en`;
-CREATE TABLE `provinces_en` (
-  `id` mediumint(1) unsigned NOT NULL AUTO_INCREMENT,
-  `country_id` smallint(1) unsigned NOT NULL,
-  `name` varchar(200) NOT NULL,
+CREATE TABLE `provinces_en`  (
+  `id` mediumint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `country_id` smallint(1) UNSIGNED NOT NULL,
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `country_id` (`country_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=3324 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+  INDEX `country_id`(`country_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3324 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of provinces_en
 -- ----------------------------
-BEGIN;
 INSERT INTO `provinces_en` VALUES (1, 1, 'Beijing');
 INSERT INTO `provinces_en` VALUES (2, 1, 'Tianjin');
 INSERT INTO `provinces_en` VALUES (3, 1, 'Hebei Province');
@@ -5385,24 +5366,22 @@ INSERT INTO `provinces_en` VALUES (3320, 236, 'wam');
 INSERT INTO `provinces_en` VALUES (3321, 236, 'warmpende');
 INSERT INTO `provinces_en` VALUES (3322, 236, 'omberampoko');
 INSERT INTO `provinces_en` VALUES (3323, 236, 'lower coto');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for provinces_zh-cn
 -- ----------------------------
 DROP TABLE IF EXISTS `provinces_zh-cn`;
-CREATE TABLE `provinces_zh-cn` (
-  `id` mediumint(1) unsigned NOT NULL AUTO_INCREMENT,
-  `country_id` smallint(1) unsigned NOT NULL,
-  `name` varchar(200) NOT NULL,
+CREATE TABLE `provinces_zh-cn`  (
+  `id` mediumint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `country_id` smallint(1) UNSIGNED NOT NULL,
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  KEY `country_id` (`country_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=3324 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+  INDEX `country_id`(`country_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3324 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of provinces_zh-cn
 -- ----------------------------
-BEGIN;
 INSERT INTO `provinces_zh-cn` VALUES (1, 1, '北京市');
 INSERT INTO `provinces_zh-cn` VALUES (2, 1, '天津市');
 INSERT INTO `provinces_zh-cn` VALUES (3, 1, '河北省');
@@ -8726,25 +8705,23 @@ INSERT INTO `provinces_zh-cn` VALUES (3320, 236, '瓦姆');
 INSERT INTO `provinces_zh-cn` VALUES (3321, 236, '瓦姆彭代');
 INSERT INTO `provinces_zh-cn` VALUES (3322, 236, '翁贝拉姆波科');
 INSERT INTO `provinces_zh-cn` VALUES (3323, 236, '下科托');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for regions
 -- ----------------------------
 DROP TABLE IF EXISTS `regions`;
-CREATE TABLE `regions` (
-  `id` smallint(1) unsigned NOT NULL AUTO_INCREMENT,
-  `lang` smallint(1) unsigned NOT NULL DEFAULT '1',
-  `pid` smallint(1) unsigned DEFAULT '0',
-  `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`,`lang`) USING BTREE,
-  KEY `id` (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+CREATE TABLE `regions`  (
+  `id` smallint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lang` smallint(1) UNSIGNED NOT NULL DEFAULT 1,
+  `pid` smallint(1) UNSIGNED NULL DEFAULT 0,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`, `lang`) USING BTREE,
+  INDEX `id`(`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of regions
 -- ----------------------------
-BEGIN;
 INSERT INTO `regions` VALUES (1, 0, 0, 'Africa');
 INSERT INTO `regions` VALUES (2, 0, 0, 'Americas');
 INSERT INTO `regions` VALUES (3, 0, 0, 'Asia');
@@ -8773,66 +8750,65 @@ INSERT INTO `regions` VALUES (25, 0, 4, 'Southern Europe');
 INSERT INTO `regions` VALUES (26, 0, 1, 'Western Africa');
 INSERT INTO `regions` VALUES (27, 0, 3, 'Western Asia');
 INSERT INTO `regions` VALUES (28, 0, 4, 'Western Europe');
-COMMIT;
 
 -- ----------------------------
 -- Table structure for users
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-  `id` bigint(1) unsigned NOT NULL AUTO_INCREMENT,
-  `pid` bigint(1) unsigned DEFAULT '0' COMMENT '推荐人id',
-  `invite` char(6) DEFAULT NULL COMMENT '邀请码',
-  `chain` text COMMENT '用户关系链',
-  `account` varchar(64) DEFAULT NULL COMMENT '登录账号,有则唯一',
-  `mail` varchar(128) DEFAULT NULL COMMENT '邮箱号,有则唯一',
-  `phone` varchar(64) DEFAULT NULL COMMENT '手机号,有则唯一',
-  `mailvery` tinyint(1) DEFAULT '0' COMMENT '邮箱是否验证,1为已验证',
-  `phonevery` tinyint(1) DEFAULT '0' COMMENT '手机是否验证,1为已验证',
-  `pwd` varchar(128) DEFAULT NULL COMMENT '密码',
-  `nickname` varchar(64) DEFAULT NULL COMMENT '昵称',
-  `avatar` varchar(255) DEFAULT NULL COMMENT '头像地址',
-  `addtime` int(1) unsigned DEFAULT '0' COMMENT '注册时间',
-  `status` tinyint(1) unsigned DEFAULT '1' COMMENT '账号状态,1为正常,其他值均为不正常',
-  `sex` tinyint(1) DEFAULT '0' COMMENT '性别,0保密,1男，2女',
-  `height` tinyint(1) unsigned DEFAULT '0' COMMENT '身高cm',
-  `weight` float(5,2) unsigned DEFAULT '0.00' COMMENT '体重kg',
-  `birth` int(1) unsigned DEFAULT NULL COMMENT '生日',
-  `age` tinyint(1) unsigned DEFAULT NULL COMMENT '年龄',
-  `job` varchar(255) DEFAULT NULL COMMENT '职业',
-  `income` varchar(255) DEFAULT NULL COMMENT '收入',
-  `emotion` tinyint(1) unsigned DEFAULT '0' COMMENT '情感状态',
-  `star` tinyint(1) unsigned DEFAULT '0' COMMENT '星座',
-  `ip` int(1) unsigned DEFAULT NULL COMMENT '注册时的ipv4地址',
-  `country` smallint(1) unsigned DEFAULT '0' COMMENT '国家id',
-  `province` smallint(1) unsigned DEFAULT NULL COMMENT '省份id',
-  `city` smallint(1) unsigned DEFAULT NULL COMMENT '城市id',
-  `singleid` tinyint(1) unsigned DEFAULT '0' COMMENT '单点登录token id',
+CREATE TABLE `users`  (
+  `id` bigint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `pid` bigint(1) UNSIGNED NULL DEFAULT 0 COMMENT '推荐人id',
+  `invite` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邀请码',
+  `chain` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '用户关系链',
+  `account` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '登录账号,有则唯一',
+  `mail` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱号,有则唯一',
+  `phone` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机号,有则唯一',
+  `mailvery` tinyint(1) NULL DEFAULT 0 COMMENT '邮箱是否验证,1为已验证',
+  `phonevery` tinyint(1) NULL DEFAULT 0 COMMENT '手机是否验证,1为已验证',
+  `pwd` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '密码',
+  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '昵称',
+  `avatar` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '头像地址',
+  `addtime` int(1) UNSIGNED NULL DEFAULT 0 COMMENT '注册时间',
+  `status` tinyint(1) UNSIGNED NULL DEFAULT 1 COMMENT '账号状态,1为正常,其他值均为不正常',
+  `sex` tinyint(1) NULL DEFAULT 0 COMMENT '性别,0保密,1男，2女',
+  `height` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '身高cm',
+  `weight` float(5, 2) UNSIGNED NULL DEFAULT 0.00 COMMENT '体重kg',
+  `birth` int(1) UNSIGNED NULL DEFAULT NULL COMMENT '生日',
+  `age` tinyint(1) UNSIGNED NULL DEFAULT NULL COMMENT '年龄',
+  `job` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '职业',
+  `income` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '收入',
+  `emotion` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '情感状态',
+  `star` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '星座',
+  `ip` int(1) UNSIGNED NULL DEFAULT NULL COMMENT '注册时的ipv4地址',
+  `country` smallint(1) UNSIGNED NULL DEFAULT 0 COMMENT '国家id',
+  `province` smallint(1) UNSIGNED NULL DEFAULT NULL COMMENT '省份id',
+  `city` smallint(1) UNSIGNED NULL DEFAULT NULL COMMENT '城市id',
+  `singleid` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '单点登录token id',
+  `lang` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户手动选择的语言',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `account` (`account`) USING BTREE,
-  UNIQUE KEY `mail` (`mail`) USING BTREE,
-  UNIQUE KEY `phone` (`phone`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=39353 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+  UNIQUE INDEX `account`(`account`) USING BTREE,
+  UNIQUE INDEX `mail`(`mail`) USING BTREE,
+  UNIQUE INDEX `phone`(`phone`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 39354 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-BEGIN;
-INSERT INTO `users` VALUES (2, 0, NULL, NULL, 'bbb', NULL, NULL, 0, 0, NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, NULL, 0, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (3, 0, NULL, NULL, '', 'dfsf@qc.cc', '', 1, 0, '$2a$10$s1RIiHFkcubdu7TeoWJjPeFhQ7v1PhZOhCrA754bXCYSept.dGOFi', '', '', 0, 1, 2, 0, 0.00, 946483200, 0, '', '', 0, 0, 0, 0, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (4, 0, NULL, NULL, NULL, 'dfsf@qc.ccz', NULL, 0, 0, '$2a$10$XvY0aIuaV0WUClH3uSDWYuzuZlnZoJqBKFK7HU85mvBzB5i5Fxe7S', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, 2130706433, 0, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (5, 0, NULL, NULL, NULL, 'dfsfzz@qc.ccz', NULL, 0, 0, '$2a$10$nQyk5E6pXEucHryCYo9Rceyy2SBVb25auT8gHHNB1NaK1YSo4VgKm', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, 2130706433, 0, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (6, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Jx0HApS0UlgqpXndLJhCf.h3GZoP0/rm2hMkFtd1ZzeVY71dWL0Xi', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, 2130706433, 0, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (7, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Q4rL/UbA5TMN5IlZ66oDmOc3ZxrJGZqVYTCigiPW2UnGVLf7n2p2u', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, 2130706433, 0, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (8, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, 1654856133, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, 2130706433, 0, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (9, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, 1654856143, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, 2130706433, 0, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (10, 0, '00000A', NULL, NULL, 'dfsf@qc.ccqb', NULL, 0, 0, '$2a$10$flBT041senJnDCWyKthk4OKQ.xPvrNLvL6h2KVecqjVJkYZQfmCzO', NULL, NULL, 1655113940, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, 2130706433, 0, NULL, NULL, 0);
-INSERT INTO `users` VALUES (11, 0, '00000B', NULL, NULL, 'bbbbs@gmail.com', NULL, 0, 0, '$2a$10$mdxvoMnHke0W8BOZuMZVV.nr9XOZfhaM2fckwy6DRIT0aO6lA8oI.', NULL, NULL, 1655113994, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, 2130706433, 0, NULL, NULL, 0);
-INSERT INTO `users` VALUES (12, 10, '00000C', '10', NULL, 'bbbbb@gmail.com', NULL, 0, 0, '$2a$10$hnFgn6Nq9B0wgRgg6YQijekYXW38dqzXzSzzRdNOQxItZn98L0gNe', NULL, NULL, 1655114127, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, 2130706433, 0, NULL, NULL, 0);
-INSERT INTO `users` VALUES (13, 12, '00000D', '10,12', NULL, 'bbbbbaaa@gmail.com', NULL, 0, 0, '$2a$10$ZDsRMtxHkmhQWt92prCHqeXY3OT/p/sA21wrkukk4yASSU.of97bm', NULL, NULL, 1655114145, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, 2130706433, 0, NULL, NULL, 0);
-INSERT INTO `users` VALUES (14, 12, '00000E', '10,12', NULL, NULL, 'bbbbbaaa@gmail.com', 0, 0, '$2a$10$oEvGCTZhfkTD8L3OKlkWBuCqb/72jKbdwvZPpEuEaiqBrxW4GvqOW', NULL, NULL, 1655114205, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, 2130706433, 0, NULL, NULL, 0);
-INSERT INTO `users` VALUES (39350, 1111111111111111111, NULL, NULL, 'aaa', NULL, NULL, 0, NULL, '$2y$10$YtTGQpR89tBaHBJAR6uKsuIylIcGOBtER336oFPCq1i4q39uP32xW', NULL, '', 1654743271, 1, 0, 254, 900.56, NULL, NULL, NULL, NULL, NULL, NULL, 4294967295, NULL, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (39352, 0, '00101E', NULL, NULL, 'dfsf@qc.bb', NULL, 0, 0, '$2a$10$rg/ETWOhhQZv3aRYQnsXpuYpveukeWURZs0RAnumhMgrSIM8UjWgK', NULL, NULL, 1655128163, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, 3117694941, 227, 3242, NULL, 0);
-COMMIT;
+INSERT INTO `users` VALUES (2, 0, NULL, NULL, 'bbb', NULL, NULL, 0, 0, NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', NULL, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (3, 0, NULL, NULL, '', 'dfsf@qc.cc', '', 1, 0, '$2a$10$s1RIiHFkcubdu7TeoWJjPeFhQ7v1PhZOhCrA754bXCYSept.dGOFi', '', '', 0, 1, 2, 0, 0.00, 946483200, 20, '', '', '0', '0', 0, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (4, 0, NULL, NULL, NULL, 'dfsf@qc.ccz', NULL, 0, 0, '$2a$10$XvY0aIuaV0WUClH3uSDWYuzuZlnZoJqBKFK7HU85mvBzB5i5Fxe7S', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (5, 0, NULL, NULL, NULL, 'dfsfzz@qc.ccz', NULL, 0, 0, '$2a$10$nQyk5E6pXEucHryCYo9Rceyy2SBVb25auT8gHHNB1NaK1YSo4VgKm', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (6, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Jx0HApS0UlgqpXndLJhCf.h3GZoP0/rm2hMkFtd1ZzeVY71dWL0Xi', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (7, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Q4rL/UbA5TMN5IlZ66oDmOc3ZxrJGZqVYTCigiPW2UnGVLf7n2p2u', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (8, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, 1654856133, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (9, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, 1654856143, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (10, 0, '00000A', NULL, NULL, 'dfsf@qc.ccqb', NULL, 0, 0, '$2a$10$flBT041senJnDCWyKthk4OKQ.xPvrNLvL6h2KVecqjVJkYZQfmCzO', NULL, NULL, 1655113940, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, 0, NULL);
+INSERT INTO `users` VALUES (11, 0, '00000B', NULL, NULL, 'bbbbs@gmail.com', NULL, 0, 0, '$2a$10$mdxvoMnHke0W8BOZuMZVV.nr9XOZfhaM2fckwy6DRIT0aO6lA8oI.', NULL, NULL, 1655113994, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, 0, NULL);
+INSERT INTO `users` VALUES (12, 10, '00000C', '10', NULL, 'bbbbb@gmail.com', NULL, 0, 0, '$2a$10$hnFgn6Nq9B0wgRgg6YQijekYXW38dqzXzSzzRdNOQxItZn98L0gNe', NULL, NULL, 1655114127, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, 0, NULL);
+INSERT INTO `users` VALUES (13, 12, '00000D', '10,12', NULL, 'bbbbbaaa@gmail.com', NULL, 0, 0, '$2a$10$ZDsRMtxHkmhQWt92prCHqeXY3OT/p/sA21wrkukk4yASSU.of97bm', NULL, NULL, 1655114145, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, 0, NULL);
+INSERT INTO `users` VALUES (14, 12, '00000E', '10,12', NULL, NULL, 'bbbbbaaa@gmail.com', 0, 0, '$2a$10$oEvGCTZhfkTD8L3OKlkWBuCqb/72jKbdwvZPpEuEaiqBrxW4GvqOW', NULL, NULL, 1655114205, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, 0, NULL);
+INSERT INTO `users` VALUES (39350, 1111111111111111111, NULL, NULL, 'aaa', NULL, NULL, 0, NULL, '$2y$10$YtTGQpR89tBaHBJAR6uKsuIylIcGOBtER336oFPCq1i4q39uP32xW', NULL, '', 1654743271, 1, 0, 254, 900.56, NULL, NULL, NULL, NULL, NULL, NULL, 4294967295, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (39352, 0, '00101E', NULL, NULL, 'dfsf@qc.bb', NULL, 0, 0, '$2a$10$rg/ETWOhhQZv3aRYQnsXpuYpveukeWURZs0RAnumhMgrSIM8UjWgK', NULL, NULL, 1655128163, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 3117694941, 227, 3242, NULL, 0, NULL);
+INSERT INTO `users` VALUES (39353, 0, '00101F', NULL, NULL, '1603601628@qq.com', NULL, 0, 0, '$2a$10$3J.QIXc3nK2VoYn7R8nDn.fmjXhfvC/3X4Mlvn1gf.sQ8eJ2ZjNA.', NULL, NULL, 1655196928, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, 1, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

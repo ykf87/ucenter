@@ -6,12 +6,17 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
 	"strconv"
 	"time"
+	"ucenter/app/coder/mailcode"
+	"ucenter/app/config"
+	"ucenter/app/i18n"
 	"ucenter/app/safety/base34"
 	"ucenter/app/safety/passwordhash"
 	"ucenter/app/safety/rsautil"
+	"ucenter/app/smtps"
 
 	carbon "github.com/golang-module/carbon/v2"
 	"github.com/oschwald/geoip2-golang"
@@ -45,6 +50,7 @@ type UserModel struct {
 	Ip        int64   `json:"ip"`
 	Country   int64   `json:"country"`
 	City      int64   `json:"city"`
+	Lang      string  `json:"lang"`
 	Singleid  int64
 	Edinfo    Editers
 }
@@ -53,19 +59,33 @@ type UserModel struct {
 type Editers int64
 
 //创建新用户
-func MakeUser(account, email, phone, pwd, invite, ip string) (user *UserModel, err error) {
+//新用户创建必须使用 account 或 email 其中之一注册
+//使用 account 必须设置密码, 使用 email 必须使用验证码
+func MakeUser(account, email, phone, pwd, code, invite, ip string) (user *UserModel, err error) {
 	hadUser := new(UserModel)
 	insertData := make(map[string]interface{})
 	if account != "" {
 		DB.Table("users").Where("account = ?", account).First(hadUser)
 		insertData["account"] = account
+		if pwd == "" {
+			err = errors.New("Please set a password")
+			return
+		}
 	} else if email != "" {
 		DB.Table("users").Where("mail = ?", email).First(hadUser)
 		insertData["mail"] = email
-	} else if phone != "" {
-		DB.Table("users").Where("phone = ?", phone).First(hadUser)
-		insertData["phone"] = phone
+		err = mailcode.Verify(email, code)
+		if err != nil {
+			return
+		}
+	} else {
+		err = errors.New("Registration failed")
+		return
 	}
+	// else if phone != "" {
+	// 	DB.Table("users").Where("phone = ?", phone).First(hadUser)
+	// 	insertData["phone"] = phone
+	// }
 	if hadUser.Id > 0 {
 		err = errors.New("User already exists, please login")
 		return
@@ -194,7 +214,7 @@ func (this *UserModel) Info() map[string]interface{} {
 	data := make(map[string]interface{})
 	b, _ := json.Marshal(this)
 	for k, v := range gjson.ParseBytes(b).Map() {
-		if k == "pwd" || k == "status" || k == "singleid" || k == "chain" {
+		if k == "pwd" || k == "status" || k == "Singleid" || k == "chain" || k == "Edinfo" || k == "ip" || k == "pid" {
 			continue
 		}
 		data[k] = v.String()
@@ -360,6 +380,23 @@ func (this Editers) SetWeight(user *UserModel, args ...interface{}) error {
 	return nil
 }
 
+//修改年龄
+func (this Editers) SetAge(user *UserModel, args ...interface{}) error {
+	changeto := args[0].(string)
+	if changeto == "" {
+		return errors.New("Please set the content to be modified")
+	}
+	cgt, _ := strconv.ParseFloat(changeto, 64)
+	if cgt < 1 || cgt > 200 {
+		return errors.New("Wrong age")
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("age", cgt)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
+}
+
 //修改生日
 func (this Editers) SetBirth(user *UserModel, args ...interface{}) error {
 	changeto := args[0].(string)
@@ -374,5 +411,107 @@ func (this Editers) SetBirth(user *UserModel, args ...interface{}) error {
 	if rs.Error != nil {
 		return rs.Error
 	}
+	return nil
+}
+
+//修改工作
+func (this Editers) SetJob(user *UserModel, args ...interface{}) error {
+	changeto := args[0].(string)
+	if changeto == "" {
+		return errors.New("Please set the content to be modified")
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("job", changeto)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
+}
+
+//修改收入
+func (this Editers) SetIncome(user *UserModel, args ...interface{}) error {
+	changeto := args[0].(string)
+	if changeto == "" {
+		return errors.New("Please set the content to be modified")
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("income", changeto)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
+}
+
+//修改情感状态
+func (this Editers) SetEmotion(user *UserModel, args ...interface{}) error {
+	changeto := args[0].(string)
+	if changeto == "" {
+		return errors.New("Please set the content to be modified")
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("emotion", changeto)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
+}
+
+//修改星座
+func (this Editers) SetStar(user *UserModel, args ...interface{}) error {
+	changeto := args[0].(string)
+	if changeto == "" {
+		return errors.New("Please set the content to be modified")
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("star", changeto)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	return nil
+}
+
+//修改密码
+func (this *UserModel) ChangePwd(pwd string) error {
+	if pwd == "" {
+		return errors.New("Please set a password")
+	}
+	pwds, err := passwordhash.PasswordHash(pwd)
+	if err != nil {
+		return err
+	}
+	tosign := this.Singleid + 1
+	dt := map[string]interface{}{
+		"pwd":      pwds,
+		"singleid": tosign,
+	}
+	rs := DB.Table("users").Where("id = ?", this.Id).Updates(dt)
+	if rs.Error != nil {
+		this.Pwd = pwds
+		this.Singleid = tosign
+		return nil
+	} else {
+		return rs.Error
+	}
+}
+
+//发送邮箱验证码
+func GetEmailCode(mail, lang string) error {
+	if mail == "" {
+		return errors.New("Please set the content to be modified")
+	}
+	mc, ok := mailcode.Maps.Get(mail)
+	if ok {
+		if mc.Expire > time.Now().Unix() {
+			return errors.New("Your verification code is still valid")
+		} else {
+			mailcode.Maps.Delete(mail)
+		}
+	}
+	code := fmt.Sprintf("%06v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(1000000))
+	s := smtps.Client(config.Config.Smtp.Host, config.Config.Smtp.Email, config.Config.Smtp.Pass, config.Config.APPName, config.Config.Smtp.Port)
+	msg := i18n.T(lang, "Your verification code is {{$1}}, the verification code is valid for 10 minutes, please keep it safe", code)
+	sub := i18n.T(lang, "{{$1}} verify the authenticity of your email", config.Config.APPName)
+	r := s.SetGeter(mail).SetMessage(string(msg)).SetSubject(string(sub)).Send()
+	if r != nil {
+		return errors.New("Captcha sending failure")
+	}
+
+	mailcode.Maps.Set(mail, &mailcode.MailCodeStruct{Code: code, Expire: (time.Now().Unix() + 600), Errtimes: 0})
 	return nil
 }

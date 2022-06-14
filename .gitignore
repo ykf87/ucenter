@@ -2,3 +2,4 @@ cmd/*.exe
 cmd/cmd
 .DS_Store
 cmd/.ssh
+cmd/config.yaml
