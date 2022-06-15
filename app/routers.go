@@ -1,7 +1,9 @@
 package app
 
 import (
+	"ucenter/app/config"
 	"ucenter/app/controllers"
+	"ucenter/app/controllers/index"
 	"ucenter/app/controllers/user"
 	"ucenter/models"
 
@@ -16,15 +18,17 @@ func Init() {
 func (this *AppClient) WebRouter() {
 	mainGroup := this.Engine.Use(Middle())
 	{
+		mainGroup.GET("/media/:path", index.Media)
+		mainGroup.POST("/login", user.Login)
+		mainGroup.POST("/sign", user.Sign)
+		mainGroup.POST("/forgot", user.Forgot)
+		mainGroup.POST("/emailcode", user.Emailcode)
+
 		authorized := mainGroup.Use(Auth())
 		{
 			authorized.POST("", user.Index)
 			authorized.POST("/editer", user.Editer)
 		}
-		mainGroup.POST("/login", user.Login)
-		mainGroup.POST("/sign", user.Sign)
-		mainGroup.POST("/forgot", user.Forgot)
-		mainGroup.POST("/emailcode", user.Emailcode)
 	}
 
 }
@@ -38,6 +42,9 @@ func Middle() gin.HandlerFunc {
 			lang = cc
 		}
 		c.Set("_lang", lang)
+
+		c.Header("server", config.Config.APPName)
+		c.Header("auther", config.Config.Auther)
 		c.Next()
 	}
 }

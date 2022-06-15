@@ -134,14 +134,15 @@ func Editer(c *gin.Context) {
 	user, _ := rs.(*models.UserModel)
 	key := c.PostForm("k")
 	val := c.PostForm("v")
-	if key == "" || val == "" {
+	if key == "" {
 		controllers.Error(c, nil, &controllers.Msg{Str: "Missing editorial content"})
 		return
 	}
 
-	inputs := make([]reflect.Value, 2)
+	inputs := make([]reflect.Value, 3)
 	inputs[0] = reflect.ValueOf(user)
 	inputs[1] = reflect.ValueOf(val)
+	inputs[2] = reflect.ValueOf(c)
 	tf := reflect.TypeOf(user.Edinfo)
 	vl := reflect.ValueOf(user.Edinfo)
 	key = strings.ToUpper(string(key[0])) + key[1:]

@@ -5,10 +5,13 @@ import (
 )
 
 var Config = struct {
-	APPName string `default:"Dome"`
-	Port    int    `required:"true"`
-	Lang    string `default:"en"` //默认语言
-	Static  string
+	APPName    string `default:"Dome"`
+	Port       int    `required:"true"`
+	Lang       string `default:"en"` //默认语言
+	Auther     string `default:"叶孔飞"`
+	Static     string
+	Staticname string
+	Aeskey     string
 
 	DB []struct {
 		Type string

@@ -29,5 +29,5 @@ func main() {
 	}
 
 	rsautil.Generate()
-	app.App.Static(config.Config.Static).Run(config.Config.Port)
+	app.App.Static(config.Config.Static, config.Config.Staticname).Run(config.Config.Port)
 }

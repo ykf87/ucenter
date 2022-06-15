@@ -3,3 +3,4 @@ cmd/cmd
 .DS_Store
 cmd/.ssh
 cmd/config.yaml
+cmd/static*

@@ -21,12 +21,12 @@ func init() {
 	App.Engine = gin.Default()
 }
 
-func (this *AppClient) Static(path string) *AppClient {
+func (this *AppClient) Static(path, name string) *AppClient {
 	if path != "" {
 		if _, err := os.Stat(path); err != nil {
 			os.MkdirAll(path, os.ModePerm)
 		}
-		this.Engine.Static("/static", path)
+		this.Engine.Static(name, path)
 	}
 	return App
 }

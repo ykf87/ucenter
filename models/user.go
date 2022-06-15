@@ -8,15 +8,20 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"os"
 	"strconv"
+	"strings"
 	"time"
 	"ucenter/app/coder/mailcode"
 	"ucenter/app/config"
+	"ucenter/app/controllers"
 	"ucenter/app/i18n"
 	"ucenter/app/safety/base34"
 	"ucenter/app/safety/passwordhash"
 	"ucenter/app/safety/rsautil"
 	"ucenter/app/smtps"
+
+	"github.com/gin-gonic/gin"
 
 	carbon "github.com/golang-module/carbon/v2"
 	"github.com/oschwald/geoip2-golang"
@@ -313,20 +318,48 @@ func (this Editers) SetNickname(user *UserModel, args ...interface{}) error {
 	if rs.Error != nil {
 		return rs.Error
 	}
+	user.Nickname = changeto
 	return nil
 }
 
 //修改头像
-func (this Editers) SetAvatar(user *UserModel, args ...interface{}) error {
+func (this Editers) SetAvatar(user *UserModel, args ...interface{}) (error, map[string]interface{}) {
 	changeto := args[0].(string)
+	avatarPath := "static/user/avatars/"
+	var filename string
+	var err error
+	oldFilename := user.Avatar
 	if changeto == "" {
-		return errors.New("Please set the content to be modified")
+		c := args[1].(*gin.Context)
+		f, err := c.FormFile("file")
+		if err != nil {
+			return errors.New("Please set the content to be modified"), nil
+		}
+		filename, err = controllers.SaveFileFromUpload(avatarPath, user.Invite, f)
+		if err != nil {
+			log.Println(err, " - when SetAvatar model upload from form file")
+			return errors.New("System error, please try again later"), nil
+		}
+	} else {
+		filename, err = controllers.SaveFileBase64(avatarPath, user.Invite, changeto)
+		if err != nil {
+			log.Println(err, " - when SetAvatar model upload from form file")
+			return errors.New("System error, please try again later"), nil
+		}
 	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("avatar", changeto)
-	if rs.Error != nil {
-		return rs.Error
+
+	if filename != "" {
+		rs := DB.Table("users").Where("id = ?", user.Id).Update("avatar", filename)
+		if rs.Error != nil {
+			return rs.Error, nil
+		}
+		if strings.Contains(oldFilename, filename) != true {
+			os.Remove(oldFilename)
+		}
+		user.Avatar = filename
+		return nil, map[string]interface{}{"avatar": filename}
 	}
-	return nil
+	return errors.New("System error, please try again later"), nil
 }
 
 //修改性别
