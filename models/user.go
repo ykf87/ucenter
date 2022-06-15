@@ -14,12 +14,12 @@ import (
 	"time"
 	"ucenter/app/coder/mailcode"
 	"ucenter/app/config"
-	"ucenter/app/controllers"
 	"ucenter/app/i18n"
 	"ucenter/app/safety/base34"
 	"ucenter/app/safety/passwordhash"
 	"ucenter/app/safety/rsautil"
 	"ucenter/app/smtps"
+	"ucenter/app/uploadfile/images"
 
 	"github.com/gin-gonic/gin"
 
@@ -50,8 +50,8 @@ type UserModel struct {
 	Age       int     `json:"age"`
 	Job       string  `json:"job"`
 	Income    string  `json:"income"`
-	Emotion   int     `json:"emotion"`
-	Star      int     `json:"star"`
+	Emotion   string  `json:"emotion"`
+	Star      string  `json:"star"`
 	Ip        int64   `json:"ip"`
 	Country   int64   `json:"country"`
 	City      int64   `json:"city"`
@@ -228,98 +228,151 @@ func (this *UserModel) Info() map[string]interface{} {
 }
 
 //账号名称修改
-func (this Editers) SetAccount(user *UserModel, args ...interface{}) error {
+func (this Editers) SetAccount(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	newAccount := args[0].(string)
 	if newAccount == "" {
-		return errors.New("Please set the account name")
+		err = errors.New("Please set the account name")
+		return
 	}
 	if user.Account == newAccount {
-		return errors.New("No account changes")
+		err = errors.New("No changes")
+		return
 	}
 	u := new(UserModel)
 	DB.Table("users").Where("account = ?", newAccount).First(u)
 	if u.Id > 0 {
-		return errors.New("Account name already exists, please use another one")
+		err = errors.New("Account name already exists, please use another one")
+		return
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("account", newAccount)
 	if rs.Error != nil {
-		return rs.Error
+		err = rs.Error
+		return
 	}
-	return nil
+	dt = map[string]interface{}{
+		"account": newAccount,
+	}
+	return
 }
 
-//邮箱修改,未接入邮箱验证码
-func (this Editers) SetEmail(user *UserModel, args ...interface{}) error {
+//邮箱修改
+func (this Editers) SetEmail(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	newAccount := args[0].(string)
+	dt = make(map[string]interface{})
 	if newAccount == "" {
-		return errors.New("Please set the Email")
+		err = errors.New("Please set the Email")
+		return
 	}
 	if user.Mail == newAccount {
-		return errors.New("No email changes")
+		err = errors.New("No changes")
+		return
 	}
+	c := args[1].(*gin.Context)
+	code := c.PostForm("code")
+	if code == "" {
+		err = errors.New("Please input your Captcha")
+		return
+	}
+	err = mailcode.Verify(newAccount, code)
+	if err != nil {
+		return
+	}
+
 	u := new(UserModel)
 	DB.Table("users").Where("mail = ?", newAccount).First(u)
 	if u.Id > 0 {
-		return errors.New("Email already exists, please use another one")
+		err = errors.New("Email already exists, please use another one")
+		return
 	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("mail", newAccount)
+
+	ssid := user.Singleid + 1
+	ud := map[string]interface{}{
+		"mail":     newAccount,
+		"singleid": ssid,
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Updates(ud)
 	if rs.Error != nil {
-		return rs.Error
+		err = rs.Error
+		return
 	}
-	return nil
+	user.Mail = newAccount
+	user.Singleid = ssid
+	token := user.Token()
+	if token == "" {
+		err = errors.New("Voucher generation failed, please try again later")
+	} else {
+		dt["token"] = token
+	}
+	return
 }
 
 //手机号修改,未接入手机证码
-func (this Editers) SetPhone(user *UserModel, args ...interface{}) error {
+func (this Editers) SetPhone(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	newAccount := args[0].(string)
 	if newAccount == "" {
-		return errors.New("Please set the Phone")
+		err = errors.New("Please set the Phone")
+		return
 	}
 	if user.Mail == newAccount {
-		return errors.New("No phone changes")
+		err = errors.New("No changes")
+		return
 	}
 	u := new(UserModel)
 	DB.Table("users").Where("phone = ?", newAccount).First(u)
 	if u.Id > 0 {
-		return errors.New("Phone already exists, please use another one")
+		err = errors.New("Phone already exists, please use another one")
+		return
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("phone", newAccount)
 	if rs.Error != nil {
-		return rs.Error
+		err = rs.Error
+		return
 	}
-	return nil
+	dt = map[string]interface{}{
+		"phone": newAccount,
+	}
+	user.Phone = newAccount
+	return
 }
 
 //修改密码
-func (this Editers) SetPassword(user *UserModel, args ...interface{}) (error, map[string]interface{}) {
+func (this Editers) SetPassword(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	changeto := args[0].(string)
 	if changeto == "" {
-		return errors.New("Please set the content to be modified"), nil
+		err = errors.New("Please set the content to be modified")
+		return
 	}
 	npwd, _ := passwordhash.PasswordHash(changeto)
-	dt := &map[string]interface{}{
+	dtn := &map[string]interface{}{
 		"pwd":      npwd,
 		"singleid": user.Singleid + 1,
 	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Updates(dt)
+	rs := DB.Table("users").Where("id = ?", user.Id).Updates(dtn)
 	if rs.Error != nil {
-		return rs.Error, nil
+		err = rs.Error
+		return
 	}
-	return nil, map[string]interface{}{"token": user.Token()}
+	dt = map[string]interface{}{"token": user.Token()}
+	return
 }
 
 //修改昵称
-func (this Editers) SetNickname(user *UserModel, args ...interface{}) error {
+func (this Editers) SetNickname(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	changeto := args[0].(string)
 	if changeto == "" {
-		return errors.New("Please set the content to be modified")
+		err = errors.New("Please set the content to be modified")
+		return
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("nickname", changeto)
 	if rs.Error != nil {
-		return rs.Error
+		err = rs.Error
+		return
 	}
 	user.Nickname = changeto
-	return nil
+	dt = map[string]interface{}{
+		"nickname": changeto,
+	}
+	return
 }
 
 //修改头像
@@ -335,13 +388,13 @@ func (this Editers) SetAvatar(user *UserModel, args ...interface{}) (error, map[
 		if err != nil {
 			return errors.New("Please set the content to be modified"), nil
 		}
-		filename, err = controllers.SaveFileFromUpload(avatarPath, user.Invite, f)
+		filename, err = images.SaveFileFromUpload(avatarPath, user.Invite, f)
 		if err != nil {
 			log.Println(err, " - when SetAvatar model upload from form file")
 			return errors.New("System error, please try again later"), nil
 		}
 	} else {
-		filename, err = controllers.SaveFileBase64(avatarPath, user.Invite, changeto)
+		filename, err = images.SaveFileBase64(avatarPath, user.Invite, changeto)
 		if err != nil {
 			log.Println(err, " - when SetAvatar model upload from form file")
 			return errors.New("System error, please try again later"), nil
@@ -363,10 +416,11 @@ func (this Editers) SetAvatar(user *UserModel, args ...interface{}) (error, map[
 }
 
 //修改性别
-func (this Editers) SetSex(user *UserModel, args ...interface{}) error {
+func (this Editers) SetSex(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	changeto := args[0].(string)
 	if changeto == "" {
-		return errors.New("Please set the content to be modified")
+		err = errors.New("Please set the content to be modified")
+		return
 	}
 	if changeto != "0" && changeto != "1" && changeto != "2" {
 		changeto = "0"
@@ -374,125 +428,236 @@ func (this Editers) SetSex(user *UserModel, args ...interface{}) error {
 	cgt, _ := strconv.Atoi(changeto)
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("sex", cgt)
 	if rs.Error != nil {
-		return rs.Error
+		err = rs.Error
+		return
 	}
-	return nil
+	dt = map[string]interface{}{
+		"sex": cgt,
+	}
+	user.Sex = cgt
+	return
 }
 
 //修改身高
-func (this Editers) SetHeight(user *UserModel, args ...interface{}) error {
+func (this Editers) SetHeight(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	changeto := args[0].(string)
 	if changeto == "" {
-		return errors.New("Please set the content to be modified")
+		err = errors.New("Please set the content to be modified")
+		return
 	}
 	cgt, _ := strconv.Atoi(changeto)
 	if cgt < 1 || cgt >= 300 {
-		return errors.New("Please set the height reasonably")
+		err = errors.New("Please set the height reasonably")
+		return
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("height", cgt)
 	if rs.Error != nil {
-		return rs.Error
+		err = rs.Error
+		return
 	}
-	return nil
+	dt = map[string]interface{}{
+		"height": cgt,
+	}
+	return
 }
 
 //修改体重
-func (this Editers) SetWeight(user *UserModel, args ...interface{}) error {
+func (this Editers) SetWeight(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	changeto := args[0].(string)
 	if changeto == "" {
-		return errors.New("Please set the content to be modified")
+		err = errors.New("Please set the content to be modified")
+		return
 	}
 	cgt, _ := strconv.ParseFloat(changeto, 64)
 	if cgt < 1.0 || cgt >= 500000.0 {
-		return errors.New("Please set your weight wisely")
+		err = errors.New("Please set your weight wisely")
+		return
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("weight", cgt)
 	if rs.Error != nil {
-		return rs.Error
+		err = rs.Error
+		return
 	}
-	return nil
+	dt = map[string]interface{}{
+		"weight": cgt,
+	}
+	return
 }
 
 //修改年龄
-func (this Editers) SetAge(user *UserModel, args ...interface{}) error {
+func (this Editers) SetAge(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	changeto := args[0].(string)
 	if changeto == "" {
-		return errors.New("Please set the content to be modified")
+		err = errors.New("Please set the content to be modified")
+		return
 	}
-	cgt, _ := strconv.ParseFloat(changeto, 64)
+	cgt, _ := strconv.Atoi(changeto)
 	if cgt < 1 || cgt > 200 {
-		return errors.New("Wrong age")
+		err = errors.New("Wrong age")
+		return
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("age", cgt)
 	if rs.Error != nil {
-		return rs.Error
+		err = rs.Error
+		return
 	}
-	return nil
+	dt = map[string]interface{}{
+		"age": cgt,
+	}
+	user.Age = cgt
+	return
 }
 
 //修改生日
-func (this Editers) SetBirth(user *UserModel, args ...interface{}) error {
+func (this Editers) SetBirth(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	changeto := args[0].(string)
 	if changeto == "" {
-		return errors.New("Please set the content to be modified")
+		err = errors.New("Please set the content to be modified")
+		return
 	}
 	cgt := carbon.Parse(changeto).Timestamp()
 	if cgt == 0 {
-		return errors.New("Wrong date format")
+		err = errors.New("Wrong date format")
+		return
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("birth", cgt)
 	if rs.Error != nil {
-		return rs.Error
+		err = rs.Error
+		return
 	}
-	return nil
+	dt = map[string]interface{}{
+		"birth": cgt,
+	}
+	user.Birth = cgt
+	return
 }
 
 //修改工作
-func (this Editers) SetJob(user *UserModel, args ...interface{}) error {
+func (this Editers) SetJob(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	changeto := args[0].(string)
 	if changeto == "" {
-		return errors.New("Please set the content to be modified")
+		err = errors.New("Please set the content to be modified")
+		return
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("job", changeto)
 	if rs.Error != nil {
-		return rs.Error
+		err = rs.Error
+		return
 	}
-	return nil
+	user.Job = changeto
+	dt = map[string]interface{}{
+		"job": changeto,
+	}
+	return
 }
 
 //修改收入
-func (this Editers) SetIncome(user *UserModel, args ...interface{}) error {
+func (this Editers) SetIncome(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	changeto := args[0].(string)
 	if changeto == "" {
-		return errors.New("Please set the content to be modified")
+		err = errors.New("Please set the content to be modified")
+		return
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("income", changeto)
 	if rs.Error != nil {
-		return rs.Error
+		err = rs.Error
+		return
 	}
-	return nil
+	dt = map[string]interface{}{
+		"income": changeto,
+	}
+	user.Income = changeto
+	return
 }
 
 //修改情感状态
-func (this Editers) SetEmotion(user *UserModel, args ...interface{}) error {
+func (this Editers) SetEmotion(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	changeto := args[0].(string)
 	if changeto == "" {
-		return errors.New("Please set the content to be modified")
+		err = errors.New("Please set the content to be modified")
+		return
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("emotion", changeto)
 	if rs.Error != nil {
-		return rs.Error
+		err = rs.Error
+		return
 	}
-	return nil
+	dt = map[string]interface{}{
+		"emotion": changeto,
+	}
+	user.Emotion = changeto
+	return
 }
 
 //修改星座
-func (this Editers) SetStar(user *UserModel, args ...interface{}) error {
+func (this Editers) SetStar(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
+	changeto := args[0].(string)
+	if changeto == "" {
+		err = errors.New("Please set the content to be modified")
+		return
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("star", changeto)
+	if rs.Error != nil {
+		err = rs.Error
+		return
+	}
+	user.Star = changeto
+	dt = map[string]interface{}{
+		"star": changeto,
+	}
+	return
+}
+
+//修改国家
+func (this Editers) SetCountry(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
+	changeto := args[0].(string)
+	if changeto == "" {
+		err = errors.New("Please set the content to be modified")
+		return
+	}
+	id, _ := strconv.Atoi(changeto)
+	if id < 1 {
+		err = errors.New("Please set the content to be modified")
+		return
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("country", id)
+	if rs.Error != nil {
+		err = rs.Error
+		return
+	}
+	user.Country = int64(id)
+	dt = map[string]interface{}{
+		"country": user.Country,
+	}
+	return
+}
+
+//修改城市
+func (this Editers) SetCity(user *UserModel, args ...interface{}) error {
 	changeto := args[0].(string)
 	if changeto == "" {
 		return errors.New("Please set the content to be modified")
 	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("star", changeto)
+
+	var provid, cityid int
+	if strings.Contains(changeto, "-") {
+		tmp := strings.Split(changeto, "-")
+		provid, _ = strconv.Atoi(tmp[0])
+		cityid, _ = strconv.Atoi(tmp[1])
+	} else {
+		provid, _ = strconv.Atoi(changeto)
+	}
+
+	if provid < 1 {
+		return errors.New("Please set the content to be modified")
+	}
+	uppdt := map[string]int{
+		"province": provid,
+	}
+	if cityid > 0 {
+		uppdt["city"] = cityid
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Updates(uppdt)
 	if rs.Error != nil {
 		return rs.Error
 	}

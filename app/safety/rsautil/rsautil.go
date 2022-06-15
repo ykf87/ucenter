@@ -77,10 +77,10 @@ func Generate() (err error) {
 	} else if _, err = os.Stat(filePath + "/rsa.pub"); err == nil {
 		publicKey, _ = ReadFromPem(filepath.Join(filePath, "rsa.pub"))
 		privateKey, _ = ReadFromPem(filepath.Join(filePath, "rsa.pem"))
-		fmt.Printf("密钥存放路径：%s\n", filePath) // 存放pem,crt,pfx等文件的目录
+		// fmt.Printf("密钥存放路径：%s\n", filePath) // 存放pem,crt,pfx等文件的目录
 		return
 	}
-	fmt.Printf("密钥存放路径：%s\n", filePath) // 存放pem,crt,pfx等文件的目录
+	// fmt.Printf("密钥存放路径：%s\n", filePath) // 存放pem,crt,pfx等文件的目录
 
 	//生成Rsa
 	publicKey, privateKey = GenerateRsaKey(PKCS8)

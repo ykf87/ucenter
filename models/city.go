@@ -2,6 +2,8 @@ package models
 
 import (
 	"errors"
+	"strings"
+	"ucenter/app/config"
 )
 
 type CityModel struct {
@@ -23,4 +25,32 @@ func GetCityByNameAndCountryId(name string, countryId int64, lang string) (*City
 		return rs, nil
 	}
 	return nil, errors.New("City not found")
+}
+
+func GetCityFilterAndPage(lang, filter string, countryid, provinceid, page, limit int) (dts []map[string]interface{}, err error) {
+	if countryid < 1 || provinceid < 1 {
+		err = errors.New("Missing queries")
+		return
+	}
+	if page < 1 {
+		page = 1
+	}
+	if limit == 0 {
+		limit = config.Config.Limit
+	}
+
+	lang = strings.ToLower(lang)
+	dbs := DB.Table("cities_"+lang).Where("country_id = ? and province_id = ?", countryid, provinceid).Order("name ASC")
+	if limit > 0 {
+		dbs = dbs.Limit(limit).Offset((page - 1) * limit)
+	}
+	if filter != "" {
+		dbs = dbs.Where("name like ?", "%"+filter+"%")
+	}
+	rs := dbs.Find(&dts)
+	if rs.Error != nil {
+		err = rs.Error
+		dts = nil
+	}
+	return
 }

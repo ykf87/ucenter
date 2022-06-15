@@ -17,7 +17,7 @@ type RWMap struct { // 一个读写锁保护的线程安全的map
 	m            map[string]*MailCodeStruct
 }
 
-var Timeout = 600 // timeout 验证码有效期,单位秒
+var Timeout = 300 // timeout 验证码有效期,单位秒
 var Maps *RWMap
 
 func init() {

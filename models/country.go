@@ -2,6 +2,8 @@ package models
 
 import (
 	"errors"
+	"strings"
+	"ucenter/app/config"
 )
 
 type CountryModel struct {
@@ -24,4 +26,40 @@ func GetCountryByIso(iso string) (*CountryModel, error) {
 		return r, nil
 	}
 	return nil, errors.New("Country not found")
+}
+
+func GetCountryByFilterAndPage(lang, filter string, page, limit int) (dts []map[string]interface{}, err error) {
+	if page < 1 {
+		page = 1
+	}
+	if limit == 0 {
+		limit = config.Config.Limit
+	}
+
+	lang = strings.ToLower(lang)
+	dbs := DB.Table("countries_" + lang).Order("name ASC")
+	if limit > 0 {
+		dbs = dbs.Limit(limit).Offset((page - 1) * limit)
+	}
+	if filter != "" {
+		dbs = dbs.Where("name like ?", "%"+filter+"%")
+	}
+	rs := dbs.Find(&dts)
+	if rs.Error != nil {
+		// if lang != "en" {
+		// 	dbs = DB.Table("countries_en").Limit(limit).Offset((page - 1) * limit).Order("name DESC")
+		// 	if filter != "" {
+		// 		dbs = dbs.Where("name like ?", "%"+filter+"%")
+		// 	}
+		// 	rs = dbs.Find(&dts)
+		// 	if rs.Error != nil {
+		// 		err = rs.Error
+		// 		dts = nil
+		// 	}
+		// } else {
+		err = rs.Error
+		dts = nil
+		// }
+	}
+	return
 }

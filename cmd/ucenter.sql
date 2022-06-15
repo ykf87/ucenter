@@ -11,7 +11,7 @@
  Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 14/06/2022 17:48:17
+ Date: 15/06/2022 18:06:50
 */
 
 SET NAMES utf8mb4;
@@ -30,7 +30,7 @@ CREATE TABLE `cities_en`  (
   INDEX `country_id`(`country_id`) USING BTREE,
   INDEX `states_id`(`province_id`) USING BTREE,
   INDEX `name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 340 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 339 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of cities_en
@@ -382,7 +382,7 @@ CREATE TABLE `cities_zh-cn`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `country_id`(`country_id`) USING BTREE,
   INDEX `states_id`(`province_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 340 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 339 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of cities_zh-cn
@@ -8795,7 +8795,7 @@ CREATE TABLE `users`  (
 -- Records of users
 -- ----------------------------
 INSERT INTO `users` VALUES (2, 0, NULL, NULL, 'bbb', NULL, NULL, 0, 0, NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', NULL, 0, NULL, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (3, 0, NULL, NULL, '', 'dfsf@qc.cc', '', 1, 0, '$2a$10$s1RIiHFkcubdu7TeoWJjPeFhQ7v1PhZOhCrA754bXCYSept.dGOFi', '', '', 0, 1, 2, 0, 0.00, 946483200, 20, '', '', '0', '0', 0, 0, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (3, 0, '000003', NULL, '', '1603601628@qq.com', '', 1, 0, '$2a$10$s1RIiHFkcubdu7TeoWJjPeFhQ7v1PhZOhCrA754bXCYSept.dGOFi', '', 'static/user/avatars/000003.png', 0, 1, 2, 0, 0.00, 946483200, 20, '', '', '0', '0', 0, 0, NULL, NULL, 2, NULL);
 INSERT INTO `users` VALUES (4, 0, NULL, NULL, NULL, 'dfsf@qc.ccz', NULL, 0, 0, '$2a$10$XvY0aIuaV0WUClH3uSDWYuzuZlnZoJqBKFK7HU85mvBzB5i5Fxe7S', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, NULL, NULL);
 INSERT INTO `users` VALUES (5, 0, NULL, NULL, NULL, 'dfsfzz@qc.ccz', NULL, 0, 0, '$2a$10$nQyk5E6pXEucHryCYo9Rceyy2SBVb25auT8gHHNB1NaK1YSo4VgKm', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, NULL, NULL);
 INSERT INTO `users` VALUES (6, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Jx0HApS0UlgqpXndLJhCf.h3GZoP0/rm2hMkFtd1ZzeVY71dWL0Xi', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, NULL, NULL);
@@ -8809,6 +8809,5 @@ INSERT INTO `users` VALUES (13, 12, '00000D', '10,12', NULL, 'bbbbbaaa@gmail.com
 INSERT INTO `users` VALUES (14, 12, '00000E', '10,12', NULL, NULL, 'bbbbbaaa@gmail.com', 0, 0, '$2a$10$oEvGCTZhfkTD8L3OKlkWBuCqb/72jKbdwvZPpEuEaiqBrxW4GvqOW', NULL, NULL, 1655114205, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, 0, NULL);
 INSERT INTO `users` VALUES (39350, 1111111111111111111, NULL, NULL, 'aaa', NULL, NULL, 0, NULL, '$2y$10$YtTGQpR89tBaHBJAR6uKsuIylIcGOBtER336oFPCq1i4q39uP32xW', NULL, '', 1654743271, 1, 0, 254, 900.56, NULL, NULL, NULL, NULL, NULL, NULL, 4294967295, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `users` VALUES (39352, 0, '00101E', NULL, NULL, 'dfsf@qc.bb', NULL, 0, 0, '$2a$10$rg/ETWOhhQZv3aRYQnsXpuYpveukeWURZs0RAnumhMgrSIM8UjWgK', NULL, NULL, 1655128163, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 3117694941, 227, 3242, NULL, 0, NULL);
-INSERT INTO `users` VALUES (39353, 0, '00101F', NULL, NULL, '1603601628@qq.com', NULL, 0, 0, '$2a$10$3J.QIXc3nK2VoYn7R8nDn.fmjXhfvC/3X4Mlvn1gf.sQ8eJ2ZjNA.', NULL, NULL, 1655196928, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', '0', 2130706433, 0, NULL, NULL, 1, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

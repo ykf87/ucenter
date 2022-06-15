@@ -19,6 +19,8 @@ func (this *AppClient) WebRouter() {
 	mainGroup := this.Engine.Use(Middle())
 	{
 		mainGroup.GET("/media/:path", index.Media)
+		// mainGroup.GET("/country/*procity", index.City)
+		mainGroup.GET("/country/*procity", index.Country)
 		mainGroup.POST("/login", user.Login)
 		mainGroup.POST("/sign", user.Sign)
 		mainGroup.POST("/forgot", user.Forgot)
@@ -40,10 +42,13 @@ func Middle() gin.HandlerFunc {
 			lang = c.GetHeader("lang")
 		} else if cc, err := c.Cookie("lang"); err == nil {
 			lang = cc
+		} else {
+			lang = config.Config.Lang
 		}
 		c.Set("_lang", lang)
-
+		c.Header("language", lang)
 		c.Header("server", config.Config.APPName)
+		c.Header("appname", config.Config.APPName)
 		c.Header("auther", config.Config.Auther)
 		c.Next()
 	}
@@ -64,12 +69,14 @@ func Auth() gin.HandlerFunc {
 			if user == nil {
 				controllers.Error(c, nil, &controllers.Msg{Str: "Please Login"})
 				c.Abort()
-			}
-			c.Set("_user", user)
-			if user.Lang != "" {
-				c.Set("_lang", user.Lang)
+			} else {
+				c.Set("_user", user)
+				if user.Lang != "" {
+					c.Header("language", user.Lang)
+					c.Set("_lang", user.Lang)
+				}
+				c.Next()
 			}
 		}
-		c.Next()
 	}
 }

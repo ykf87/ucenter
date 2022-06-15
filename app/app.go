@@ -33,5 +33,7 @@ func (this *AppClient) Static(path, name string) *AppClient {
 
 func (this *AppClient) Run(port int) {
 	this.WebRouter()
-	this.Engine.Run(fmt.Sprintf(":%d", port))
+	portstr := fmt.Sprintf(":%d", port)
+	fmt.Println("地址: http://localhost" + portstr)
+	this.Engine.Run(portstr)
 }

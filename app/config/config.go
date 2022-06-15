@@ -12,6 +12,7 @@ var Config = struct {
 	Static     string
 	Staticname string
 	Aeskey     string
+	Limit      int `default:20`
 
 	DB []struct {
 		Type string
