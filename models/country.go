@@ -82,7 +82,7 @@ func GetCountryByIso(iso string) (ct *CountryModel, err error) {
 	// return nil, errors.New("Country not found")
 }
 
-func GetCountryByFilterAndPage(lang, filter string, page, limit int) (dts map[string]string, err error) {
+func GetCountryByFilterAndPage(lang, filter string, page, limit int) (dts map[string]interface{}, err error) {
 	if page < 1 {
 		page = 1
 	}
@@ -105,7 +105,7 @@ func GetCountryByFilterAndPage(lang, filter string, page, limit int) (dts map[st
 		err = rs.Error
 		dts = nil
 	} else {
-		dts = make(map[string]string)
+		dts = make(map[string]interface{})
 		for _, v := range nngdfg {
 			for iso, b := range Countries {
 				if v.Id == b.Id {

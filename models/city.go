@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"ucenter/app/config"
 )
@@ -58,10 +59,16 @@ func GetCityFilterAndPage(lang, filter string, countryid int64, provinceid, page
 	if filter != "" {
 		dbs = dbs.Where("name like ?", "%"+filter+"%")
 	}
-	rs := dbs.Find(&dts)
+	var ctmds []*CityModel
+	rs := dbs.Find(&ctmds)
 	if rs.Error != nil {
 		err = rs.Error
 		dts = nil
+	} else {
+		dts = make(map[string]interface{})
+		for _, v := range ctmds {
+			dts[fmt.Sprintf("%d", v.Id)] = v.Name
+		}
 	}
 	return
 }

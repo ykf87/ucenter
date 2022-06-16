@@ -227,7 +227,14 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 			continue
 		}
 		if k == "birth" && v.Int() > 0 {
-			data[k] = carbon.CreateFromTimestamp(v.Int()).SetTimezone(timezone).ToDateString()
+			var fmt string
+			fmts, ok := config.Config.Timefmts[lang]
+			if ok {
+				fmt = fmts.Datefmt
+			} else {
+				fmt = config.Config.Datefmt
+			}
+			data[k] = carbon.CreateFromTimestamp(v.Int()).SetTimezone(timezone).Carbon2Time().Format(fmt)
 		} else if k == "country" && v.Int() > 0 {
 			data[k] = CountryMap.Get(lang, v.Int())
 		} else if k == "province" && v.Int() > 0 {

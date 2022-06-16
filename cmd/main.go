@@ -27,7 +27,7 @@ func main() {
 		log.Println(err)
 		return
 	}
-
+	log.Println(config.Config.Timefmts)
 	rsautil.Generate()
 	app.App.Static(config.Config.Static, config.Config.Staticname).Run(config.Config.Port)
 }

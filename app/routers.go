@@ -72,12 +72,12 @@ func Auth() gin.HandlerFunc {
 			token = c.GetString("token")
 		}
 		if token == "" {
-			controllers.Error(c, nil, &controllers.Msg{Str: "Please Login"})
+			controllers.Resp(c, nil, &controllers.Msg{Str: "Please Login"}, 401)
 			c.Abort()
 		} else {
 			user := models.UnToken(token)
 			if user == nil {
-				controllers.Error(c, nil, &controllers.Msg{Str: "Please Login"})
+				controllers.Resp(c, nil, &controllers.Msg{Str: "Please Login"}, 401)
 				c.Abort()
 			} else {
 				c.Set("_user", user)

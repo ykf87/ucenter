@@ -40,7 +40,7 @@ func Country(c *gin.Context) {
 	if pc != "" {
 		if strings.Contains(pc, "/") {
 			ids := strings.Split(pc, "/")
-			iso := ids[0]
+			iso := strings.ToUpper(ids[0])
 			provId, _ := strconv.Atoi(ids[1])
 			country, ok := models.Countries[iso]
 			if ok {
@@ -49,6 +49,7 @@ func Country(c *gin.Context) {
 				err = errors.New("No results found")
 			}
 		} else {
+			pc = strings.ToUpper(pc)
 			country, ok := models.Countries[pc]
 			if ok {
 				rs, err = models.GetProvinceByFilterAndPage(lang, filter, country.Id, page, limit)
