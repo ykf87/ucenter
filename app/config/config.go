@@ -29,7 +29,7 @@ var Config = struct {
 		Datetimefmt string
 		Datefmt     string
 		Timefmt     string
-	}
+	} `required:"true"`
 
 	Smtp struct {
 		Host  string
