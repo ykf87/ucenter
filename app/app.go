@@ -30,7 +30,6 @@ func (this *AppClient) Static(path, name string) *AppClient {
 		if name == "" {
 			name = "/" + strings.Trim(path, "./")
 		}
-		fmt.Println(name, path)
 		this.Engine.Static(name, path)
 	}
 	return App

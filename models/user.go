@@ -29,35 +29,37 @@ import (
 )
 
 type UserModel struct {
-	Id        int64   `json:"id"`
-	Pid       int64   `json:"pid"`
-	Invite    string  `json:"invite"`
-	Chain     string  `json:"chain"`
-	Account   string  `json:"account"`
-	Mail      string  `json:"mail"`
-	Phone     string  `json:"phone"`
-	Mailvery  int     `json:"mailvery"`
-	Phonevery int     `json:"phonevery"`
-	Pwd       string  `json:"pwd"`
-	Nickname  string  `json:"nickname"`
-	Avatar    string  `json:"avatar"`
-	Addtime   int64   `json:"addtime"`
-	Status    int     `json:"status"`
-	Sex       int     `json:"sex"`
-	Height    int     `json:"height"`
-	Weight    float32 `json:"weight"`
-	Birth     int64   `json:"birth"`
-	Age       int     `json:"age"`
-	Job       string  `json:"job"`
-	Income    string  `json:"income"`
-	Emotion   string  `json:"emotion"`
-	Star      string  `json:"star"`
-	Ip        int64   `json:"ip"`
-	Country   int64   `json:"country"`
-	City      int64   `json:"city"`
-	Lang      string  `json:"lang"`
-	Singleid  int64
-	Edinfo    Editers
+	Id            int64   `json:"id"`
+	Pid           int64   `json:"pid"`
+	Invite        string  `json:"invite"`
+	Chain         string  `json:"chain"`
+	Account       string  `json:"account"`
+	Mail          string  `json:"mail"`
+	Phone         string  `json:"phone"`
+	Mailvery      int     `json:"mailvery"`
+	Phonevery     int     `json:"phonevery"`
+	Pwd           string  `json:"pwd"`
+	Nickname      string  `json:"nickname"`
+	Avatar        string  `json:"avatar"`
+	Addtime       int64   `json:"addtime"`
+	Status        int     `json:"status"`
+	Sex           int     `json:"sex"`
+	Height        int     `json:"height"`
+	Weight        float64 `json:"weight"`
+	Birth         int64   `json:"birth"`
+	Age           int     `json:"age"`
+	Job           string  `json:"job"`
+	Income        string  `json:"income"`
+	Emotion       string  `json:"emotion"`
+	Constellation int64   `json:"constellation"`
+	Temperament   string  `json:"temperament"`
+	Ip            int64   `json:"ip"`
+	Country       int64   `json:"country"`
+	Province      int64   `json:"province"`
+	City          int64   `json:"city"`
+	Lang          string  `json:"lang"`
+	Singleid      int64
+	Edinfo        Editers
 }
 
 //账号修改器
@@ -83,6 +85,7 @@ func MakeUser(account, email, phone, pwd, code, invite, ip string) (user *UserMo
 		if err != nil {
 			return
 		}
+		insertData["mailvery"] = 1
 	} else {
 		err = errors.New("Registration failed")
 		return
@@ -212,7 +215,7 @@ func UnToken(token string) *UserModel {
 }
 
 //返回用户信息
-func (this *UserModel) Info() map[string]interface{} {
+func (this *UserModel) Info(lang string) map[string]interface{} {
 	if this.Id < 1 {
 		return nil
 	}
@@ -222,7 +225,40 @@ func (this *UserModel) Info() map[string]interface{} {
 		if k == "pwd" || k == "status" || k == "Singleid" || k == "chain" || k == "Edinfo" || k == "ip" || k == "pid" {
 			continue
 		}
-		data[k] = v.String()
+		if k == "birth" && v.Int() > 0 {
+			data[k] = carbon.CreateFromTimestamp(v.Int()).ToDateString(carbon.NewYork)
+		} else if k == "country" && v.Int() > 0 {
+			data[k] = CountryMap.Get(lang, v.Int())
+		} else if k == "province" && v.Int() > 0 {
+			r, e := GetProvinceById(v.Int(), lang)
+			if e == nil {
+				data[k] = r.Name
+			} else {
+				data[k] = ""
+			}
+		} else if k == "city" && v.Int() > 0 {
+			r, e := GetCityById(v.Int(), lang)
+			if e == nil {
+				data[k] = r.Name
+			} else {
+				data[k] = ""
+			}
+		} else if k == "temperament" {
+			vals := strings.Split(v.String(), ",")
+			var ssds []string
+			for _, v := range vals {
+				id, _ := strconv.Atoi(v)
+				name := TemperamentMap.Get(lang, int64(id))
+				if name != "" {
+					ssds = append(ssds, name)
+				}
+			}
+			data[k] = strings.Join(ssds, ",")
+		} else if k == "constellation" && v.Int() > 0 {
+			data[k] = ConstellationMap.Get(lang, v.Int())
+		} else {
+			data[k] = v.String()
+		}
 	}
 	return data
 }
@@ -252,6 +288,7 @@ func (this Editers) SetAccount(user *UserModel, args ...interface{}) (err error,
 	dt = map[string]interface{}{
 		"account": newAccount,
 	}
+	user.Account = newAccount
 	return
 }
 
@@ -289,6 +326,7 @@ func (this Editers) SetEmail(user *UserModel, args ...interface{}) (err error, d
 	ud := map[string]interface{}{
 		"mail":     newAccount,
 		"singleid": ssid,
+		"mailvery": 1,
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Updates(ud)
 	if rs.Error != nil {
@@ -458,6 +496,7 @@ func (this Editers) SetHeight(user *UserModel, args ...interface{}) (err error, 
 	dt = map[string]interface{}{
 		"height": cgt,
 	}
+	user.Height = cgt
 	return
 }
 
@@ -481,6 +520,7 @@ func (this Editers) SetWeight(user *UserModel, args ...interface{}) (err error, 
 	dt = map[string]interface{}{
 		"weight": cgt,
 	}
+	user.Weight = cgt
 	return
 }
 
@@ -526,7 +566,7 @@ func (this Editers) SetBirth(user *UserModel, args ...interface{}) (err error, d
 		return
 	}
 	dt = map[string]interface{}{
-		"birth": cgt,
+		"birth": changeto,
 	}
 	user.Birth = cgt
 	return
@@ -590,20 +630,71 @@ func (this Editers) SetEmotion(user *UserModel, args ...interface{}) (err error,
 }
 
 //修改星座
-func (this Editers) SetStar(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
+func (this Editers) SetConstellation(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	changeto := args[0].(string)
 	if changeto == "" {
 		err = errors.New("Please set the content to be modified")
 		return
 	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("star", changeto)
+	cgt, _ := strconv.Atoi(changeto)
+	if cgt < 1 || cgt > 12 {
+		err = errors.New("Please set reasonably")
+		return
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("constellation", cgt)
 	if rs.Error != nil {
 		err = rs.Error
 		return
 	}
-	user.Star = changeto
+	user.Constellation = int64(cgt)
+	c := args[1].(*gin.Context)
+	langob, _ := c.Get("_lang")
+	lang := langob.(string)
 	dt = map[string]interface{}{
-		"star": changeto,
+		"constellation": ConstellationMap.Get(lang, int64(cgt)),
+	}
+	return
+}
+
+//修改性格
+func (this Editers) SetTemperament(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
+	changeto := args[0].(string)
+	if changeto == "" {
+		err = errors.New("Please set the content to be modified")
+		return
+	}
+
+	c := args[1].(*gin.Context)
+	langob, _ := c.Get("_lang")
+	lang := langob.(string)
+
+	var vals []string
+	var ids []string
+	arrs := strings.Split(changeto, ",")
+	for _, v := range arrs {
+		cgt, _ := strconv.Atoi(v)
+		geted := TemperamentMap.Get(lang, int64(cgt))
+		if geted != "" {
+			vals = append(vals, geted)
+			ids = append(ids, v)
+		}
+	}
+
+	if len(ids) > 0 {
+		changeto = strings.Join(ids, ",")
+		rs := DB.Table("users").Where("id = ?", user.Id).Update("temperament", changeto)
+		if rs.Error != nil {
+			err = rs.Error
+			return
+		}
+		user.Temperament = changeto
+	} else {
+		err = errors.New("Please set reasonably")
+		return
+	}
+
+	dt = map[string]interface{}{
+		"constellation": vals,
 	}
 	return
 }
@@ -626,8 +717,11 @@ func (this Editers) SetCountry(user *UserModel, args ...interface{}) (err error,
 		return
 	}
 	user.Country = int64(id)
+	c := args[1].(*gin.Context)
+	langob, _ := c.Get("_lang")
+	lang := langob.(string)
 	dt = map[string]interface{}{
-		"country": user.Country,
+		"country": CountryMap.Get(lang, user.Country),
 	}
 	return
 }
@@ -661,6 +755,10 @@ func (this Editers) SetCity(user *UserModel, args ...interface{}) error {
 	if rs.Error != nil {
 		return rs.Error
 	}
+	if cityid > 0 {
+		user.City = int64(cityid)
+	}
+	user.Province = int64(provid)
 	return nil
 }
 

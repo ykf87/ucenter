@@ -19,6 +19,43 @@ type CountryModel struct {
 	Emoji     string  `json:"emoji"`
 }
 
+type CountryNameModel struct {
+	Id   int64
+	Name string
+}
+
+var CountryMap GlobalMapStruct = make(GlobalMapStruct)
+
+func InitCountry() error {
+	langs, err := GetAllLanguages(false)
+	if err != nil {
+		return err
+	}
+	for code, _ := range langs {
+		SetCountryMapByLang(code, false)
+	}
+	return nil
+}
+
+func SetCountryMapByLang(lang string, reset bool) error {
+	lang = strings.ToLower(lang)
+	_, ok := CountryMap[lang]
+	if ok && reset == false {
+		return nil
+	}
+	var dts []*CountryNameModel
+	rs := DB.Table(lang + "_countries").Find(&dts)
+	if rs.Error != nil {
+		return rs.Error
+	}
+	cl := make(map[int64]string)
+	for _, v := range dts {
+		cl[v.Id] = v.Name
+	}
+	CountryMap[lang] = cl
+	return nil
+}
+
 func GetCountryByIso(iso string) (*CountryModel, error) {
 	r := new(CountryModel)
 	DB.Table("countries").Where("iso", iso).First(r)
@@ -37,7 +74,7 @@ func GetCountryByFilterAndPage(lang, filter string, page, limit int) (dts []map[
 	}
 
 	lang = strings.ToLower(lang)
-	dbs := DB.Table("countries_" + lang).Order("name ASC")
+	dbs := DB.Table(lang + "_countries").Order("name ASC")
 	if limit > 0 {
 		dbs = dbs.Limit(limit).Offset((page - 1) * limit)
 	}
@@ -46,20 +83,8 @@ func GetCountryByFilterAndPage(lang, filter string, page, limit int) (dts []map[
 	}
 	rs := dbs.Find(&dts)
 	if rs.Error != nil {
-		// if lang != "en" {
-		// 	dbs = DB.Table("countries_en").Limit(limit).Offset((page - 1) * limit).Order("name DESC")
-		// 	if filter != "" {
-		// 		dbs = dbs.Where("name like ?", "%"+filter+"%")
-		// 	}
-		// 	rs = dbs.Find(&dts)
-		// 	if rs.Error != nil {
-		// 		err = rs.Error
-		// 		dts = nil
-		// 	}
-		// } else {
 		err = rs.Error
 		dts = nil
-		// }
 	}
 	return
 }

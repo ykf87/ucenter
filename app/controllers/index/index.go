@@ -2,9 +2,11 @@ package index
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
+	"ucenter/app/config"
 	"ucenter/app/controllers"
 	"ucenter/models"
 
@@ -53,4 +55,59 @@ func Country(c *gin.Context) {
 	} else {
 		controllers.Success(c, rs, nil)
 	}
+}
+
+//获取一些列表
+func Lists(c *gin.Context) {
+	filter := strings.Trim(c.Query("q"), " ")
+	page, _ := strconv.Atoi(c.Query("page"))
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	tb := strings.Trim(c.Param("table"), "/ ")
+	langobj, _ := c.Get("_lang")
+	lang := langobj.(string)
+	if limit == 0 {
+		limit = config.Config.Limit
+	}
+	if page < 0 {
+		page = 1
+	}
+
+	if tb == "" {
+		controllers.Error(c, nil, &controllers.Msg{Str: "No results found"})
+		return
+	}
+	tbName := lang + "_" + tb
+	tbName = strings.ToLower(tbName)
+
+	dbObject := models.DB.Table(tbName)
+	if tb == "temperaments" {
+		sex := c.Query("sex")
+		if sex != "" {
+			dbObject = dbObject.Where("sex = ?", sex)
+		}
+	}
+	if filter != "" {
+		dbObject = dbObject.Where("name like ?", "%"+filter+"%")
+	}
+
+	type sspfd struct {
+		Id   int64  `json:"id"`
+		Name string `json:"name"`
+	}
+	var dts []*sspfd
+	if limit > 0 {
+		dbObject = dbObject.Limit(limit).Offset((page - 1) * limit)
+	}
+	rs := dbObject.Find(&dts)
+	if rs.Error != nil {
+		log.Println(rs.Error)
+		controllers.Error(c, nil, &controllers.Msg{Str: "No results found"})
+		return
+	}
+	ngst := make(map[int64]string)
+	for _, v := range dts {
+		ngst[v.Id] = v.Name
+	}
+
+	controllers.Success(c, ngst, &controllers.Msg{Str: "Success"})
 }

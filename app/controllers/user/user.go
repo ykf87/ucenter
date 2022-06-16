@@ -125,7 +125,8 @@ func Login(c *gin.Context) {
 func Index(c *gin.Context) {
 	rs, _ := c.Get("_user")
 	user, _ := rs.(*models.UserModel)
-	controllers.Success(c, user.Info(), nil)
+	langob, _ := c.Get("_lang")
+	controllers.Success(c, user.Info(langob.(string)), nil)
 }
 
 //编辑信息

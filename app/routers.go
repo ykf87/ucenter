@@ -19,8 +19,8 @@ func (this *AppClient) WebRouter() {
 	mainGroup := this.Engine.Use(Middle())
 	{
 		mainGroup.GET("/media/:path", index.Media)
-		// mainGroup.GET("/country/*procity", index.City)
 		mainGroup.GET("/country/*procity", index.Country)
+		mainGroup.GET("/lists/:table", index.Lists)
 		mainGroup.POST("/login", user.Login)
 		mainGroup.POST("/sign", user.Sign)
 		mainGroup.POST("/forgot", user.Forgot)
@@ -28,7 +28,7 @@ func (this *AppClient) WebRouter() {
 
 		authorized := mainGroup.Use(Auth())
 		{
-			authorized.POST("", user.Index)
+			authorized.POST("/index", user.Index)
 			authorized.POST("/editer", user.Editer)
 		}
 	}

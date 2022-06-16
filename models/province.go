@@ -12,12 +12,25 @@ type ProvinceModel struct {
 	Name      string `json:"name"`
 }
 
+func GetProvinceById(id int64, lang string) (*ProvinceModel, error) {
+	if lang == "" {
+		lang = config.Config.Lang
+	}
+	lang = strings.ToLower(lang)
+	tbs := new(ProvinceModel)
+	rs := DB.Table(lang+"_provinces").Where("id = ?", id).First(tbs)
+	if rs.Error == nil {
+		return tbs, nil
+	}
+	return nil, rs.Error
+}
+
 func GetProvinceByNameAndCountry(country_id int64, name, lang string) (*ProvinceModel, error) {
 	if lang == "" {
-		lang = TableLang
+		lang = config.Config.Lang
 	}
 	rs := new(ProvinceModel)
-	DB.Table("provinces_"+lang).Where("country_id = ? and name = ?", country_id, name).First(rs)
+	DB.Table(lang+"_provinces").Where("country_id = ? and name = ?", country_id, name).First(rs)
 	if rs.Id > 0 {
 		return rs, nil
 	}
@@ -37,7 +50,7 @@ func GetProvinceByFilterAndPage(lang, filter string, countryid, page, limit int)
 	}
 
 	lang = strings.ToLower(lang)
-	dbs := DB.Table("provinces_"+lang).Where("country_id = ?", countryid).Order("name ASC")
+	dbs := DB.Table(lang+"_provinces").Where("country_id = ?", countryid).Order("name ASC")
 	if limit > 0 {
 		dbs = dbs.Limit(limit).Offset((page - 1) * limit)
 	}

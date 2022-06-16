@@ -13,14 +13,25 @@ type CityModel struct {
 	Name       string `json:"name"`
 }
 
-var TableLang = "en"
+func GetCityById(id int64, lang string) (*CityModel, error) {
+	if lang == "" {
+		lang = config.Config.Lang
+	}
+	lang = strings.ToLower(lang)
+	tbs := new(CityModel)
+	rs := DB.Table(lang+"_cities").Where("id = ?", id).First(tbs)
+	if rs.Error == nil {
+		return tbs, nil
+	}
+	return nil, rs.Error
+}
 
 func GetCityByNameAndCountryId(name string, countryId int64, lang string) (*CityModel, error) {
 	if lang == "" {
-		lang = TableLang
+		lang = config.Config.Lang
 	}
 	rs := new(CityModel)
-	DB.Table("cities_"+lang).Where("country_id = ? and name = ?", countryId, name).First(rs)
+	DB.Table(lang+"_cities").Where("country_id = ? and name = ?", countryId, name).First(rs)
 	if rs.Id > 0 {
 		return rs, nil
 	}
@@ -40,7 +51,7 @@ func GetCityFilterAndPage(lang, filter string, countryid, provinceid, page, limi
 	}
 
 	lang = strings.ToLower(lang)
-	dbs := DB.Table("cities_"+lang).Where("country_id = ? and province_id = ?", countryid, provinceid).Order("name ASC")
+	dbs := DB.Table(lang+"_cities").Where("country_id = ? and province_id = ?", countryid, provinceid).Order("name ASC")
 	if limit > 0 {
 		dbs = dbs.Limit(limit).Offset((page - 1) * limit)
 	}
