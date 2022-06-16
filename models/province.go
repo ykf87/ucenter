@@ -37,7 +37,7 @@ func GetProvinceByNameAndCountry(country_id int64, name, lang string) (*Province
 	return nil, errors.New("City not found")
 }
 
-func GetProvinceByFilterAndPage(lang, filter string, countryid, page, limit int) (dts []map[string]interface{}, err error) {
+func GetProvinceByFilterAndPage(lang, filter string, countryid int64, page, limit int) (dts []map[string]interface{}, err error) {
 	if countryid < 1 {
 		err = errors.New("Missing queries")
 		return

@@ -1,6 +1,7 @@
 package index
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -34,17 +35,26 @@ func Country(c *gin.Context) {
 	langs, _ := c.Get("_lang")
 	lang := langs.(string)
 	var err error
-	var rs []map[string]interface{}
+	var rs map[string]interface{}
 
 	if pc != "" {
 		if strings.Contains(pc, "/") {
 			ids := strings.Split(pc, "/")
-			countryId, _ := strconv.Atoi(ids[0])
+			iso := ids[0]
 			provId, _ := strconv.Atoi(ids[1])
-			rs, err = models.GetCityFilterAndPage(lang, filter, countryId, provId, page, limit)
+			country, ok := models.Countries[iso]
+			if ok {
+				rs, err = models.GetCityFilterAndPage(lang, filter, country.Id, provId, page, limit)
+			} else {
+				err = errors.New("No results found")
+			}
 		} else {
-			countryId, _ := strconv.Atoi(pc)
-			rs, err = models.GetProvinceByFilterAndPage(lang, filter, countryId, page, limit)
+			country, ok := models.Countries[pc]
+			if ok {
+				rs, err = models.GetProvinceByFilterAndPage(lang, filter, country.Id, page, limit)
+			} else {
+				err = errors.New("No results found")
+			}
 		}
 	} else {
 		rs, err = models.GetCountryByFilterAndPage(lang, filter, page, limit)

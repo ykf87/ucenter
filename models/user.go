@@ -58,6 +58,7 @@ type UserModel struct {
 	Province      int64   `json:"province"`
 	City          int64   `json:"city"`
 	Lang          string  `json:"lang"`
+	Timezone      string  `json:"timezone"`
 	Singleid      int64
 	Edinfo        Editers
 }
@@ -215,7 +216,7 @@ func UnToken(token string) *UserModel {
 }
 
 //返回用户信息
-func (this *UserModel) Info(lang string) map[string]interface{} {
+func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 	if this.Id < 1 {
 		return nil
 	}
@@ -226,7 +227,7 @@ func (this *UserModel) Info(lang string) map[string]interface{} {
 			continue
 		}
 		if k == "birth" && v.Int() > 0 {
-			data[k] = carbon.CreateFromTimestamp(v.Int()).ToDateString(carbon.NewYork)
+			data[k] = carbon.CreateFromTimestamp(v.Int()).SetTimezone(timezone).ToDateString()
 		} else if k == "country" && v.Int() > 0 {
 			data[k] = CountryMap.Get(lang, v.Int())
 		} else if k == "province" && v.Int() > 0 {

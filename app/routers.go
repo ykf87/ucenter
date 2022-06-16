@@ -85,6 +85,9 @@ func Auth() gin.HandlerFunc {
 					c.Header("language", user.Lang)
 					c.Set("_lang", user.Lang)
 				}
+				if user.Timezone != "" {
+					c.Set("_timezone", user.Timezone)
+				}
 				c.Next()
 			}
 		}
