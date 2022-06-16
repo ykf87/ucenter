@@ -12,7 +12,9 @@ var Config = struct {
 	Static     string
 	Staticname string
 	Aeskey     string
-	Limit      int `default:20`
+	Limit      int    `default:20`
+	Country    string `default:"US"`
+	Timezone   string `default:"America/Adak"`
 
 	DB []struct {
 		Type string

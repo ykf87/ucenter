@@ -46,6 +46,16 @@ func Middle() gin.HandlerFunc {
 			lang = config.Config.Lang
 		}
 		c.Set("_lang", lang)
+
+		country, err := models.GetCountryByIp(c.ClientIP())
+		if err != nil {
+			c.Set("_timezone", config.Config.Timezone)
+			c.Header("timezone", config.Config.Timezone)
+		} else {
+			c.Set("_timezone", country.Timezone)
+			c.Header("timezone", country.Timezone)
+		}
+
 		c.Header("language", lang)
 		c.Header("server", config.Config.APPName)
 		c.Header("appname", config.Config.APPName)

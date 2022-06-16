@@ -15,6 +15,7 @@ import (
 )
 
 type GlobalMapStruct map[string]map[int64]string
+type GlobalMapString map[string]string
 
 var DB *gorm.DB
 var DefaultSqliteFile = "db.db"
