@@ -6,19 +6,16 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"math/rand"
 	"net"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-	"ucenter/app/coder/mailcode"
 	"ucenter/app/config"
-	"ucenter/app/i18n"
+	"ucenter/app/mails/sender/coder"
 	"ucenter/app/safety/base34"
 	"ucenter/app/safety/passwordhash"
 	"ucenter/app/safety/rsautil"
-	"ucenter/app/smtps"
 	"ucenter/app/uploadfile/images"
 
 	"github.com/gin-gonic/gin"
@@ -41,6 +38,7 @@ type UserModel struct {
 	Pwd           string  `json:"pwd"`
 	Nickname      string  `json:"nickname"`
 	Avatar        string  `json:"avatar"`
+	Background    string  `json:"background"`
 	Addtime       int64   `json:"addtime"`
 	Status        int     `json:"status"`
 	Sex           int     `json:"sex"`
@@ -69,9 +67,10 @@ type Editers int64
 //创建新用户
 //新用户创建必须使用 account 或 email 其中之一注册
 //使用 account 必须设置密码, 使用 email 必须使用验证码
-func MakeUser(account, email, phone, pwd, code, invite, ip string) (user *UserModel, err error) {
+func MakeUser(account, email, phone, pwd, code, invite, nickname, ip string) (user *UserModel, err error) {
 	hadUser := new(UserModel)
 	insertData := make(map[string]interface{})
+	insertData["nickname"] = nickname
 	if account != "" {
 		DB.Table("users").Where("account = ?", account).First(hadUser)
 		insertData["account"] = account
@@ -82,11 +81,15 @@ func MakeUser(account, email, phone, pwd, code, invite, ip string) (user *UserMo
 	} else if email != "" {
 		DB.Table("users").Where("mail = ?", email).First(hadUser)
 		insertData["mail"] = email
-		err = mailcode.Verify(email, code)
+		err = coder.Verify(email, code)
 		if err != nil {
 			return
 		}
 		insertData["mailvery"] = 1
+		if nickname == "" {
+			tmp := strings.Split(email, "@")
+			insertData["nickname"] = tmp[0]
+		}
 	} else {
 		err = errors.New("Registration failed")
 		return
@@ -152,6 +155,9 @@ func MakeUser(account, email, phone, pwd, code, invite, ip string) (user *UserMo
 	user = new(UserModel)
 	user.Edinfo = Editers(user.Id)
 	if DB.Table("users").Where(insertData).First(user).Error == nil && user.Id > 0 {
+		if user.Pid > 0 {
+			go AddUserInvitee(user.Pid, user.Id)
+		}
 		DB.Table("users").Where("id = ?", user.Id).Update("invite", string(base34.Base34(uint64(user.Id))))
 	}
 
@@ -185,6 +191,9 @@ func (this *UserModel) Token() string {
 		log.Println("UserModel Token - 用户实例id为0")
 		return ""
 	}
+	sid := this.Singleid + 1
+	DB.Table("users").Where("id = ?", this.Id).Update("singleid", sid)
+	this.Singleid = sid
 	token, err := rsautil.RsaEncrypt(fmt.Sprintf(`{"id":%d,"time":%d,"sid":%d}`, this.Id, time.Now().Unix(), this.Singleid))
 	if err != nil {
 		log.Println("UserModel Token - ", err)
@@ -318,7 +327,7 @@ func (this Editers) SetEmail(user *UserModel, args ...interface{}) (err error, d
 		err = errors.New("Please input your Captcha")
 		return
 	}
-	err = mailcode.Verify(newAccount, code)
+	err = coder.Verify(newAccount, code)
 	if err != nil {
 		return
 	}
@@ -457,6 +466,46 @@ func (this Editers) SetAvatar(user *UserModel, args ...interface{}) (error, map[
 		}
 		user.Avatar = filename
 		return nil, map[string]interface{}{"avatar": filename}
+	}
+	return errors.New("System error, please try again later"), nil
+}
+
+//修改背景图片
+func (this Editers) SetBackground(user *UserModel, args ...interface{}) (error, map[string]interface{}) {
+	changeto := args[0].(string)
+	avatarPath := "static/user/background/"
+	var filename string
+	var err error
+	oldFilename := user.Background
+	if changeto == "" {
+		c := args[1].(*gin.Context)
+		f, err := c.FormFile("file")
+		if err != nil {
+			return errors.New("Please set the content to be modified"), nil
+		}
+		filename, err = images.SaveFileFromUpload(avatarPath, user.Invite, f)
+		if err != nil {
+			log.Println(err, " - when SetBackground model upload from form file")
+			return errors.New("System error, please try again later"), nil
+		}
+	} else {
+		filename, err = images.SaveFileBase64(avatarPath, user.Invite, changeto)
+		if err != nil {
+			log.Println(err, " - when SetAvatar model upload from form file")
+			return errors.New("System error, please try again later"), nil
+		}
+	}
+
+	if filename != "" {
+		rs := DB.Table("users").Where("id = ?", user.Id).Update("background", filename)
+		if rs.Error != nil {
+			return rs.Error, nil
+		}
+		if strings.Contains(oldFilename, filename) != true {
+			os.Remove(oldFilename)
+		}
+		user.Background = filename
+		return nil, map[string]interface{}{"background": filename}
 	}
 	return errors.New("System error, please try again later"), nil
 }
@@ -794,28 +843,7 @@ func (this *UserModel) ChangePwd(pwd string) error {
 	}
 }
 
-//发送邮箱验证码
-func GetEmailCode(mail, lang string) error {
-	if mail == "" {
-		return errors.New("Please set the content to be modified")
-	}
-	mc, ok := mailcode.Maps.Get(mail)
-	if ok {
-		if mc.Expire > time.Now().Unix() {
-			return errors.New("Your verification code is still valid")
-		} else {
-			mailcode.Maps.Delete(mail)
-		}
-	}
-	code := fmt.Sprintf("%06v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(1000000))
-	s := smtps.Client(config.Config.Smtp.Host, config.Config.Smtp.Email, config.Config.Smtp.Pass, config.Config.APPName, config.Config.Smtp.Port)
-	msg := i18n.T(lang, "Your verification code is {{$1}}, the verification code is valid for 10 minutes, please keep it safe", code)
-	sub := i18n.T(lang, "{{$1}} verify the authenticity of your email", config.Config.APPName)
-	r := s.SetGeter(mail).SetMessage(string(msg)).SetSubject(string(sub)).Send()
-	if r != nil {
-		return errors.New("Captcha sending failure")
-	}
+//注销账号,账号信息存储至其他表格,并删除user表内容
+func (this *UserModel) MoveAndDelete() {
 
-	mailcode.Maps.Set(mail, &mailcode.MailCodeStruct{Code: code, Expire: (time.Now().Unix() + 600), Errtimes: 0})
-	return nil
 }

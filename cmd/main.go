@@ -1,3 +1,6 @@
+// linux execute file
+// env GOOS=linux GOARCH=amd64 go build
+// export CGO_ENABLED=0 && export GOOS=linux && export GOARCH=amd64 && go build
 package main
 
 import (
@@ -5,6 +8,7 @@ import (
 	"log"
 	"ucenter/app"
 	"ucenter/app/config"
+	"ucenter/app/mails/smtp"
 	"ucenter/app/safety/rsautil"
 	"ucenter/models"
 )
@@ -26,6 +30,9 @@ func main() {
 	if err != nil {
 		log.Println(err)
 		return
+	}
+	for k, v := range config.Config.Smtp {
+		smtp.SetConfig(k, v)
 	}
 	rsautil.Generate()
 	app.App.Static(config.Config.Static, config.Config.Staticname).Run(config.Config.Port)

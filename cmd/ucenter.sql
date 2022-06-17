@@ -11,7 +11,7 @@
  Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 16/06/2022 18:10:06
+ Date: 17/06/2022 16:49:41
 */
 
 SET NAMES utf8mb4;
@@ -4732,6 +4732,21 @@ CREATE TABLE `user_attrs`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户一些属性,主要用于搜索' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for user_invitees
+-- ----------------------------
+DROP TABLE IF EXISTS `user_invitees`;
+CREATE TABLE `user_invitees`  (
+  `id` bigint(1) UNSIGNED NOT NULL COMMENT '邀请人id',
+  `uid` bigint(1) UNSIGNED NOT NULL COMMENT '被邀请人id',
+  PRIMARY KEY (`id`, `uid`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户邀请下级列表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user_invitees
+-- ----------------------------
+INSERT INTO `user_invitees` VALUES (3, 39355);
+
+-- ----------------------------
 -- Table structure for users
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
@@ -4748,6 +4763,7 @@ CREATE TABLE `users`  (
   `pwd` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '密码',
   `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '昵称',
   `avatar` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '头像地址',
+  `background` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '主页背景图片',
   `addtime` int(1) UNSIGNED NULL DEFAULT 0 COMMENT '注册时间',
   `status` tinyint(1) UNSIGNED NULL DEFAULT 1 COMMENT '账号状态,1为正常,其他值均为不正常',
   `sex` tinyint(1) NULL DEFAULT 0 COMMENT '性别,0保密,1男，2女',
@@ -4772,26 +4788,87 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `account`(`account`) USING BTREE,
   UNIQUE INDEX `mail`(`mail`) USING BTREE,
   UNIQUE INDEX `phone`(`phone`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39353 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 39356 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (2, 0, NULL, NULL, 'bbb', NULL, NULL, 0, 0, NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (3, 0, '000003', NULL, '', '1603601628@qq.com', '', 1, 0, '$2a$10$s1RIiHFkcubdu7TeoWJjPeFhQ7v1PhZOhCrA754bXCYSept.dGOFi', '速度放缓', 'static/user/avatars/000003.jpg', 0, 1, 1, 0, 0.00, 1024184719, 20, '', '', '0', 1, '5,8,9', 0, 1, 13, 117, 2, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (4, 0, NULL, NULL, NULL, 'dfsf@qc.ccz', NULL, 0, 0, '$2a$10$XvY0aIuaV0WUClH3uSDWYuzuZlnZoJqBKFK7HU85mvBzB5i5Fxe7S', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (5, 0, NULL, NULL, NULL, 'dfsfzz@qc.ccz', NULL, 0, 0, '$2a$10$nQyk5E6pXEucHryCYo9Rceyy2SBVb25auT8gHHNB1NaK1YSo4VgKm', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (6, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Jx0HApS0UlgqpXndLJhCf.h3GZoP0/rm2hMkFtd1ZzeVY71dWL0Xi', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (7, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Q4rL/UbA5TMN5IlZ66oDmOc3ZxrJGZqVYTCigiPW2UnGVLf7n2p2u', NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (8, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, 1654856133, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (9, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, 1654856143, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (10, 0, '00000A', NULL, NULL, 'dfsf@qc.ccqb', NULL, 0, 0, '$2a$10$flBT041senJnDCWyKthk4OKQ.xPvrNLvL6h2KVecqjVJkYZQfmCzO', NULL, NULL, 1655113940, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (11, 0, '00000B', NULL, NULL, 'bbbbs@gmail.com', NULL, 0, 0, '$2a$10$mdxvoMnHke0W8BOZuMZVV.nr9XOZfhaM2fckwy6DRIT0aO6lA8oI.', NULL, NULL, 1655113994, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (12, 10, '00000C', '10', NULL, 'bbbbb@gmail.com', NULL, 0, 0, '$2a$10$hnFgn6Nq9B0wgRgg6YQijekYXW38dqzXzSzzRdNOQxItZn98L0gNe', NULL, NULL, 1655114127, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (13, 12, '00000D', '10,12', NULL, 'bbbbbaaa@gmail.com', NULL, 0, 0, '$2a$10$ZDsRMtxHkmhQWt92prCHqeXY3OT/p/sA21wrkukk4yASSU.of97bm', NULL, NULL, 1655114145, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (14, 12, '00000E', '10,12', NULL, NULL, 'bbbbbaaa@gmail.com', 0, 0, '$2a$10$oEvGCTZhfkTD8L3OKlkWBuCqb/72jKbdwvZPpEuEaiqBrxW4GvqOW', NULL, NULL, 1655114205, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (39350, 1111111111111111111, NULL, NULL, 'aaa', NULL, NULL, 0, NULL, '$2y$10$YtTGQpR89tBaHBJAR6uKsuIylIcGOBtER336oFPCq1i4q39uP32xW', NULL, '', 1654743271, 1, 0, 254, 900.56, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4294967295, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `users` VALUES (39352, 0, '00101E', NULL, NULL, 'dfsf@qc.bb', NULL, 0, 0, '$2a$10$rg/ETWOhhQZv3aRYQnsXpuYpveukeWURZs0RAnumhMgrSIM8UjWgK', NULL, NULL, 1655128163, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 3117694941, 227, 3242, NULL, 0, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (2, 0, NULL, NULL, 'bbb', NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (3, 0, '000003', NULL, '', '1603601628@qq.combb', '', 1, 0, '$2a$10$s1RIiHFkcubdu7TeoWJjPeFhQ7v1PhZOhCrA754bXCYSept.dGOFi', '速度放缓', 'static/user/avatars/000003.jpg', 'static/user/background/000003.png', 0, 1, 1, 0, 0.00, 1024184719, 20, '', '', '0', 1, '5,8,9', 0, 1, 13, 117, 5, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (4, 0, NULL, NULL, NULL, 'dfsf@qc.ccz', NULL, 0, 0, '$2a$10$XvY0aIuaV0WUClH3uSDWYuzuZlnZoJqBKFK7HU85mvBzB5i5Fxe7S', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (5, 0, NULL, NULL, NULL, 'dfsfzz@qc.ccz', NULL, 0, 0, '$2a$10$nQyk5E6pXEucHryCYo9Rceyy2SBVb25auT8gHHNB1NaK1YSo4VgKm', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (6, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Jx0HApS0UlgqpXndLJhCf.h3GZoP0/rm2hMkFtd1ZzeVY71dWL0Xi', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (7, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Q4rL/UbA5TMN5IlZ66oDmOc3ZxrJGZqVYTCigiPW2UnGVLf7n2p2u', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (8, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 1654856133, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (9, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 1654856143, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (10, 0, '00000A', NULL, NULL, 'dfsf@qc.ccqb', NULL, 0, 0, '$2a$10$flBT041senJnDCWyKthk4OKQ.xPvrNLvL6h2KVecqjVJkYZQfmCzO', NULL, NULL, NULL, 1655113940, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (11, 0, '00000B', NULL, NULL, 'bbbbs@gmail.com', NULL, 0, 0, '$2a$10$mdxvoMnHke0W8BOZuMZVV.nr9XOZfhaM2fckwy6DRIT0aO6lA8oI.', NULL, NULL, NULL, 1655113994, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (12, 10, '00000C', '10', NULL, 'bbbbb@gmail.com', NULL, 0, 0, '$2a$10$hnFgn6Nq9B0wgRgg6YQijekYXW38dqzXzSzzRdNOQxItZn98L0gNe', NULL, NULL, NULL, 1655114127, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (13, 12, '00000D', '10,12', NULL, 'bbbbbaaa@gmail.com', NULL, 0, 0, '$2a$10$ZDsRMtxHkmhQWt92prCHqeXY3OT/p/sA21wrkukk4yASSU.of97bm', NULL, NULL, NULL, 1655114145, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (14, 12, '00000E', '10,12', NULL, NULL, 'bbbbbaaa@gmail.com', 0, 0, '$2a$10$oEvGCTZhfkTD8L3OKlkWBuCqb/72jKbdwvZPpEuEaiqBrxW4GvqOW', NULL, NULL, NULL, 1655114205, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (39350, 1111111111111111111, NULL, NULL, 'aaa', NULL, NULL, 0, NULL, '$2y$10$YtTGQpR89tBaHBJAR6uKsuIylIcGOBtER336oFPCq1i4q39uP32xW', NULL, '', NULL, 1654743271, 1, 0, 254, 900.56, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4294967295, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (39352, 0, '00101E', NULL, NULL, 'dfsf@qc.bb', NULL, 0, 0, '$2a$10$rg/ETWOhhQZv3aRYQnsXpuYpveukeWURZs0RAnumhMgrSIM8UjWgK', NULL, NULL, NULL, 1655128163, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 3117694941, 227, 3242, NULL, 0, NULL, NULL, NULL);
+INSERT INTO `users` VALUES (39355, 3, '00101H', '3', NULL, '1603601628@qq.com', NULL, 1, 0, '$2a$10$UC56Xn8/JXYNsvIVyMFxSe2/G71kM3g0RM1CX9pr8VpcXgcYeT1iu', '1603601628', NULL, NULL, 1655455507, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2130706433, 0, NULL, NULL, 1, NULL, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for users_removed
+-- ----------------------------
+DROP TABLE IF EXISTS `users_removed`;
+CREATE TABLE `users_removed`  (
+  `id` bigint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `pid` bigint(1) UNSIGNED NULL DEFAULT 0 COMMENT '推荐人id',
+  `invite` char(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邀请码',
+  `chain` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '用户关系链',
+  `account` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '登录账号,有则唯一',
+  `mail` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '邮箱号,有则唯一',
+  `phone` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机号,有则唯一',
+  `mailvery` tinyint(1) NULL DEFAULT 0 COMMENT '邮箱是否验证,1为已验证',
+  `phonevery` tinyint(1) NULL DEFAULT 0 COMMENT '手机是否验证,1为已验证',
+  `pwd` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '密码',
+  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '昵称',
+  `avatar` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '头像地址',
+  `background` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '主页背景图片',
+  `addtime` int(1) UNSIGNED NULL DEFAULT 0 COMMENT '注册时间',
+  `status` tinyint(1) UNSIGNED NULL DEFAULT 1 COMMENT '账号状态,1为正常,其他值均为不正常',
+  `sex` tinyint(1) NULL DEFAULT 0 COMMENT '性别,0保密,1男，2女',
+  `height` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '身高cm',
+  `weight` float(5, 2) UNSIGNED NULL DEFAULT 0.00 COMMENT '体重kg',
+  `birth` int(1) UNSIGNED NULL DEFAULT NULL COMMENT '生日',
+  `age` tinyint(1) UNSIGNED NULL DEFAULT NULL COMMENT '年龄',
+  `job` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '职业',
+  `income` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '收入',
+  `emotion` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '情感状态',
+  `constellation` tinyint(1) UNSIGNED NULL DEFAULT NULL COMMENT '星座',
+  `temperament` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '性格,可设置多个',
+  `ip` int(1) UNSIGNED NULL DEFAULT NULL COMMENT '注册时的ipv4地址',
+  `country` smallint(1) UNSIGNED NULL DEFAULT 0 COMMENT '国家id',
+  `province` smallint(1) UNSIGNED NULL DEFAULT NULL COMMENT '省份id',
+  `city` smallint(1) UNSIGNED NULL DEFAULT NULL COMMENT '城市id',
+  `singleid` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '单点登录token id',
+  `lang` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户手动选择的语言',
+  `currency` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户手动选择的币种',
+  `timezone` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户时区',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 39353 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of users_removed
+-- ----------------------------
+INSERT INTO `users_removed` VALUES (2, 0, NULL, NULL, 'bbb', NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (3, 0, '000003', NULL, '', '1603601628@qq.com', '', 1, 0, '$2a$10$s1RIiHFkcubdu7TeoWJjPeFhQ7v1PhZOhCrA754bXCYSept.dGOFi', '速度放缓', 'static/user/avatars/000003.jpg', 'static/user/background/000003.png', 0, 1, 1, 0, 0.00, 1024184719, 20, '', '', '0', 1, '5,8,9', 0, 1, 13, 117, 5, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (4, 0, NULL, NULL, NULL, 'dfsf@qc.ccz', NULL, 0, 0, '$2a$10$XvY0aIuaV0WUClH3uSDWYuzuZlnZoJqBKFK7HU85mvBzB5i5Fxe7S', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (5, 0, NULL, NULL, NULL, 'dfsfzz@qc.ccz', NULL, 0, 0, '$2a$10$nQyk5E6pXEucHryCYo9Rceyy2SBVb25auT8gHHNB1NaK1YSo4VgKm', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (6, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Jx0HApS0UlgqpXndLJhCf.h3GZoP0/rm2hMkFtd1ZzeVY71dWL0Xi', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (7, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Q4rL/UbA5TMN5IlZ66oDmOc3ZxrJGZqVYTCigiPW2UnGVLf7n2p2u', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (8, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 1654856133, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (9, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 1654856143, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (10, 0, '00000A', NULL, NULL, 'dfsf@qc.ccqb', NULL, 0, 0, '$2a$10$flBT041senJnDCWyKthk4OKQ.xPvrNLvL6h2KVecqjVJkYZQfmCzO', NULL, NULL, NULL, 1655113940, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (11, 0, '00000B', NULL, NULL, 'bbbbs@gmail.com', NULL, 0, 0, '$2a$10$mdxvoMnHke0W8BOZuMZVV.nr9XOZfhaM2fckwy6DRIT0aO6lA8oI.', NULL, NULL, NULL, 1655113994, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (12, 10, '00000C', '10', NULL, 'bbbbb@gmail.com', NULL, 0, 0, '$2a$10$hnFgn6Nq9B0wgRgg6YQijekYXW38dqzXzSzzRdNOQxItZn98L0gNe', NULL, NULL, NULL, 1655114127, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (13, 12, '00000D', '10,12', NULL, 'bbbbbaaa@gmail.com', NULL, 0, 0, '$2a$10$ZDsRMtxHkmhQWt92prCHqeXY3OT/p/sA21wrkukk4yASSU.of97bm', NULL, NULL, NULL, 1655114145, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (14, 12, '00000E', '10,12', NULL, NULL, 'bbbbbaaa@gmail.com', 0, 0, '$2a$10$oEvGCTZhfkTD8L3OKlkWBuCqb/72jKbdwvZPpEuEaiqBrxW4GvqOW', NULL, NULL, NULL, 1655114205, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (39350, 1111111111111111111, NULL, NULL, 'aaa', NULL, NULL, 0, NULL, '$2y$10$YtTGQpR89tBaHBJAR6uKsuIylIcGOBtER336oFPCq1i4q39uP32xW', NULL, '', NULL, 1654743271, 1, 0, 254, 900.56, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4294967295, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `users_removed` VALUES (39352, 0, '00101E', NULL, NULL, 'dfsf@qc.bb', NULL, 0, 0, '$2a$10$rg/ETWOhhQZv3aRYQnsXpuYpveukeWURZs0RAnumhMgrSIM8UjWgK', NULL, NULL, NULL, 1655128163, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 3117694941, 227, 3242, NULL, 0, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for zh-cn_cities

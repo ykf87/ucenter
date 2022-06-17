@@ -1,9 +1,17 @@
-package mailcode
+package coder
 
 import (
 	"errors"
+	"fmt"
+	"log"
+	"math/rand"
 	"sync"
 	"time"
+	"ucenter/app/config"
+	"ucenter/app/i18n"
+	"ucenter/app/mails/smtp"
+
+	"github.com/matcornic/hermes/v2"
 )
 
 type MailCodeStruct struct { //一个已经发送验证码并维护验证码的结构体
@@ -96,5 +104,57 @@ func Verify(mail, code string) error {
 		return errors.New("Incorrect Captcha")
 	}
 	Maps.Delete(mail)
+	return nil
+}
+
+// 发送验证码
+func Send(mail, lang string) error {
+	if mail == "" {
+		return errors.New("Please set the Email")
+	}
+	mc, ok := Maps.Get(mail)
+	if ok {
+		if mc.Expire > time.Now().Unix() {
+			return errors.New("Your verification code is still valid")
+		} else {
+			Maps.Delete(mail)
+		}
+	}
+
+	code := fmt.Sprintf("%06v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(1000000))
+
+	s, err := smtp.Client("coder")
+	if err != nil {
+		return err
+	}
+
+	email := hermes.Email{
+		Body: hermes.Body{
+			Actions: []hermes.Action{
+				{
+					InviteCode: code,
+				},
+			},
+			Outros: []string{
+				string(i18n.T(lang, "Need help? Please contact us in the app, this email will not accept any reply.")),
+			},
+			Title:     string(i18n.T(lang, "Captcha is valid for 10 minutes, and expires after use or after 5 times of wrong input, please keep it safe!")),
+			Signature: string(i18n.T(lang, "Have a good day")),
+		},
+	}
+	h := smtp.SmtpModel()
+	emailBody, err := h.GenerateHTML(email)
+	if err != nil {
+		log.Println("Send Email Code Err: ", err)
+		return errors.New("Captcha sending failure")
+	}
+
+	sub := i18n.T(lang, "{{$1}} verify the authenticity of your email", config.Config.APPName)
+	r := s.SetGeter(mail).SetMessage(emailBody).SetSubject(string(sub)).Send()
+	if r != nil {
+		return errors.New("Captcha sending failure")
+	}
+
+	Maps.Set(mail, &MailCodeStruct{Code: code, Expire: (time.Now().Unix() + 600), Errtimes: 0})
 	return nil
 }

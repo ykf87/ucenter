@@ -1,10 +1,13 @@
-package smtps
+package smtp
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
+	"ucenter/app/config"
 
+	"github.com/matcornic/hermes/v2"
 	"gopkg.in/gomail.v2"
 )
 
@@ -22,15 +25,47 @@ type Stmp struct {
 	Subject  string
 }
 
-func Client(host, email, pass, appname string, port int) *Stmp {
-	cli := &Stmp{
-		Host:    host,
-		Port:    port,
-		Email:   email,
-		Pass:    pass,
-		Appname: appname,
+var configs map[string]*config.SmtpConf
+
+func Client(key string) (s *Stmp, err error) {
+	if configs == nil {
+		err = errors.New("SMTP configuration exception")
+		return
 	}
-	return cli
+	if key == "" {
+		key = "default"
+	}
+	c, ok := configs[key]
+	if !ok {
+		if key == "default" {
+			err = errors.New("SMTP configuration exception")
+			return
+		}
+		c, ok = configs["default"]
+		if !ok {
+			err = errors.New("SMTP configuration exception")
+			return
+		}
+	}
+	s = &Stmp{
+		Host:    c.Host,
+		Port:    c.Port,
+		Email:   c.Email,
+		Pass:    c.Pass,
+		Appname: config.Config.APPName,
+	}
+	return
+}
+
+func SetConfig(key string, c *config.SmtpConf) bool {
+	if key == "" {
+		return false
+	}
+	if configs == nil {
+		configs = make(map[string]*config.SmtpConf)
+	}
+	configs[key] = c
+	return true
 }
 
 func (this *Stmp) SetSender(mail string) *Stmp {
@@ -87,4 +122,20 @@ func (this *Stmp) Send() error {
 	d := gomail.NewDialer(this.Host, this.Port, this.Email, this.Pass)
 	err := d.DialAndSend(m)
 	return err
+}
+
+func SmtpModel() hermes.Hermes {
+	copyright := config.Config.Copyright
+	if copyright == "" {
+		copyright = "Copyright © " + config.Config.APPName + ". All rights reserved."
+	}
+	return hermes.Hermes{
+		Product: hermes.Product{
+			Name: config.Config.APPName,
+			Link: config.Config.Domain,
+			// Logo:        "https://www.zhishukongjian.com/reset/images/logo.png",
+			Logo:      "https://img0.baidu.com/it/u=3327368668,2450215212&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=313",
+			Copyright: copyright,
+		},
+	}
 }

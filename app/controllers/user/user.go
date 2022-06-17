@@ -3,9 +3,10 @@ package user
 import (
 	"reflect"
 	"strings"
-	"ucenter/app/coder/mailcode"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
+	"ucenter/app/mails/sender/coder"
+	"ucenter/app/mails/sender/sign"
 	"ucenter/app/safety/passwordhash"
 	"ucenter/models"
 
@@ -23,7 +24,7 @@ func Emailcode(c *gin.Context) {
 	} else {
 		lang = langos.(string)
 	}
-	err := models.GetEmailCode(email, lang)
+	err := coder.Send(email, lang)
 	if err != nil {
 		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
 		return
@@ -38,10 +39,18 @@ func Sign(c *gin.Context) {
 	email := c.PostForm("email")
 	pwd := c.PostForm("password")
 	invite := c.PostForm("invite")
+	nickname := c.PostForm("nickname")
 	code := c.PostForm("code")
+	langos, exit := c.Get("_lang")
+	var lang string
+	if !exit {
+		lang = config.Config.Lang
+	} else {
+		lang = langos.(string)
+	}
 
 	ip := c.ClientIP()
-	user, err := models.MakeUser(account, email, phone, pwd, code, invite, ip)
+	user, err := models.MakeUser(account, email, phone, pwd, code, invite, nickname, ip)
 	if err != nil {
 		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
 		return
@@ -50,11 +59,16 @@ func Sign(c *gin.Context) {
 		controllers.Error(c, nil, &controllers.Msg{Str: "System error, please try again later"})
 		return
 	}
+	if user.Mail != "" {
+		go sign.Send(user.Mail, lang)
+	}
+
 	token := user.Token()
 	if token == "" {
 		controllers.Error(c, nil, &controllers.Msg{Str: "Voucher generation failed, please try again later"})
 		return
 	}
+
 	controllers.Success(c, map[string]interface{}{
 		"token": token,
 	}, nil)
@@ -71,7 +85,7 @@ func Login(c *gin.Context) {
 	veried := false
 
 	if email != "" && code != "" {
-		err := mailcode.Verify(email, code)
+		err := coder.Verify(email, code)
 		if err != nil {
 			controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
 			return
@@ -182,7 +196,7 @@ func Forgot(c *gin.Context) {
 	} else if pwd == "" {
 		msg = "Please set a password"
 	} else {
-		err := mailcode.Verify(email, code)
+		err := coder.Verify(email, code)
 		if err != nil {
 			msg = err.Error()
 		} else {
@@ -204,4 +218,31 @@ func Forgot(c *gin.Context) {
 		}
 	}
 	controllers.Error(c, nil, &controllers.Msg{Str: msg})
+}
+
+//获取用户的邀请人信息,也就是上级
+func Invitees(c *gin.Context) {
+
+}
+
+//获取被邀请人列表,也就是下级
+func Invitee(c *gin.Context) {
+
+}
+
+//账号永久注销,注销账号必须验证邮箱,否则不安全
+func Cancellation(c *gin.Context) {
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
+
+	code := c.PostForm("code")
+	if code == "" {
+		controllers.Error(c, nil, &controllers.Msg{Str: "Please input your Captcha"})
+		return
+	}
+	err := coder.Verify(user.Mail, code)
+	if err != nil {
+		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
+		return
+	}
 }
