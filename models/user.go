@@ -2,6 +2,7 @@ package models
 
 //uid 从39350开始,邀请码后4位有效,前方2位补0
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -203,13 +204,19 @@ func (this *UserModel) Token() string {
 	// 	return ""
 	// }
 	token := aess.EcbEncrypt(str, nil)
-	return token
+	return base64.StdEncoding.EncodeToString([]byte(token))
+	// return token
 }
 
 //通过 token 生成 user model
 func UnToken(token string) *UserModel {
 	// idstr, err := rsautil.RsaDecrypt(token)
-	idstr := aess.EcbDecrypt(token, nil)
+	tokens, err := base64.StdEncoding.DecodeString(token)
+	if err != nil {
+		log.Println("untoken base64 decode err: ", err)
+		return nil
+	}
+	idstr := aess.EcbDecrypt(string(tokens), nil)
 	if idstr == "" {
 		return nil
 	}
