@@ -13,9 +13,11 @@ import (
 	"time"
 	"ucenter/app/config"
 	"ucenter/app/mails/sender/coder"
+	"ucenter/app/safety/aess"
 	"ucenter/app/safety/base34"
 	"ucenter/app/safety/passwordhash"
-	"ucenter/app/safety/rsautil"
+
+	// "ucenter/app/safety/rsautil"
 	"ucenter/app/uploadfile/images"
 
 	"github.com/gin-gonic/gin"
@@ -67,7 +69,7 @@ type Editers int64
 //创建新用户
 //新用户创建必须使用 account 或 email 其中之一注册
 //使用 account 必须设置密码, 使用 email 必须使用验证码
-func MakeUser(account, email, phone, pwd, code, invite, nickname, ip string) (user *UserModel, err error) {
+func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip string) (user *UserModel, err error) {
 	hadUser := new(UserModel)
 	insertData := make(map[string]interface{})
 	insertData["nickname"] = nickname
@@ -194,20 +196,26 @@ func (this *UserModel) Token() string {
 	sid := this.Singleid + 1
 	DB.Table("users").Where("id = ?", this.Id).Update("singleid", sid)
 	this.Singleid = sid
-	token, err := rsautil.RsaEncrypt(fmt.Sprintf(`{"id":%d,"time":%d,"sid":%d}`, this.Id, time.Now().Unix(), this.Singleid))
-	if err != nil {
-		log.Println("UserModel Token - ", err)
-		return ""
-	}
+	str := fmt.Sprintf(`{"time":%d,"id":%d,"sid":%d}`, time.Now().Unix(), this.Id, this.Singleid)
+	// token, err := rsautil.RsaEncrypt(str)
+	// if err != nil {
+	// 	log.Println("UserModel Token - ", err)
+	// 	return ""
+	// }
+	token := aess.EcbEncrypt(str, nil)
 	return token
 }
 
 //通过 token 生成 user model
 func UnToken(token string) *UserModel {
-	idstr, err := rsautil.RsaDecrypt(token)
-	if err != nil {
+	// idstr, err := rsautil.RsaDecrypt(token)
+	idstr := aess.EcbDecrypt(token, nil)
+	if idstr == "" {
 		return nil
 	}
+	// if err != nil {
+	// 	return nil
+	// }
 	ts := gjson.Get(idstr, "time").Int()
 	id := gjson.Get(idstr, "id").Int()
 	sid := gjson.Get(idstr, "sid").Int()

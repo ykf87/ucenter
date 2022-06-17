@@ -5,6 +5,7 @@ import (
 	"strings"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
+	"ucenter/app/mails/sender/cancellation"
 	"ucenter/app/mails/sender/coder"
 	"ucenter/app/mails/sender/sign"
 	"ucenter/app/safety/passwordhash"
@@ -41,6 +42,7 @@ func Sign(c *gin.Context) {
 	invite := c.PostForm("invite")
 	nickname := c.PostForm("nickname")
 	code := c.PostForm("code")
+	platform := c.GetHeader("platform")
 	langos, exit := c.Get("_lang")
 	var lang string
 	if !exit {
@@ -50,7 +52,7 @@ func Sign(c *gin.Context) {
 	}
 
 	ip := c.ClientIP()
-	user, err := models.MakeUser(account, email, phone, pwd, code, invite, nickname, ip)
+	user, err := models.MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip)
 	if err != nil {
 		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
 		return
@@ -245,4 +247,7 @@ func Cancellation(c *gin.Context) {
 		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
 		return
 	}
+
+	//修改删除关系网,发送告别邮件
+	cancellation.Send()
 }

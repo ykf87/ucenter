@@ -9,7 +9,7 @@ import (
 var AESKEY []byte
 
 func init() {
-	AESKEY = []byte{117, 71, 55, 104, 70, 36, 103, 75, 33, 90, 89, 109, 112, 52, 111, 107}
+	AESKEY = []byte{106, 33, 61, 105, 49, 64, 126, 119, 61, 51, 70, 67, 63, 97, 57, 89}
 }
 
 func EcbDecrypt(str string, key []byte) string {
@@ -25,7 +25,11 @@ func EcbDecrypt(str string, key []byte) string {
 		block.Decrypt(decrypted[bs:be], data[bs:be])
 	}
 
-	return string(PKCS5UnPadding(decrypted))
+	rrs := PKCS5UnPadding(decrypted)
+	if rrs == nil {
+		return ""
+	}
+	return string(rrs)
 }
 
 func EcbEncrypt(str string, key []byte) string {
@@ -54,5 +58,9 @@ func PKCS5UnPadding(origData []byte) []byte {
 	length := len(origData)
 	// 去掉最后一个字节 unpadding 次
 	unpadding := int(origData[length-1])
+	mxx := length - unpadding
+	if mxx < 1 {
+		return nil
+	}
 	return origData[:(length - unpadding)]
 }

@@ -9,6 +9,7 @@ import (
 	"ucenter/app"
 	"ucenter/app/config"
 	"ucenter/app/mails/smtp"
+	"ucenter/app/safety/aess"
 	"ucenter/app/safety/rsautil"
 	"ucenter/models"
 )
@@ -33,6 +34,9 @@ func main() {
 	}
 	for k, v := range config.Config.Smtp {
 		smtp.SetConfig(k, v)
+	}
+	if config.Config.Aeskey != "" {
+		aess.AESKEY = []byte(config.Config.Aeskey)
 	}
 	rsautil.Generate()
 	app.App.Static(config.Config.Static, config.Config.Staticname).Run(config.Config.Port)

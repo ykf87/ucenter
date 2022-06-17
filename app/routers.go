@@ -18,12 +18,12 @@ func Init() {
 func (this *AppClient) WebRouter() {
 	mainGroup := this.Engine.Use(Middle())
 	{
-		userNoAuth := this.Engine.Group("/user")
+		userNoAuth := this.Engine.Group("/")
 		{
-			userNoAuth.POST("/login", user.Login)         //登录
-			userNoAuth.POST("/sign", user.Sign)           //注册
-			userNoAuth.POST("/forgot", user.Forgot)       //忘记密码
-			userNoAuth.POST("/emailcode", user.Emailcode) //邮件发送,考虑做ip限流
+			userNoAuth.POST("login", user.Login)         //登录
+			userNoAuth.POST("sign", user.Sign)           //注册
+			userNoAuth.POST("forgot", user.Forgot)       //忘记密码
+			userNoAuth.POST("emailcode", user.Emailcode) //邮件发送,考虑做ip限流
 		}
 		authorized := this.Engine.Group("/user").Use(Auth())
 		{
