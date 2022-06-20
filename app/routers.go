@@ -67,6 +67,13 @@ func Middle() gin.HandlerFunc {
 		c.Header("server", config.Config.APPName)
 		// c.Header("appname", config.Config.APPName)
 		c.Header("auther", config.Config.Auther)
+
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, token")
+		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+		c.Header("Access-Control-Allow-Credentials", "true")
+
 		c.Next()
 	}
 }
