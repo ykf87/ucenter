@@ -22,8 +22,8 @@ type CountryModel struct {
 }
 
 type CountryNameModel struct {
-	Id   int64
-	Name string
+	Id   int64  `json:"id"`
+	Name string `json:"name"`
 }
 
 var CountryMap GlobalMapStruct = make(GlobalMapStruct)
@@ -82,7 +82,7 @@ func GetCountryByIso(iso string) (ct *CountryModel, err error) {
 	// return nil, errors.New("Country not found")
 }
 
-func GetCountryByFilterAndPage(lang, filter string, page, limit int) (dts map[string]interface{}, err error) {
+func GetCountryByFilterAndPage(lang, filter string, page, limit int, kv string) (dts interface{}, err error) {
 	if page < 1 {
 		page = 1
 	}
@@ -105,14 +105,22 @@ func GetCountryByFilterAndPage(lang, filter string, page, limit int) (dts map[st
 		err = rs.Error
 		dts = nil
 	} else {
-		dts = make(map[string]interface{})
-		for _, v := range nngdfg {
-			for iso, b := range Countries {
-				if v.Id == b.Id {
-					dts[iso] = v.Name
-					break
+		if len(nngdfg) < 1 {
+			return nil, errors.New("No results found")
+		}
+		if kv != "" {
+			dtszz := make(map[string]interface{})
+			for _, v := range nngdfg {
+				for iso, b := range Countries {
+					if v.Id == b.Id {
+						dtszz[iso] = v.Name
+						break
+					}
 				}
 			}
+			dts = dtszz
+		} else {
+			dts = nngdfg
 		}
 	}
 	return

@@ -39,7 +39,7 @@ func GetCityByNameAndCountryId(name string, countryId int64, lang string) (*City
 	return nil, errors.New("City not found")
 }
 
-func GetCityFilterAndPage(lang, filter string, countryid int64, provinceid, page, limit int) (dts map[string]interface{}, err error) {
+func GetCityFilterAndPage(lang, filter string, countryid int64, provinceid, page, limit int, kv string) (dts interface{}, err error) {
 	if countryid < 1 || provinceid < 1 {
 		err = errors.New("Missing queries")
 		return
@@ -65,9 +65,17 @@ func GetCityFilterAndPage(lang, filter string, countryid int64, provinceid, page
 		err = rs.Error
 		dts = nil
 	} else {
-		dts = make(map[string]interface{})
-		for _, v := range ctmds {
-			dts[fmt.Sprintf("%d", v.Id)] = v.Name
+		if len(ctmds) < 1 {
+			return nil, errors.New("No results found")
+		}
+		if kv != "" {
+			ddzzs := make(map[string]interface{})
+			for _, v := range ctmds {
+				ddzzs[fmt.Sprintf("%d", v.Id)] = v.Name
+			}
+			dts = ddzzs
+		} else {
+			dts = ctmds
 		}
 	}
 	return

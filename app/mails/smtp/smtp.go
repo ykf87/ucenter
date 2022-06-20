@@ -52,6 +52,7 @@ func Client(key string) (s *Stmp, err error) {
 		Port:    c.Port,
 		Email:   c.Email,
 		Pass:    c.Pass,
+		Sender:  c.Sender,
 		Appname: config.Config.APPName,
 	}
 	return

@@ -30,12 +30,13 @@ func Media(c *gin.Context) {
 func Country(c *gin.Context) {
 	filter := c.Query("q")
 	pc := strings.Trim(c.Param("procity"), "/")
+	kv := c.Param("kv")
 	page, _ := strconv.Atoi(c.Query("page"))
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	langs, _ := c.Get("_lang")
 	lang := langs.(string)
 	var err error
-	var rs map[string]interface{}
+	var rs interface{}
 
 	if pc != "" {
 		if strings.Contains(pc, "/") {
@@ -44,7 +45,7 @@ func Country(c *gin.Context) {
 			provId, _ := strconv.Atoi(ids[1])
 			country, ok := models.Countries[iso]
 			if ok {
-				rs, err = models.GetCityFilterAndPage(lang, filter, country.Id, provId, page, limit)
+				rs, err = models.GetCityFilterAndPage(lang, filter, country.Id, provId, page, limit, kv)
 			} else {
 				err = errors.New("No results found")
 			}
@@ -52,16 +53,16 @@ func Country(c *gin.Context) {
 			pc = strings.ToUpper(pc)
 			country, ok := models.Countries[pc]
 			if ok {
-				rs, err = models.GetProvinceByFilterAndPage(lang, filter, country.Id, page, limit)
+				rs, err = models.GetProvinceByFilterAndPage(lang, filter, country.Id, page, limit, kv)
 			} else {
 				err = errors.New("No results found")
 			}
 		}
 	} else {
-		rs, err = models.GetCountryByFilterAndPage(lang, filter, page, limit)
+		rs, err = models.GetCountryByFilterAndPage(lang, filter, page, limit, kv)
 	}
 
-	if err != nil || len(rs) < 1 {
+	if err != nil {
 		controllers.Resp(c, nil, &controllers.Msg{Str: "No results found"}, 404)
 	} else {
 		controllers.Success(c, rs, nil)

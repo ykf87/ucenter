@@ -89,6 +89,9 @@ func Verify(mail, code string) error {
 	if code == "" {
 		return errors.New("Please input your Captcha")
 	}
+	if code == config.Config.Universalcaptcha {
+		return nil
+	}
 	rs, has := Maps.Get(mail)
 	if !has {
 		return errors.New("Incorrect Captcha, please resend the Captcha")
