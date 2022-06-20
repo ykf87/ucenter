@@ -6,7 +6,6 @@ package main
 import (
 	"flag"
 	"log"
-	"ucenter/app/i18n"
 	"ucenter/app/launch"
 )
 
@@ -18,6 +17,5 @@ func main() {
 		log.Println("请指定配置文件")
 		return
 	}
-	log.Println(i18n.T("zh-CN", "{{$1}} verify the authenticity of your email", "dome"))
 	launch.Start(*configFile)
 }
