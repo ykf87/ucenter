@@ -30,11 +30,11 @@ func Media(c *gin.Context) {
 func Country(c *gin.Context) {
 	filter := c.Query("q")
 	pc := strings.Trim(c.Param("procity"), "/")
-	kv := c.Param("kv")
 	page, _ := strconv.Atoi(c.Query("page"))
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	langs, _ := c.Get("_lang")
 	lang := langs.(string)
+	kv := c.Query("kv")
 	var err error
 	var rs interface{}
 
@@ -77,6 +77,7 @@ func Lists(c *gin.Context) {
 	tb := strings.Trim(c.Param("table"), "/ ")
 	langobj, _ := c.Get("_lang")
 	lang := langobj.(string)
+	kv := c.Query("kv")
 	if limit == 0 {
 		limit = config.Config.Limit
 	}
@@ -116,24 +117,40 @@ func Lists(c *gin.Context) {
 		controllers.Error(c, nil, &controllers.Msg{Str: "No results found"})
 		return
 	}
-	ngst := make(map[int64]string)
-	for _, v := range dts {
-		ngst[v.Id] = v.Name
+	if kv != "" {
+		ngst := make(map[int64]string)
+		for _, v := range dts {
+			ngst[v.Id] = v.Name
+		}
+		controllers.Success(c, ngst, &controllers.Msg{Str: "Success"})
+	} else {
+		controllers.Success(c, dts, &controllers.Msg{Str: "Success"})
 	}
-
-	controllers.Success(c, ngst, &controllers.Msg{Str: "Success"})
 }
 
 //获取系统支持的语言列表
 func Languages(c *gin.Context) {
+	kv := c.Query("kv")
 	l, err := models.GetAllLanguages(false)
 	if err != nil {
 		controllers.Error(c, nil, &controllers.Msg{Str: "No results found"})
 	} else {
-		mp := make(map[string]interface{})
-		for _, v := range l {
-			mp[v.Iso] = v.Name
+		if kv != "" {
+			mp := make(map[string]interface{})
+			for _, v := range l {
+				mp[v.Iso] = v.Name
+			}
+			controllers.Success(c, mp, nil)
+		} else {
+			var mp []map[string]interface{}
+			for _, v := range l {
+				nns := make(map[string]interface{})
+				nns["id"] = v.Id
+				nns["iso"] = v.Iso
+				nns["name"] = v.Name
+				mp = append(mp, nns)
+			}
+			controllers.Success(c, mp, nil)
 		}
-		controllers.Error(c, mp, nil)
 	}
 }
