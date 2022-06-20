@@ -16,6 +16,7 @@ func Start(filename string) {
 		log.Println(err)
 		return
 	}
+	config.Cpath = filename
 	err = models.Init(config.Config.DB[0].Type, config.Config.DB[0].Dsn, config.Config.DB[0].Path)
 	if err != nil {
 		log.Println(err)

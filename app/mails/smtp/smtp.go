@@ -134,7 +134,7 @@ func SmtpModel() hermes.Hermes {
 			Name: config.Config.APPName,
 			Link: config.Config.Domain,
 			// Logo:        "https://www.zhishukongjian.com/reset/images/logo.png",
-			Logo:      "https://img0.baidu.com/it/u=3327368668,2450215212&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=313",
+			Logo:      config.Config.Logo,
 			Copyright: copyright,
 		},
 	}

@@ -11,13 +11,14 @@ type SmtpConf struct {
 	Pass  string
 }
 
-var Config = struct {
+type ConfigStruct struct {
 	APPName     string `required:"true"`
 	Domain      string `required:"true"`
 	Port        int    `required:"true"`
 	Lang        string `default:"en"` //默认语言
 	Auther      string `default:"blandal.com@gmail.com"`
 	Copyright   string
+	Logo        string
 	Static      string
 	Staticname  string
 	Aeskey      string
@@ -41,9 +42,16 @@ var Config = struct {
 		Datefmt     string
 		Timefmt     string
 	}
-}{}
+}
+
+var Config = new(ConfigStruct)
+var Cpath string
 
 func Init(path string) (err error) {
-	err = configor.Load(&Config, path)
+	cc := new(ConfigStruct)
+	err = configor.Load(cc, path)
+	if err == nil {
+		Config = cc
+	}
 	return
 }

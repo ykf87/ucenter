@@ -122,3 +122,17 @@ func Lists(c *gin.Context) {
 
 	controllers.Success(c, ngst, &controllers.Msg{Str: "Success"})
 }
+
+//获取系统支持的语言列表
+func Languages(c *gin.Context) {
+	l, err := models.GetAllLanguages(false)
+	if err != nil {
+		controllers.Error(c, nil, &controllers.Msg{Str: "No results found"})
+	} else {
+		mp := make(map[string]interface{})
+		for _, v := range l {
+			mp[v.Iso] = v.Name
+		}
+		controllers.Error(c, mp, nil)
+	}
+}

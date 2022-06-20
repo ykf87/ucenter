@@ -36,8 +36,8 @@ func (this *AppClient) WebRouter() {
 
 		mainGroup.GET("/media/:path", index.Media)        //静态内容,经过解密处理的返回,目的是加密存储一些敏感内容,并解密后显示
 		mainGroup.GET("/country/*procity", index.Country) //国家,省份和城市列表
+		mainGroup.GET("/langs", index.Languages)          //显示一些属性表的列表内容
 		mainGroup.GET("/lists/:table", index.Lists)       //显示一些属性表的列表内容
-
 	}
 
 }

@@ -480,7 +480,7 @@ func (this Editers) SetAvatar(user *UserModel, args ...interface{}) (error, map[
 			os.Remove(oldFilename)
 		}
 		user.Avatar = filename
-		return nil, map[string]interface{}{"avatar": filename}
+		return nil, map[string]interface{}{"avatar": config.Config.Domain + filename}
 	}
 	return errors.New("System error, please try again later"), nil
 }

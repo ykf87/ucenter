@@ -35,8 +35,8 @@ func Emailcode(c *gin.Context) {
 
 //注册
 func Sign(c *gin.Context) {
-	account := c.PostForm("account")
-	phone := c.PostForm("phone")
+	// account := c.PostForm("account")
+	// phone := c.PostForm("phone")
 	email := c.PostForm("email")
 	pwd := c.PostForm("password")
 	invite := c.PostForm("invite")
@@ -51,8 +51,18 @@ func Sign(c *gin.Context) {
 		lang = langos.(string)
 	}
 
+	if email == "" {
+		controllers.Error(c, nil, &controllers.Msg{Str: "Please set the Email"})
+		return
+	}
+
+	if code == "" {
+		controllers.Error(c, nil, &controllers.Msg{Str: "Please input your Captcha"})
+		return
+	}
+
 	ip := c.ClientIP()
-	user, err := models.MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip)
+	user, err := models.MakeUser("", email, "", pwd, code, invite, nickname, platform, ip)
 	if err != nil {
 		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
 		return
@@ -86,7 +96,12 @@ func Login(c *gin.Context) {
 	code := c.PostForm("code")
 	veried := false
 
-	if email != "" && code != "" {
+	if email == "" {
+		controllers.Error(c, nil, &controllers.Msg{Str: "Please set the Email"})
+		return
+	}
+
+	if code != "" {
 		err := coder.Verify(email, code)
 		if err != nil {
 			controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})

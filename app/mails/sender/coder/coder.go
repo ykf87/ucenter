@@ -17,7 +17,7 @@ import (
 type MailCodeStruct struct { //一个已经发送验证码并维护验证码的结构体
 	Code     string //验证码内容
 	Errtimes int    //输入错误次数
-	Expire   int64  //过期时间
+	Sendtime int64  //过期时间
 }
 
 type RWMap struct { // 一个读写锁保护的线程安全的map
@@ -25,7 +25,8 @@ type RWMap struct { // 一个读写锁保护的线程安全的map
 	m            map[string]*MailCodeStruct
 }
 
-var Timeout = 300 // timeout 验证码有效期,单位秒
+var Timeout int64 = 300   //timeout 验证码有效期,单位秒
+var ResendTime int64 = 60 //重新发送验证码间隔
 var Maps *RWMap
 
 func init() {
@@ -35,11 +36,11 @@ func init() {
 	go Maps.checkMap(60)
 }
 
-func (m *RWMap) checkMap(timer int) { //定时检查邮箱过期二维码
+func (m *RWMap) checkMap(timer int) { //定时检查邮箱过期验证码
 	for {
 		nowTime := time.Now().Unix()
 		m.Each(func(k string, v *MailCodeStruct) bool {
-			if v.Expire <= nowTime {
+			if v.Sendtime+Timeout <= nowTime {
 				m.Delete(k)
 			}
 			return true
@@ -92,7 +93,7 @@ func Verify(mail, code string) error {
 	if !has {
 		return errors.New("Incorrect Captcha, please resend the Captcha")
 	}
-	if rs.Expire <= time.Now().Unix() {
+	if rs.Sendtime+Timeout <= time.Now().Unix() {
 		return errors.New("Incorrect Captcha, please resend the Captcha")
 	}
 	if rs.Errtimes >= 5 {
@@ -114,7 +115,7 @@ func Send(mail, lang string) error {
 	}
 	mc, ok := Maps.Get(mail)
 	if ok {
-		if mc.Expire > time.Now().Unix() {
+		if mc.Sendtime+ResendTime > time.Now().Unix() {
 			return errors.New("Your verification code is still valid")
 		} else {
 			Maps.Delete(mail)
@@ -145,16 +146,17 @@ func Send(mail, lang string) error {
 	h := smtp.SmtpModel()
 	emailBody, err := h.GenerateHTML(email)
 	if err != nil {
-		log.Println("Send Email Code Err: ", err)
+		log.Println("Send Email Code Err(coder): ", err)
 		return errors.New("Captcha sending failure")
 	}
 
 	sub := i18n.T(lang, "{{$1}} verify the authenticity of your email", config.Config.APPName)
 	r := s.SetGeter(mail).SetMessage(emailBody).SetSubject(string(sub)).Send()
 	if r != nil {
+		log.Println("Send Email Code Err: ", r)
 		return errors.New("Captcha sending failure")
 	}
 
-	Maps.Set(mail, &MailCodeStruct{Code: code, Expire: (time.Now().Unix() + 600), Errtimes: 0})
+	Maps.Set(mail, &MailCodeStruct{Code: code, Sendtime: time.Now().Unix(), Errtimes: 0})
 	return nil
 }
