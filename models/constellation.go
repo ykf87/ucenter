@@ -44,7 +44,7 @@ func SetConstellationMapByLang(lang string, reset bool) error {
 
 //获取所有星座
 func GetAllConstellations(lang, kv string) (dt interface{}, err error) {
-	tbName := lang + "_constellations"
+	tbName := strings.ToLower(lang + "_constellations")
 	dbObject := DB.Table(tbName)
 
 	var vser []*ConstellationModel

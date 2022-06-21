@@ -12,6 +12,11 @@ type SmtpConf struct {
 	Sender string
 }
 
+type ImConf struct {
+	Id  string
+	Key string
+}
+
 type ConfigStruct struct {
 	APPName          string `required:"true"`
 	Domain           string `required:"true"`
@@ -44,6 +49,8 @@ type ConfigStruct struct {
 		Datefmt     string
 		Timefmt     string
 	}
+
+	Im map[string]*ImConf `required:"true"`
 }
 
 var Config = new(ConfigStruct)

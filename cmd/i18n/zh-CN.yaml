@@ -42,3 +42,5 @@ zh-CN:
   SMTP configuration exception: "SMTP配置异常"
   "Need help? Please contact us in the app, this email will not accept any reply.": "需要帮助?请在APP中联系我们,此邮件不接受任何回复."
   "Have a good day": "祝您生活愉快"
+  "Hello, I am a Frisky Meets assistant, welcome to join Frisky Meets, I am very happy to have a small partner, I wish you can find like-minded friends in Frisky Meets, start a heart-to-heart dating, welcome your valuable comments on Frisky Meets.": "大家好，我是Frisky Meets的助理，欢迎大家加入Frisky Meets，我很高兴有一个小伙伴，希望大家能在Frisky Meets找到志同道合的朋友，开始心心相印的约会，欢迎大家对Frisky Meets提出宝贵意见。"
+  "Welcome to {{$1}}": "欢迎加入 {{$1}}"

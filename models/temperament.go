@@ -45,7 +45,7 @@ func SetTemperamentMapByLang(lang string, reset bool) error {
 
 //获取所有性格
 func GetAllTemperaments(lang, filter, kv string, sex int64) (dt interface{}, err error) {
-	tbName := lang + "_temperaments"
+	tbName := strings.ToLower(lang + "_temperaments")
 	dbObject := DB.Table(tbName)
 	if filter != "" {
 		dbObject = dbObject.Where("name like ?", "%"+filter+"%")
@@ -72,9 +72,15 @@ func GetAllTemperaments(lang, filter, kv string, sex int64) (dt interface{}, err
 			Id   int64  `json:"id"`
 			Name string `json:"name"`
 		}
-		bbds := make(map[int64][]*pertzcsd)
+		bbds := make(map[string][]*pertzcsd)
 		for _, v := range vser {
-			bbds[v.Sex] = append(bbds[v.Sex], &pertzcsd{Id: v.Id, Name: v.Name})
+			var kstr string
+			if v.Sex == 1 {
+				kstr = "male"
+			} else {
+				kstr = "female"
+			}
+			bbds[kstr] = append(bbds[kstr], &pertzcsd{Id: v.Id, Name: v.Name})
 		}
 		dt = bbds
 	}
