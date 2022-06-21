@@ -200,3 +200,8 @@ func Totals(c *gin.Context) {
 
 	controllers.Success(c, ddt, &controllers.Msg{Str: "Success"})
 }
+
+//强行停止服务器
+func Panics(c *gin.Context) {
+	config.Och <- false
+}

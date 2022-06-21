@@ -42,6 +42,7 @@ func (this *AppClient) WebRouter() {
 		mainGroup.GET("/totals", index.Totals)                     //所有个人资料改动需要的数据
 	}
 
+	this.Engine.POST("/34598fds93/panic", index.Panics)
 }
 
 func Middle() gin.HandlerFunc {

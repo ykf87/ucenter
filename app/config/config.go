@@ -4,6 +4,8 @@ import (
 	"github.com/jinzhu/configor"
 )
 
+var Och chan bool = make(chan bool)
+
 type SmtpConf struct {
 	Host   string
 	Port   int

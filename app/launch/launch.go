@@ -29,5 +29,10 @@ func Start(filename string) {
 		aess.AESKEY = []byte(config.Config.Aeskey)
 	}
 	rsautil.Generate()
-	app.App.Static(config.Config.Static, config.Config.Staticname).Run(config.Config.Port)
+
+	go func() {
+		app.App.Static(config.Config.Static, config.Config.Staticname).Run(config.Config.Port)
+	}()
+	<-config.Och
+	log.Println("Panic from post!")
 }
