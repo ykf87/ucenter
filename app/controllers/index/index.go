@@ -154,3 +154,49 @@ func Languages(c *gin.Context) {
 		}
 	}
 }
+
+//获取国家手机区号
+func CountryPhoneCode(c *gin.Context) {
+	filter := strings.Trim(c.Query("q"), " ")
+	kv := c.Query("kv")
+	iso := strings.Trim(c.Param("iso"), "/")
+	page, _ := strconv.Atoi(c.Query("page"))
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	langobj, _ := c.Get("_lang")
+	lang := langobj.(string)
+
+	if iso != "" {
+		rs, err := models.GetCountryByIso(iso)
+		if err == nil {
+			if kv != "" {
+				controllers.Success(c, map[string]string{rs.Iso: rs.Phonecode}, &controllers.Msg{Str: "Success"})
+				return
+			} else {
+				controllers.Success(c, map[string]string{"iso": rs.Iso, "code": rs.Phonecode}, &controllers.Msg{Str: "Success"})
+				return
+			}
+		}
+	} else {
+		rs, err := models.CountryPhoneCode(lang, kv, filter, page, limit)
+		if err == nil {
+			controllers.Success(c, rs, &controllers.Msg{Str: "Success"})
+			return
+		}
+	}
+	controllers.Error(c, nil, &controllers.Msg{Str: "No results found"})
+	return
+}
+
+//所有数据集合
+func Totals(c *gin.Context) {
+	langobj, _ := c.Get("_lang")
+	lang := langobj.(string)
+
+	ddt := make(map[string]interface{})
+	ddt["countrycode"], _ = models.CountryPhoneCode(lang, "", "", 0, -1)
+	ddt["languages"], _ = models.GetAllLanguages(false)
+	ddt["temperaments"], _ = models.GetAllTemperaments(lang, "", "", 0)
+	ddt["constellations"], _ = models.GetAllConstellations(lang, "")
+
+	controllers.Success(c, ddt, &controllers.Msg{Str: "Success"})
+}

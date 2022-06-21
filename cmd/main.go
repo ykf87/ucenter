@@ -1,6 +1,7 @@
 // linux execute file
 // env GOOS=linux GOARCH=amd64 go build
 // export CGO_ENABLED=0 && export GOOS=linux && export GOARCH=amd64 && go build
+// ./frpc.exe -c frpc.ini
 package main
 
 import (

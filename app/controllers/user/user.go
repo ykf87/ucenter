@@ -17,7 +17,6 @@ import (
 //获取邮箱验证码
 func Emailcode(c *gin.Context) {
 	email := c.PostForm("email")
-
 	var lang string
 	langos, exits := c.Get("_lang")
 	if !exits {
@@ -83,6 +82,7 @@ func Sign(c *gin.Context) {
 
 	controllers.Success(c, map[string]interface{}{
 		"token": token,
+		"id":    user.Id,
 	}, nil)
 	return
 }
@@ -134,6 +134,7 @@ func Login(c *gin.Context) {
 					if token != "" {
 						controllers.Success(c, map[string]interface{}{
 							"token": token,
+							"id":    user.Id,
 						}, nil)
 						return
 					} else {

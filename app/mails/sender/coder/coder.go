@@ -126,9 +126,11 @@ func Send(mail, lang string) error {
 	}
 
 	code := fmt.Sprintf("%06v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(1000000))
+	Maps.Set(mail, &MailCodeStruct{Code: code, Sendtime: time.Now().Unix(), Errtimes: 0})
 
 	s, err := smtp.Client("coder")
 	if err != nil {
+		Maps.Delete(mail)
 		return err
 	}
 
@@ -149,6 +151,7 @@ func Send(mail, lang string) error {
 	h := smtp.SmtpModel()
 	emailBody, err := h.GenerateHTML(email)
 	if err != nil {
+		Maps.Delete(mail)
 		log.Println("Send Email Code Err(coder): ", err)
 		return errors.New("Captcha sending failure")
 	}
@@ -156,10 +159,10 @@ func Send(mail, lang string) error {
 	sub := i18n.T(lang, "{{$1}} verify the authenticity of your email", config.Config.APPName)
 	r := s.SetGeter(mail).SetMessage(emailBody).SetSubject(string(sub)).Send()
 	if r != nil {
+		Maps.Delete(mail)
 		log.Println("Send Email Code Err: ", r)
 		return errors.New("Captcha sending failure")
 	}
 
-	Maps.Set(mail, &MailCodeStruct{Code: code, Sendtime: time.Now().Unix(), Errtimes: 0})
 	return nil
 }

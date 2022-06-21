@@ -42,3 +42,41 @@ func SetTemperamentMapByLang(lang string, reset bool) error {
 	TemperamentMap[lang] = cl
 	return nil
 }
+
+//获取所有性格
+func GetAllTemperaments(lang, filter, kv string, sex int64) (dt interface{}, err error) {
+	tbName := lang + "_temperaments"
+	dbObject := DB.Table(tbName)
+	if filter != "" {
+		dbObject = dbObject.Where("name like ?", "%"+filter+"%")
+	}
+	if sex > 0 {
+		dbObject = dbObject.Where("sex = ?", sex)
+	}
+
+	var vser []*TemperamentModel
+	rs := dbObject.Find(&vser)
+	if rs.Error != nil {
+		err = rs.Error
+		return
+	}
+
+	if kv != "" {
+		bbds := make(map[int64]map[int64]string)
+		for _, v := range vser {
+			bbds[v.Sex][v.Id] = v.Name
+		}
+		dt = bbds
+	} else {
+		type pertzcsd struct {
+			Id   int64  `json:"id"`
+			Name string `json:"name"`
+		}
+		bbds := make(map[int64][]*pertzcsd)
+		for _, v := range vser {
+			bbds[v.Sex] = append(bbds[v.Sex], &pertzcsd{Id: v.Id, Name: v.Name})
+		}
+		dt = bbds
+	}
+	return
+}

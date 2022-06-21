@@ -41,3 +41,27 @@ func SetConstellationMapByLang(lang string, reset bool) error {
 	ConstellationMap[lang] = cl
 	return nil
 }
+
+//获取所有星座
+func GetAllConstellations(lang, kv string) (dt interface{}, err error) {
+	tbName := lang + "_constellations"
+	dbObject := DB.Table(tbName)
+
+	var vser []*ConstellationModel
+	rs := dbObject.Find(&vser)
+	if rs.Error != nil {
+		err = rs.Error
+		return
+	}
+
+	if kv != "" {
+		bbds := make(map[int64]string)
+		for _, v := range vser {
+			bbds[v.Id] = v.Name
+		}
+		dt = bbds
+	} else {
+		dt = vser
+	}
+	return
+}

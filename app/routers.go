@@ -34,10 +34,12 @@ func (this *AppClient) WebRouter() {
 			authorized.POST("/cancellation", user.Cancellation) //注销账号
 		}
 
-		mainGroup.GET("/media/:path", index.Media)        //静态内容,经过解密处理的返回,目的是加密存储一些敏感内容,并解密后显示
-		mainGroup.GET("/country/*procity", index.Country) //国家,省份和城市列表
-		mainGroup.GET("/langs", index.Languages)          //显示一些属性表的列表内容
-		mainGroup.GET("/lists/:table", index.Lists)       //显示一些属性表的列表内容
+		mainGroup.GET("/media/:path", index.Media)                 //静态内容,经过解密处理的返回,目的是加密存储一些敏感内容,并解密后显示
+		mainGroup.GET("/country/*procity", index.Country)          //国家,省份和城市列表
+		mainGroup.GET("/countrycode/*iso", index.CountryPhoneCode) //国家手机区号获取
+		mainGroup.GET("/langs", index.Languages)                   //显示系统支持的语言
+		mainGroup.GET("/lists/:table", index.Lists)                //显示一些属性表的列表内容
+		mainGroup.GET("/totals", index.Totals)                     //所有个人资料改动需要的数据
 	}
 
 }
@@ -68,11 +70,11 @@ func Middle() gin.HandlerFunc {
 		// c.Header("appname", config.Config.APPName)
 		c.Header("auther", config.Config.Auther)
 
-		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, token")
-		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
-		c.Header("Access-Control-Allow-Credentials", "true")
+		// c.Header("Access-Control-Allow-Origin", "*")
+		// c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, token")
+		// c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		// c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+		// c.Header("Access-Control-Allow-Credentials", "true")
 
 		c.Next()
 	}

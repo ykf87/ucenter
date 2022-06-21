@@ -149,3 +149,40 @@ func GetCountryByIp(ip string) (ct *CountryModel, err error) {
 	}
 	return
 }
+
+//返回phonecode
+func CountryPhoneCode(lang, kv, filter string, page, limit int) (dts interface{}, err error) {
+	lang = strings.ToLower(lang)
+	if page < 1 {
+		page = 1
+	}
+	if limit == 0 {
+		limit = config.Config.Limit
+	}
+	type sdsds struct {
+		Id        int64  `json:"id"`
+		Iso       string `json:"iso"`
+		Phonecode string `json:"phonecode"`
+		Name      string `json:"name"`
+	}
+	var nds []*sdsds
+	dbs := DB.Select("a.id, a.iso, a.phonecode, b.name").Table("countries as a").Joins("left join `" + lang + "_countries` as b on a.id = b.id")
+	if filter != "" {
+		dbs = dbs.Where("b.name like ?", "%"+filter+"%")
+	}
+	if limit > 0 {
+		dbs = dbs.Limit(limit).Offset((page - 1) * limit)
+	}
+	rs := dbs.Find(&nds)
+	if rs.Error != nil {
+		return nil, errors.New("No results found")
+	}
+	if kv != "" {
+		mps := make(map[string]interface{})
+		for _, v := range nds {
+			mps[v.Iso] = v.Phonecode
+		}
+		return mps, nil
+	}
+	return nds, nil
+}
