@@ -3,7 +3,6 @@ package index
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -72,60 +71,69 @@ func Country(c *gin.Context) {
 //获取一些列表
 func Lists(c *gin.Context) {
 	filter := strings.Trim(c.Query("q"), " ")
-	page, _ := strconv.Atoi(c.Query("page"))
-	limit, _ := strconv.Atoi(c.Query("limit"))
 	tb := strings.Trim(c.Param("table"), "/ ")
 	langobj, _ := c.Get("_lang")
 	lang := langobj.(string)
 	kv := c.Query("kv")
-	if limit == 0 {
-		limit = config.Config.Limit
-	}
-	if page < 0 {
-		page = 1
-	}
 
 	if tb == "" {
 		controllers.Error(c, nil, &controllers.Msg{Str: "No results found"})
 		return
 	}
-	tbName := lang + "_" + tb
-	tbName = strings.ToLower(tbName)
-
-	dbObject := models.DB.Table(tbName)
-	if tb == "temperaments" {
-		sex := c.Query("sex")
-		if sex != "" {
-			dbObject = dbObject.Where("sex = ?", sex)
-		}
+	lang = strings.ToLower(lang)
+	var res interface{}
+	switch tb {
+	case "incomes":
+		res = models.IncomesList(filter, kv)
+	case "educations":
+		res = models.EducationList(lang, filter, kv)
+	case "constellations":
+		res = models.GetAllConstellations(lang, filter, kv)
+	case "temperaments":
+		sexstr := c.Query("sex")
+		sex, _ := strconv.Atoi(sexstr)
+		res = models.GetAllTemperaments(lang, filter, kv, int64(sex))
 	}
-	if filter != "" {
-		dbObject = dbObject.Where("name like ?", "%"+filter+"%")
-	}
-
-	type sspfd struct {
-		Id   int64  `json:"id"`
-		Name string `json:"name"`
-	}
-	var dts []*sspfd
-	if limit > 0 {
-		dbObject = dbObject.Limit(limit).Offset((page - 1) * limit)
-	}
-	rs := dbObject.Find(&dts)
-	if rs.Error != nil {
-		log.Println(rs.Error)
-		controllers.Error(c, nil, &controllers.Msg{Str: "No results found"})
-		return
-	}
-	if kv != "" {
-		ngst := make(map[int64]string)
-		for _, v := range dts {
-			ngst[v.Id] = v.Name
-		}
-		controllers.Success(c, ngst, &controllers.Msg{Str: "Success"})
+	if res == nil {
+		controllers.Resp(c, nil, &controllers.Msg{Str: "No results found"}, 404)
 	} else {
-		controllers.Success(c, dts, &controllers.Msg{Str: "Success"})
+		controllers.Success(c, res, &controllers.Msg{Str: "Success"})
 	}
+
+	// dbObject := models.DB.Table(tbName)
+	// if tb == "temperaments" {
+	// 	sex := c.Query("sex")
+	// 	if sex != "" {
+	// 		dbObject = dbObject.Where("sex = ?", sex)
+	// 	}
+	// }
+	// if filter != "" {
+	// 	dbObject = dbObject.Where("name like ?", "%"+filter+"%")
+	// }
+
+	// type sspfd struct {
+	// 	Id   int64  `json:"id"`
+	// 	Name string `json:"name"`
+	// }
+	// var dts []*sspfd
+	// if limit > 0 {
+	// 	dbObject = dbObject.Limit(limit).Offset((page - 1) * limit)
+	// }
+	// rs := dbObject.Find(&dts)
+	// if rs.Error != nil {
+	// 	log.Println(rs.Error)
+	// 	controllers.Error(c, nil, &controllers.Msg{Str: "No results found"})
+	// 	return
+	// }
+	// if kv != "" {
+	// 	ngst := make(map[int64]string)
+	// 	for _, v := range dts {
+	// 		ngst[v.Id] = v.Name
+	// 	}
+	// 	controllers.Success(c, ngst, &controllers.Msg{Str: "Success"})
+	// } else {
+	// 	controllers.Success(c, dts, &controllers.Msg{Str: "Success"})
+	// }
 }
 
 //获取系统支持的语言列表
@@ -195,8 +203,10 @@ func Totals(c *gin.Context) {
 	ddt := make(map[string]interface{})
 	ddt["countrycode"], _ = models.CountryPhoneCode(lang, "", "", 0, -1)
 	ddt["languages"], _ = models.GetAllLanguages(false)
-	ddt["temperaments"], _ = models.GetAllTemperaments(lang, "", "", 0)
-	ddt["constellations"], _ = models.GetAllConstellations(lang, "")
+	ddt["temperaments"] = models.GetAllTemperaments(lang, "", "", 0)
+	ddt["constellations"] = models.GetAllConstellations(lang, "", "")
+	ddt["incomes"] = models.IncomesList("", "")
+	ddt["educations"] = models.EducationList(lang, "", "")
 
 	controllers.Success(c, ddt, &controllers.Msg{Str: "Success"})
 }
@@ -211,15 +221,53 @@ func Search(c *gin.Context) {
 	langob, _ := c.Get("_lang")
 	timezones, _ := c.Get("_timezone")
 
-	r := models.GetUserList(page, limit, q, []int64{user.Id})
+	var ulids []int64
+	if user != nil {
+		ulids = append(ulids, user.Id)
+	}
+	r := models.GetUserList(page, limit, q, ulids)
 	if r == nil || len(r) < 1 {
 		controllers.Resp(c, nil, nil, 404)
 	} else {
 		var lll []map[string]interface{}
+		var iids []int64
 		for _, v := range r {
-			nbs := v.Info(langob.(string), timezones.(string))
-			nbs["liked"] = 0
-			lll = append(lll, nbs)
+			iids = append(iids, v.Id)
+		}
+		if user != nil {
+			nnvs := models.GetUserLikedList(user.Id, iids)
+			if nnvs != nil && len(nnvs) > 0 {
+				mmp := make(map[int64]bool)
+				for _, v := range nnvs {
+					if v.Mutual == 1 {
+						mmp[v.Likeid] = true
+					} else {
+						mmp[v.Likeid] = false
+					}
+				}
+				for _, v := range r {
+					nbs := v.Info(langob.(string), timezones.(string))
+					if sdfn, ok := mmp[v.Id]; ok {
+						if sdfn == true {
+							nbs["likeeach"] = "1"
+						} else {
+							nbs["likeeach"] = "0"
+						}
+						nbs["liked"] = "1"
+					} else {
+						nbs["liked"] = "0"
+						nbs["likeeach"] = "0"
+					}
+					lll = append(lll, nbs)
+				}
+			}
+		} else {
+			for _, v := range r {
+				nbs := v.Info(langob.(string), timezones.(string))
+				nbs["liked"] = "0"
+				nbs["likeeach"] = "0"
+				lll = append(lll, nbs)
+			}
 		}
 		controllers.Success(c, lll, &controllers.Msg{Str: "Success"})
 	}

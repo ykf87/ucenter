@@ -1,3 +1,4 @@
+//学历
 package models
 
 import (
@@ -5,29 +6,28 @@ import (
 	"ucenter/app/config"
 )
 
-var ConstellationMap GlobalMapStruct = make(GlobalMapStruct)
+var EducationMap GlobalMapStruct = make(GlobalMapStruct)
 
 //初始化星座表到map
-func SetConstellationMap() error {
+func SetEducationMap() error {
 	langs, err := GetAllLanguages(false)
 	if err != nil {
 		return err
 	}
 	ttmmp := make(GlobalMapStruct)
 	for code, _ := range langs {
-		code = strings.ToLower(code)
-		tmp, err := setConstellationMapByLang(code)
+		tmp, err := setEducationMapByLang(code)
 		if err == nil {
 			ttmmp[code] = tmp
 		}
 	}
-	ConstellationMap = ttmmp
+	EducationMap = ttmmp
 	return nil
 }
 
-func setConstellationMapByLang(lang string) (map[int64]string, error) {
+func setEducationMapByLang(lang string) (map[int64]string, error) {
 	var dts []*IdNameModel
-	rs := DB.Table(lang + "_constellations").Find(&dts)
+	rs := DB.Table(lang + "_educations").Find(&dts)
 	if rs.Error != nil {
 		return nil, rs.Error
 	}
@@ -38,13 +38,13 @@ func setConstellationMapByLang(lang string) (map[int64]string, error) {
 	return cl, nil
 }
 
-//获取所有星座
-func GetAllConstellations(lang, filter, kv string) (ddt interface{}) {
-	ors, ok := ConstellationMap[lang]
+//返回学历列表
+func EducationList(lang, filter, kv string) (ddt interface{}) {
+	ors, ok := EducationMap[lang]
 	if !ok {
-		ors, ok = ConstellationMap[strings.ToLower(config.Config.Lang)]
+		ors, ok = EducationMap[strings.ToLower(config.Config.Lang)]
 		if !ok {
-			return
+			return nil
 		}
 	}
 	if kv != "" {
@@ -73,24 +73,4 @@ func GetAllConstellations(lang, filter, kv string) (ddt interface{}) {
 		ddt = dt
 	}
 	return
-	// tbName := strings.ToLower(lang + "_constellations")
-	// dbObject := DB.Table(tbName)
-
-	// var vser []*IdNameModel
-	// rs := dbObject.Find(&vser)
-	// if rs.Error != nil {
-	// 	err = rs.Error
-	// 	return
-	// }
-
-	// if kv != "" {
-	// 	bbds := make(map[int64]string)
-	// 	for _, v := range vser {
-	// 		bbds[v.Id] = v.Name
-	// 	}
-	// 	dt = bbds
-	// } else {
-	// 	dt = vser
-	// }
-	// return
 }

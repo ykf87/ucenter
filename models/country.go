@@ -34,36 +34,37 @@ func InitCountry() error {
 	if err != nil {
 		return err
 	}
+	tmmpp := make(GlobalMapStruct)
 	for code, _ := range langs {
-		SetCountryMapByLang(code, false)
+		code = strings.ToLower(code)
+		sdff, err := setCountryMapByLang(code)
+		if err == nil {
+			tmmpp[code] = sdff
+		}
 	}
+	CountryMap = tmmpp
 
 	var countrys []*CountryModel
+	ccmpt := make(map[string]*CountryModel)
 	DB.Table("countries").Find(&countrys)
 	for _, v := range countrys {
-		Countries[v.Iso] = v
+		ccmpt[v.Iso] = v
 	}
-
+	Countries = ccmpt
 	return nil
 }
 
-func SetCountryMapByLang(lang string, reset bool) error {
-	lang = strings.ToLower(lang)
-	_, ok := CountryMap[lang]
-	if ok && reset == false {
-		return nil
-	}
+func setCountryMapByLang(lang string) (map[int64]string, error) {
 	var dts []*CountryNameModel
 	rs := DB.Table(lang + "_countries").Find(&dts)
 	if rs.Error != nil {
-		return rs.Error
+		return nil, rs.Error
 	}
 	cl := make(map[int64]string)
 	for _, v := range dts {
 		cl[v.Id] = v.Name
 	}
-	CountryMap[lang] = cl
-	return nil
+	return cl, nil
 }
 
 func GetCountryByIso(iso string) (ct *CountryModel, err error) {

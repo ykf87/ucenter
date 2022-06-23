@@ -11,7 +11,7 @@
  Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 17/06/2022 17:43:49
+ Date: 23/06/2022 17:58:31
 */
 
 SET NAMES utf8mb4;
@@ -452,6 +452,27 @@ INSERT INTO `currencies` VALUES (157, 'BYN', 'Br', 0, NULL);
 INSERT INTO `currencies` VALUES (158, 'AAD', '$', 0, NULL);
 
 -- ----------------------------
+-- Table structure for en_articles
+-- ----------------------------
+DROP TABLE IF EXISTS `en_articles`;
+CREATE TABLE `en_articles`  (
+  `id` int(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `key` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用于搜索的唯一标识',
+  `title` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `keyword` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '关键词',
+  `desc` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '简介',
+  `cont` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '正文',
+  `addtime` bigint(1) UNSIGNED NULL DEFAULT NULL COMMENT '添加时间',
+  `pin` tinyint(1) UNSIGNED NULL DEFAULT NULL COMMENT '置顶',
+  `status` tinyint(1) UNSIGNED NULL DEFAULT 1 COMMENT '状态',
+  `sort` smallint(1) UNSIGNED NULL DEFAULT 0 COMMENT '排序,大到小',
+  `views` int(1) UNSIGNED NULL DEFAULT 0 COMMENT '浏览量',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `key`(`key`) USING BTREE,
+  INDEX `title`(`title`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for en_cities
 -- ----------------------------
 DROP TABLE IF EXISTS `en_cities`;
@@ -463,7 +484,7 @@ CREATE TABLE `en_cities`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `country_id`(`country_id`) USING BTREE,
   INDEX `states_id`(`province_id`) USING BTREE,
-  INDEX `name`(`name`) USING BTREE
+  INDEX `name`(`name`(191)) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 339 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -1252,6 +1273,24 @@ INSERT INTO `en_currencies` VALUES (155, 'Saint Helena pound');
 INSERT INTO `en_currencies` VALUES (156, 'Congolese Franc');
 INSERT INTO `en_currencies` VALUES (157, 'Belarusian ruble');
 INSERT INTO `en_currencies` VALUES (158, 'Antarctican dollar');
+
+-- ----------------------------
+-- Table structure for en_educations
+-- ----------------------------
+DROP TABLE IF EXISTS `en_educations`;
+CREATE TABLE `en_educations`  (
+  `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '学历名称',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '学历表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of en_educations
+-- ----------------------------
+INSERT INTO `en_educations` VALUES (1, 'High school');
+INSERT INTO `en_educations` VALUES (2, 'Associate degree');
+INSERT INTO `en_educations` VALUES (3, 'Bachelor');
+INSERT INTO `en_educations` VALUES (4, 'Master degree or above');
 
 -- ----------------------------
 -- Table structure for en_provinces
@@ -4688,6 +4727,25 @@ INSERT INTO `en_temperaments` VALUES (33, 2, 'kind');
 INSERT INTO `en_temperaments` VALUES (34, 2, 'charming');
 
 -- ----------------------------
+-- Table structure for incomes
+-- ----------------------------
+DROP TABLE IF EXISTS `incomes`;
+CREATE TABLE `incomes`  (
+  `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of incomes
+-- ----------------------------
+INSERT INTO `incomes` VALUES (1, '<500');
+INSERT INTO `incomes` VALUES (2, '500-1000');
+INSERT INTO `incomes` VALUES (3, '1000-2000');
+INSERT INTO `incomes` VALUES (4, '2000-3000');
+INSERT INTO `incomes` VALUES (5, '> 3000');
+
+-- ----------------------------
 -- Table structure for languages
 -- ----------------------------
 DROP TABLE IF EXISTS `languages`;
@@ -4747,6 +4805,24 @@ CREATE TABLE `user_invitees`  (
 INSERT INTO `user_invitees` VALUES (3, 39355);
 
 -- ----------------------------
+-- Table structure for user_likes
+-- ----------------------------
+DROP TABLE IF EXISTS `user_likes`;
+CREATE TABLE `user_likes`  (
+  `id` bigint(1) UNSIGNED NOT NULL COMMENT '用户id',
+  `likeid` bigint(1) UNSIGNED NOT NULL COMMENT '用户喜欢的用户id',
+  `mutual` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '是否相互喜欢',
+  `addtime` bigint(1) UNSIGNED NULL DEFAULT NULL COMMENT '喜欢的时间',
+  PRIMARY KEY (`id`, `likeid`) USING BTREE,
+  INDEX `mutual`(`mutual`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户喜欢列表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user_likes
+-- ----------------------------
+INSERT INTO `user_likes` VALUES (39355, 11, 0, 1655950963);
+
+-- ----------------------------
 -- Table structure for users
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
@@ -4772,9 +4848,10 @@ CREATE TABLE `users`  (
   `birth` int(1) UNSIGNED NULL DEFAULT NULL COMMENT '生日',
   `age` tinyint(1) UNSIGNED NULL DEFAULT NULL COMMENT '年龄',
   `job` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '职业',
-  `income` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '收入',
+  `income` tinyint(1) NULL DEFAULT NULL COMMENT '收入',
   `emotion` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '情感状态',
   `constellation` tinyint(1) UNSIGNED NULL DEFAULT NULL COMMENT '星座',
+  `edu` tinyint(1) UNSIGNED NULL DEFAULT NULL COMMENT '学历',
   `temperament` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '性格,可设置多个',
   `ip` int(1) UNSIGNED NULL DEFAULT NULL COMMENT '注册时的ipv4地址',
   `country` smallint(1) UNSIGNED NULL DEFAULT 0 COMMENT '国家id',
@@ -4789,27 +4866,29 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `account`(`account`) USING BTREE,
   UNIQUE INDEX `mail`(`mail`) USING BTREE,
   UNIQUE INDEX `phone`(`phone`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39356 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 39358 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (2, 0, NULL, NULL, 'bbb', NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (3, 0, '000003', NULL, '', '1603601628@qq.combb', '', 1, 0, '$2a$10$s1RIiHFkcubdu7TeoWJjPeFhQ7v1PhZOhCrA754bXCYSept.dGOFi', '速度放缓', 'static/user/avatars/000003.jpg', 'static/user/background/000003.png', 0, 1, 1, 0, 0.00, 1024184719, 20, '', '', '0', 1, '5,8,9', 0, 1, 13, 117, 5, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (4, 0, NULL, NULL, NULL, 'dfsf@qc.ccz', NULL, 0, 0, '$2a$10$XvY0aIuaV0WUClH3uSDWYuzuZlnZoJqBKFK7HU85mvBzB5i5Fxe7S', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (5, 0, NULL, NULL, NULL, 'dfsfzz@qc.ccz', NULL, 0, 0, '$2a$10$nQyk5E6pXEucHryCYo9Rceyy2SBVb25auT8gHHNB1NaK1YSo4VgKm', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (6, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Jx0HApS0UlgqpXndLJhCf.h3GZoP0/rm2hMkFtd1ZzeVY71dWL0Xi', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (7, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Q4rL/UbA5TMN5IlZ66oDmOc3ZxrJGZqVYTCigiPW2UnGVLf7n2p2u', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (8, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 1654856133, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (9, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 1654856143, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (10, 0, '00000A', NULL, NULL, 'dfsf@qc.ccqb', NULL, 0, 0, '$2a$10$flBT041senJnDCWyKthk4OKQ.xPvrNLvL6h2KVecqjVJkYZQfmCzO', NULL, NULL, NULL, 1655113940, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (11, 0, '00000B', NULL, NULL, 'bbbbs@gmail.com', NULL, 0, 0, '$2a$10$mdxvoMnHke0W8BOZuMZVV.nr9XOZfhaM2fckwy6DRIT0aO6lA8oI.', NULL, NULL, NULL, 1655113994, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (12, 10, '00000C', '10', NULL, 'bbbbb@gmail.com', NULL, 0, 0, '$2a$10$hnFgn6Nq9B0wgRgg6YQijekYXW38dqzXzSzzRdNOQxItZn98L0gNe', NULL, NULL, NULL, 1655114127, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (13, 12, '00000D', '10,12', NULL, 'bbbbbaaa@gmail.com', NULL, 0, 0, '$2a$10$ZDsRMtxHkmhQWt92prCHqeXY3OT/p/sA21wrkukk4yASSU.of97bm', NULL, NULL, NULL, 1655114145, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (14, 12, '00000E', '10,12', NULL, NULL, 'bbbbbaaa@gmail.com', 0, 0, '$2a$10$oEvGCTZhfkTD8L3OKlkWBuCqb/72jKbdwvZPpEuEaiqBrxW4GvqOW', NULL, NULL, NULL, 1655114205, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (39350, 1111111111111111111, NULL, NULL, 'aaa', NULL, NULL, 0, NULL, '$2y$10$YtTGQpR89tBaHBJAR6uKsuIylIcGOBtER336oFPCq1i4q39uP32xW', NULL, '', NULL, 1654743271, 1, 0, 254, 900.56, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4294967295, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (39352, 0, '00101E', NULL, NULL, 'dfsf@qc.bb', NULL, 0, 0, '$2a$10$rg/ETWOhhQZv3aRYQnsXpuYpveukeWURZs0RAnumhMgrSIM8UjWgK', NULL, NULL, NULL, 1655128163, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 3117694941, 227, 3242, NULL, 0, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (39355, 3, '00101H', '3', NULL, '1603601628@qq.com', NULL, 1, 0, '$2a$10$UC56Xn8/JXYNsvIVyMFxSe2/G71kM3g0RM1CX9pr8VpcXgcYeT1iu', '1603601628', NULL, NULL, 1655455507, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2130706433, 0, NULL, NULL, 32, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (2, 0, NULL, NULL, 'bbb', NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (3, 0, '000003', NULL, '', '1603601628@qq.combb', '', 1, 0, '$2a$10$s1RIiHFkcubdu7TeoWJjPeFhQ7v1PhZOhCrA754bXCYSept.dGOFi', '速度放缓', 'static/user/avatars/000003.jpg', 'static/user/background/000003.png', 0, 1, 1, 0, 0.00, 1024184719, 20, '', NULL, '0', 1, NULL, '5,8,9', 0, 1, 13, 117, 5, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (4, 0, NULL, NULL, NULL, 'dfsf@qc.ccz', NULL, 0, 0, '$2a$10$XvY0aIuaV0WUClH3uSDWYuzuZlnZoJqBKFK7HU85mvBzB5i5Fxe7S', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (5, 0, NULL, NULL, NULL, 'dfsfzz@qc.ccz', NULL, 0, 0, '$2a$10$nQyk5E6pXEucHryCYo9Rceyy2SBVb25auT8gHHNB1NaK1YSo4VgKm', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (6, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Jx0HApS0UlgqpXndLJhCf.h3GZoP0/rm2hMkFtd1ZzeVY71dWL0Xi', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (7, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, '$2a$10$Q4rL/UbA5TMN5IlZ66oDmOc3ZxrJGZqVYTCigiPW2UnGVLf7n2p2u', NULL, NULL, NULL, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (8, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 1654856133, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (9, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, 1654856143, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 2130706433, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (10, 0, '00000A', NULL, NULL, 'dfsf@qc.ccqb', NULL, 0, 0, '$2a$10$flBT041senJnDCWyKthk4OKQ.xPvrNLvL6h2KVecqjVJkYZQfmCzO', NULL, NULL, NULL, 1655113940, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (11, 0, '00000B', NULL, NULL, 'bbbbs@gmail.com', NULL, 0, 0, '$2a$10$mdxvoMnHke0W8BOZuMZVV.nr9XOZfhaM2fckwy6DRIT0aO6lA8oI.', NULL, NULL, NULL, 1655113994, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (12, 10, '00000C', '10', NULL, 'bbbbb@gmail.com', NULL, 0, 0, '$2a$10$hnFgn6Nq9B0wgRgg6YQijekYXW38dqzXzSzzRdNOQxItZn98L0gNe', NULL, NULL, NULL, 1655114127, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (13, 12, '00000D', '10,12', NULL, 'bbbbbaaa@gmail.com', NULL, 0, 0, '$2a$10$ZDsRMtxHkmhQWt92prCHqeXY3OT/p/sA21wrkukk4yASSU.of97bm', NULL, NULL, NULL, 1655114145, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (14, 12, '00000E', '10,12', NULL, NULL, 'bbbbbaaa@gmail.com', 0, 0, '$2a$10$oEvGCTZhfkTD8L3OKlkWBuCqb/72jKbdwvZPpEuEaiqBrxW4GvqOW', NULL, NULL, NULL, 1655114205, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (39350, 1111111111111111111, NULL, NULL, 'aaa', NULL, NULL, 0, NULL, '$2y$10$YtTGQpR89tBaHBJAR6uKsuIylIcGOBtER336oFPCq1i4q39uP32xW', NULL, '', NULL, 1654743271, 1, 0, 254, 900.56, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4294967295, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (39352, 0, '00101E', NULL, NULL, 'dfsf@qc.bb', NULL, 0, 0, '$2a$10$rg/ETWOhhQZv3aRYQnsXpuYpveukeWURZs0RAnumhMgrSIM8UjWgK', NULL, NULL, NULL, 1655128163, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, NULL, 3117694941, 227, 3242, NULL, 0, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (39355, 3, '00101H', '3', NULL, '1603601628@qq.com', NULL, 1, 0, '$2a$10$UC56Xn8/JXYNsvIVyMFxSe2/G71kM3g0RM1CX9pr8VpcXgcYeT1iu', '1603601628', NULL, NULL, 1655455507, 1, 0, 0, 0.00, NULL, 18, NULL, NULL, NULL, NULL, 3, NULL, 2130706433, 0, NULL, NULL, 35, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (39356, 0, '00101J', NULL, NULL, '1603601628@qq.comt', NULL, 1, 0, NULL, '1603601628', NULL, NULL, 1655714181, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2584805404, 132, 1779, NULL, 1, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (39357, 0, '00101K', NULL, NULL, '784471540@qq.com', NULL, 1, 0, '$2a$10$/GS0OeQUTm5/ttqy9jQBAO70mmrGE7Xitu/XwTQWG/vesM.FL0pVa', '784471540', NULL, NULL, 1655778346, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3748146605, 1, NULL, 115, 4, NULL, NULL, NULL, 0);
 
 -- ----------------------------
 -- Table structure for users_removed
@@ -4870,6 +4949,27 @@ INSERT INTO `users_removed` VALUES (13, 12, '00000D', '10,12', NULL, 'bbbbbaaa@g
 INSERT INTO `users_removed` VALUES (14, 12, '00000E', '10,12', NULL, NULL, 'bbbbbaaa@gmail.com', 0, 0, '$2a$10$oEvGCTZhfkTD8L3OKlkWBuCqb/72jKbdwvZPpEuEaiqBrxW4GvqOW', NULL, NULL, NULL, 1655114205, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL);
 INSERT INTO `users_removed` VALUES (39350, 1111111111111111111, NULL, NULL, 'aaa', NULL, NULL, 0, NULL, '$2y$10$YtTGQpR89tBaHBJAR6uKsuIylIcGOBtER336oFPCq1i4q39uP32xW', NULL, '', NULL, 1654743271, 1, 0, 254, 900.56, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4294967295, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO `users_removed` VALUES (39352, 0, '00101E', NULL, NULL, 'dfsf@qc.bb', NULL, 0, 0, '$2a$10$rg/ETWOhhQZv3aRYQnsXpuYpveukeWURZs0RAnumhMgrSIM8UjWgK', NULL, NULL, NULL, 1655128163, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, '0', 0, NULL, 3117694941, 227, 3242, NULL, 0, NULL, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for zh-cn_articles
+-- ----------------------------
+DROP TABLE IF EXISTS `zh-cn_articles`;
+CREATE TABLE `zh-cn_articles`  (
+  `id` int(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `key` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用于搜索的唯一标识',
+  `title` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `keyword` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '关键词',
+  `desc` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '简介',
+  `cont` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '正文',
+  `addtime` bigint(1) UNSIGNED NULL DEFAULT NULL COMMENT '添加时间',
+  `pin` tinyint(1) UNSIGNED NULL DEFAULT NULL COMMENT '置顶',
+  `status` tinyint(1) UNSIGNED NULL DEFAULT 1 COMMENT '状态',
+  `sort` smallint(1) UNSIGNED NULL DEFAULT 0 COMMENT '排序,大到小',
+  `views` int(1) UNSIGNED NULL DEFAULT 0 COMMENT '浏览量',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `key`(`key`) USING BTREE,
+  INDEX `title`(`title`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for zh-cn_cities
@@ -5671,6 +5771,24 @@ INSERT INTO `zh-cn_currencies` VALUES (155, '圣赫勒拿镑');
 INSERT INTO `zh-cn_currencies` VALUES (156, '刚果法郎');
 INSERT INTO `zh-cn_currencies` VALUES (157, '白俄罗斯卢布');
 INSERT INTO `zh-cn_currencies` VALUES (158, '南极元');
+
+-- ----------------------------
+-- Table structure for zh-cn_educations
+-- ----------------------------
+DROP TABLE IF EXISTS `zh-cn_educations`;
+CREATE TABLE `zh-cn_educations`  (
+  `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '学历名称',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '学历表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of zh-cn_educations
+-- ----------------------------
+INSERT INTO `zh-cn_educations` VALUES (1, '高中或以下');
+INSERT INTO `zh-cn_educations` VALUES (2, '专科');
+INSERT INTO `zh-cn_educations` VALUES (3, '本科');
+INSERT INTO `zh-cn_educations` VALUES (4, '硕士或以上');
 
 -- ----------------------------
 -- Table structure for zh-cn_provinces

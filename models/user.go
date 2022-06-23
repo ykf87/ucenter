@@ -48,9 +48,10 @@ type UserModel struct {
 	Birth         int64   `json:"birth"`
 	Age           int     `json:"age"`
 	Job           string  `json:"job"`
-	Income        string  `json:"income"`
+	Income        int64   `json:"income"`
 	Emotion       string  `json:"emotion"`
 	Constellation int64   `json:"constellation"`
+	Edu           int64   `json:"edu"`
 	Temperament   string  `json:"temperament"`
 	Ip            int64   `json:"ip"`
 	Country       int64   `json:"country"`
@@ -325,6 +326,15 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 			data[k] = strings.Join(ssds, ",")
 		} else if k == "constellation" && v.Int() > 0 {
 			data[k] = ConstellationMap.Get(lang, v.Int())
+		} else if k == "edu" {
+			data[k] = EducationMap.Get(lang, v.Int())
+		} else if k == "income" {
+			tmp, ok := IncomesMap[v.Int()]
+			if ok == true {
+				data[k] = tmp
+			} else {
+				data[k] = ""
+			}
 		} else {
 			data[k] = v.String()
 		}
@@ -707,15 +717,26 @@ func (this Editers) SetIncome(user *UserModel, args ...interface{}) (err error, 
 		err = errors.New("Please set the content to be modified")
 		return
 	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("income", changeto)
+	cgt, _ := strconv.Atoi(changeto)
+	if cgt < 1 {
+		err = errors.New("Please set reasonably")
+		return
+	}
+	ccgt := int64(cgt)
+	ins, ok := IncomesMap[ccgt]
+	if !ok {
+		err = errors.New("Please set reasonably")
+		return
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("income", ccgt)
 	if rs.Error != nil {
 		err = rs.Error
 		return
 	}
 	dt = map[string]interface{}{
-		"income": changeto,
+		"income": ins,
 	}
-	user.Income = changeto
+	user.Income = ccgt
 	return
 }
 

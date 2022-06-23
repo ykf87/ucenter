@@ -46,6 +46,16 @@ func UserLikeAdd(uid, likeid int64) bool {
 	return true
 }
 
-func GetUserLiked() {
-
+//获取用户id喜欢的用户
+func GetUserLikedList(uid int64, inids []int64) []*UserLikeModel {
+	var lks []*UserLikeModel
+	rs := DB.Table("user_likes").Where("id = ?", uid)
+	if inids != nil && len(inids) > 0 {
+		rs = rs.Where("likeid in ?", inids)
+	}
+	rrs := rs.Find(&lks)
+	if rrs.Error != nil {
+		return nil
+	}
+	return lks
 }

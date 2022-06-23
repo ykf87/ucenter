@@ -1,5 +1,9 @@
 package models
 
+import (
+	"strings"
+)
+
 type LanguageModel struct {
 	Id   int64  `json:"id"`
 	Iso  string `json:"iso"`
@@ -21,7 +25,7 @@ func GetAllLanguages(reget bool) (list map[string]*LanguageModel, err error) {
 	}
 	list = make(map[string]*LanguageModel)
 	for _, v := range langs {
-		list[v.Iso] = v
+		list[strings.ToLower(v.Iso)] = v
 	}
 	LangLists = list
 	return

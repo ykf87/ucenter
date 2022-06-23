@@ -1,6 +1,7 @@
 package app
 
 import (
+	"strings"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
 	"ucenter/app/controllers/index"
@@ -60,18 +61,24 @@ func Middle() gin.HandlerFunc {
 			lang = c.GetHeader("lang")
 		} else if cc, err := c.Cookie("lang"); err == nil {
 			lang = cc
+		} else if cc, err := c.GetQuery("lang"); err == true {
+			lang = cc
 		} else {
 			lang = config.Config.Lang
+		}
+		lang = strings.ToLower(lang)
+		if _, ok := models.LangLists[lang]; !ok {
+			lang = strings.ToLower(config.Config.Lang)
 		}
 		c.Set("_lang", lang)
 
 		country, err := models.GetCountryByIp(c.ClientIP())
 		if err != nil {
 			c.Set("_timezone", config.Config.Timezone)
-			c.Header("timezone", config.Config.Timezone)
+			// c.Header("timezone", config.Config.Timezone)
 		} else {
 			c.Set("_timezone", country.Timezone)
-			c.Header("timezone", country.Timezone)
+			// c.Header("timezone", country.Timezone)
 		}
 
 		c.Header("language", lang)
@@ -98,8 +105,9 @@ func Auth() gin.HandlerFunc {
 		} else {
 			c.Set("_user", user)
 			if user.Lang != "" {
-				c.Header("language", user.Lang)
-				c.Set("_lang", user.Lang)
+				lang := strings.ToLower(user.Lang)
+				c.Header("language", lang)
+				c.Set("_lang", lang)
 			}
 			if user.Timezone != "" {
 				c.Set("_timezone", user.Timezone)
