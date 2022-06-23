@@ -37,6 +37,7 @@ type ConfigStruct struct {
 	Datetimefmt      string `default:"2006-01-02 15:04:05"`
 	Datefmt          string `default:"2006-01-02"`
 	Timefmt          string `default:"15:04:05"`
+	Useim            string `required:"true"` //使用的im
 
 	DB []struct {
 		Type string

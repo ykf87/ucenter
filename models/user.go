@@ -83,11 +83,14 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip s
 	} else if email != "" {
 		DB.Table("users").Where("mail = ?", email).First(hadUser)
 		insertData["mail"] = email
-		err = coder.Verify(email, code)
-		if err != nil {
-			return
+		if code != "" {
+			err = coder.Verify(email, code)
+			if err != nil {
+				return
+			}
+			insertData["mailvery"] = 1
 		}
-		insertData["mailvery"] = 1
+
 		if nickname == "" {
 			tmp := strings.Split(email, "@")
 			insertData["nickname"] = tmp[0]
@@ -188,7 +191,7 @@ func GetUser(id int64, account, email, phone string) *UserModel {
 }
 
 //查找用户列表
-func GetUserList(page, limit int, q string, noids []int64) []*UserModel {
+func GetUserList(page, limit int, q, rd string, noids []int64) []*UserModel {
 	if page < 1 {
 		page = 1
 	}
@@ -204,6 +207,9 @@ func GetUserList(page, limit int, q string, noids []int64) []*UserModel {
 	}
 	if q != "" {
 		dbob = dbob.Where("nickname like ?", "%"+q+"%")
+	}
+	if rd != "" {
+		dbob = dbob.Order("RAND()")
 	}
 	var useslist []*UserModel
 	rs := dbob.Find(&useslist)
@@ -323,7 +329,7 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 					ssds = append(ssds, name)
 				}
 			}
-			data[k] = strings.Join(ssds, ",")
+			data[k] = ssds //strings.Join(ssds, ",")
 		} else if k == "constellation" && v.Int() > 0 {
 			data[k] = ConstellationMap.Get(lang, v.Int())
 		} else if k == "edu" {

@@ -55,11 +55,6 @@ func Sign(c *gin.Context) {
 		return
 	}
 
-	if code == "" {
-		controllers.Error(c, nil, &controllers.Msg{Str: "Please input your Captcha"})
-		return
-	}
-
 	ip := c.ClientIP()
 	user, err := models.MakeUser("", email, "", pwd, code, invite, nickname, platform, ip)
 	if err != nil {

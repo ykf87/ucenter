@@ -11,7 +11,32 @@ import (
 	"io/ioutil"
 	"strconv"
 	"time"
+	"ucenter/app/config"
 )
+
+type Client struct {
+	Id  string
+	Key string
+}
+
+type UserSigs struct {
+	Sig      string
+	Expireto int64
+}
+
+var token *UserSigs
+
+func GetClient() (cli *Client, err error) {
+	c, ok := config.Config.Im["tencent"]
+	if !ok {
+		err = errors.New("No config for tencent im")
+		return
+	}
+	cli = new(Client)
+	cli.Id = c.Id
+	cli.Key = c.Key
+	return
+}
 
 /**
  *【功能说明】用于签发 TRTC 和 IM 服务中必须要使用的 UserSig 鉴权票据
@@ -32,8 +57,16 @@ import (
  * key - The encryption key used to calculate usersig can be obtained from the console.
  * expire - UserSig expiration time, in seconds. For example, 86400 indicates that the generated UserSig will expire one day after being generated.
  */
-func GenUserSig(sdkappid int, key string, userid string, expire int) (string, error) {
-	return genSig(sdkappid, key, userid, expire, nil)
+func (this *Client) GenUserSig(userid string, expire int) (string, int, error) {
+	iid, _ := strconv.Atoi(this.Id)
+	sig, err := genSig(iid, this.Key, userid, expire, nil)
+	if err != nil {
+		return "", 0, err
+	}
+	token = new(UserSigs)
+	token.Sig = sig
+	token.Expireto = time.Now().Unix() + int64(expire)
+	return sig, expire, nil
 }
 
 func GenUserSigWithBuf(sdkappid int, key string, userid string, expire int, buf []byte) (string, error) {
@@ -296,7 +329,7 @@ func genSig(sdkappid int, key string, identifier string, expire int, userbuf []b
 	if err = w.Close(); err != nil {
 		return "", err
 	}
-	return base64urlEncode(b.Bytes()), nil
+	return base64.URLEncoding.EncodeToString(b.Bytes()), nil
 }
 
 // VerifyUserSig 检验UserSig在now时间点时是否有效
@@ -330,7 +363,7 @@ type userSig struct {
 }
 
 func newUserSig(usersig string) (userSig, error) {
-	b, err := base64urlDecode(usersig)
+	b, err := base64.URLEncoding.DecodeString(usersig)
 	if err != nil {
 		return userSig{}, err
 	}

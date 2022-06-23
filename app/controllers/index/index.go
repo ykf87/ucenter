@@ -99,41 +99,6 @@ func Lists(c *gin.Context) {
 	} else {
 		controllers.Success(c, res, &controllers.Msg{Str: "Success"})
 	}
-
-	// dbObject := models.DB.Table(tbName)
-	// if tb == "temperaments" {
-	// 	sex := c.Query("sex")
-	// 	if sex != "" {
-	// 		dbObject = dbObject.Where("sex = ?", sex)
-	// 	}
-	// }
-	// if filter != "" {
-	// 	dbObject = dbObject.Where("name like ?", "%"+filter+"%")
-	// }
-
-	// type sspfd struct {
-	// 	Id   int64  `json:"id"`
-	// 	Name string `json:"name"`
-	// }
-	// var dts []*sspfd
-	// if limit > 0 {
-	// 	dbObject = dbObject.Limit(limit).Offset((page - 1) * limit)
-	// }
-	// rs := dbObject.Find(&dts)
-	// if rs.Error != nil {
-	// 	log.Println(rs.Error)
-	// 	controllers.Error(c, nil, &controllers.Msg{Str: "No results found"})
-	// 	return
-	// }
-	// if kv != "" {
-	// 	ngst := make(map[int64]string)
-	// 	for _, v := range dts {
-	// 		ngst[v.Id] = v.Name
-	// 	}
-	// 	controllers.Success(c, ngst, &controllers.Msg{Str: "Success"})
-	// } else {
-	// 	controllers.Success(c, dts, &controllers.Msg{Str: "Success"})
-	// }
 }
 
 //获取系统支持的语言列表
@@ -217,6 +182,7 @@ func Search(c *gin.Context) {
 	q := strings.Trim(c.Query("q"), " ")
 	page, _ := strconv.Atoi(c.Query("page"))
 	limit, _ := strconv.Atoi(c.Query("limit"))
+	rd := strings.Trim(c.Query("rand"), " ")
 
 	langob, _ := c.Get("_lang")
 	timezones, _ := c.Get("_timezone")
@@ -225,7 +191,7 @@ func Search(c *gin.Context) {
 	if user != nil {
 		ulids = append(ulids, user.Id)
 	}
-	r := models.GetUserList(page, limit, q, ulids)
+	r := models.GetUserList(page, limit, q, rd, ulids)
 	if r == nil || len(r) < 1 {
 		controllers.Resp(c, nil, nil, 404)
 	} else {
@@ -258,6 +224,13 @@ func Search(c *gin.Context) {
 						nbs["liked"] = "0"
 						nbs["likeeach"] = "0"
 					}
+					lll = append(lll, nbs)
+				}
+			} else {
+				for _, v := range r {
+					nbs := v.Info(langob.(string), timezones.(string))
+					nbs["liked"] = "0"
+					nbs["likeeach"] = "0"
 					lll = append(lll, nbs)
 				}
 			}
