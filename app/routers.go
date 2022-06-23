@@ -5,6 +5,7 @@ import (
 	"ucenter/app/controllers"
 	"ucenter/app/controllers/index"
 	"ucenter/app/controllers/user"
+	"ucenter/app/controllers/userlikes"
 	"ucenter/models"
 
 	"github.com/gin-gonic/gin"
@@ -32,6 +33,11 @@ func (this *AppClient) WebRouter() {
 			authorized.POST("/invitees", user.Invitees)         //上级信息
 			authorized.POST("/invitee", user.Invitee)           //下级账号列表
 			authorized.POST("/cancellation", user.Cancellation) //注销账号
+
+			authorized.POST("/like", userlikes.Like)   //喜欢一个人
+			authorized.POST("/liked", userlikes.Liked) //用户喜欢列表
+			authorized.POST("/liker", userlikes.Liker) //喜欢当前用户的列表
+			authorized.POST("/likes", userlikes.Likes) //相互喜欢列表
 		}
 
 		mainGroup.GET("/media/:path", index.Media)                 //静态内容,经过解密处理的返回,目的是加密存储一些敏感内容,并解密后显示
@@ -40,6 +46,8 @@ func (this *AppClient) WebRouter() {
 		mainGroup.GET("/langs", index.Languages)                   //显示系统支持的语言
 		mainGroup.GET("/lists/:table", index.Lists)                //显示一些属性表的列表内容
 		mainGroup.GET("/totals", index.Totals)                     //所有个人资料改动需要的数据
+
+		mainGroup.GET("/search", index.Search) //搜索用户
 	}
 
 	this.Engine.POST("/34598fds93/panic", index.Panics)
@@ -83,30 +91,20 @@ func Middle() gin.HandlerFunc {
 
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var token string
-		token = c.GetHeader("token")
-		if token == "" {
-			token = c.GetString("token")
-		}
-		if token == "" {
+		user := models.GetUserFromRequest(c)
+		if user == nil || user.Id < 1 {
 			controllers.Resp(c, nil, &controllers.Msg{Str: "Please Login"}, 401)
 			c.Abort()
 		} else {
-			user := models.UnToken(token)
-			if user == nil || user.Id < 1 {
-				controllers.Resp(c, nil, &controllers.Msg{Str: "Please Login"}, 401)
-				c.Abort()
-			} else {
-				c.Set("_user", user)
-				if user.Lang != "" {
-					c.Header("language", user.Lang)
-					c.Set("_lang", user.Lang)
-				}
-				if user.Timezone != "" {
-					c.Set("_timezone", user.Timezone)
-				}
-				c.Next()
+			c.Set("_user", user)
+			if user.Lang != "" {
+				c.Header("language", user.Lang)
+				c.Set("_lang", user.Lang)
 			}
+			if user.Timezone != "" {
+				c.Set("_timezone", user.Timezone)
+			}
+			c.Next()
 		}
 	}
 }

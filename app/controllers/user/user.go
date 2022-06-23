@@ -5,7 +5,7 @@ import (
 	"strings"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
-	"ucenter/app/mails/sender/cancellation"
+	"ucenter/app/mails/sender/bye"
 	"ucenter/app/mails/sender/coder"
 	"ucenter/app/mails/sender/sign"
 	"ucenter/app/safety/passwordhash"
@@ -265,5 +265,5 @@ func Cancellation(c *gin.Context) {
 	}
 
 	//修改删除关系网,发送告别邮件
-	cancellation.Send()
+	bye.Send()
 }

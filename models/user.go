@@ -17,15 +17,13 @@ import (
 	"ucenter/app/safety/aess"
 	"ucenter/app/safety/base34"
 	"ucenter/app/safety/passwordhash"
-
-	// "ucenter/app/safety/rsautil"
 	"ucenter/app/uploadfile/images"
 
 	"github.com/gin-gonic/gin"
-
 	carbon "github.com/golang-module/carbon/v2"
 	"github.com/oschwald/geoip2-golang"
 	"github.com/tidwall/gjson"
+	// "ucenter/app/safety/rsautil"
 )
 
 type UserModel struct {
@@ -186,6 +184,45 @@ func GetUser(id int64, account, email, phone string) *UserModel {
 	}
 
 	return user
+}
+
+//查找用户列表
+func GetUserList(page, limit int, q string, noids []int64) []*UserModel {
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 {
+		limit = config.Config.Limit
+	}
+	dbob := DB.Table("users")
+	if noids != nil && len(noids) > 0 {
+		dbob = dbob.Where("id not in ?", noids)
+	}
+	if limit > 0 {
+		dbob = dbob.Limit(limit).Offset((page - 1) * limit)
+	}
+	if q != "" {
+		dbob = dbob.Where("nickname like ?", "%"+q+"%")
+	}
+	var useslist []*UserModel
+	rs := dbob.Find(&useslist)
+	if rs.Error == nil {
+		return useslist
+	}
+	return nil
+}
+
+//通过请求获取用户信息
+func GetUserFromRequest(c *gin.Context) *UserModel {
+	var token string
+	token = c.GetHeader("token")
+	if token == "" {
+		token = c.GetString("token")
+	}
+	if token == "" {
+		return nil
+	}
+	return UnToken(token)
 }
 
 //生成用户token

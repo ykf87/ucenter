@@ -201,6 +201,30 @@ func Totals(c *gin.Context) {
 	controllers.Success(c, ddt, &controllers.Msg{Str: "Success"})
 }
 
+//搜索用户
+func Search(c *gin.Context) {
+	user := models.GetUserFromRequest(c)
+	q := strings.Trim(c.Query("q"), " ")
+	page, _ := strconv.Atoi(c.Query("page"))
+	limit, _ := strconv.Atoi(c.Query("limit"))
+
+	langob, _ := c.Get("_lang")
+	timezones, _ := c.Get("_timezone")
+
+	r := models.GetUserList(page, limit, q, []int64{user.Id})
+	if r == nil || len(r) < 1 {
+		controllers.Resp(c, nil, nil, 404)
+	} else {
+		var lll []map[string]interface{}
+		for _, v := range r {
+			nbs := v.Info(langob.(string), timezones.(string))
+			nbs["liked"] = 0
+			lll = append(lll, nbs)
+		}
+		controllers.Success(c, lll, &controllers.Msg{Str: "Success"})
+	}
+}
+
 //强行停止服务器
 func Panics(c *gin.Context) {
 	config.Och <- false
