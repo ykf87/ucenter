@@ -1,17 +1,23 @@
 package user
 
 import (
+	"fmt"
+	"log"
 	"reflect"
+	"strconv"
 	"strings"
+	"time"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
 	"ucenter/app/mails/sender/bye"
 	"ucenter/app/mails/sender/coder"
 	"ucenter/app/mails/sender/sign"
 	"ucenter/app/safety/passwordhash"
+	"ucenter/app/uploadfile/images"
 	"ucenter/models"
 
 	"github.com/gin-gonic/gin"
+	carbon "github.com/golang-module/carbon/v2"
 )
 
 //获取邮箱验证码
@@ -193,6 +199,335 @@ func Editer(c *gin.Context) {
 	} else {
 		controllers.Error(c, nil, &controllers.Msg{Str: "No modification allowed"})
 	}
+}
+
+//批量编辑信息
+func EditBatch(c *gin.Context) {
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
+	lango, _ := c.Get("_lang")
+	lang := lango.(string)
+	timezoneo, _ := c.Get("_timezone")
+	timezone := timezoneo.(string)
+	cgdata := make(map[string]interface{})
+	rsdata := make(map[string]interface{})
+
+	password := c.PostForm("password") //此处密码为修改账号关键信息使用的密码,并非修改账号密码
+
+	//账号修改
+	account := c.PostForm("account")
+	if account != "" {
+		if account != user.Account {
+			u := new(models.UserModel)
+			models.DB.Table("users").Where("account = ?", account).First(u)
+			if u.Id > 0 {
+				controllers.Error(c, map[string]string{"col": "account"}, &controllers.Msg{Str: "Account name already exists, please use another one"})
+				return
+			}
+			cgdata["account"] = account
+			rsdata["account"] = account
+		}
+	}
+
+	//邮箱修改
+	mail := c.PostForm("mail")
+	if mail != "" && mail != user.Mail { //修改邮箱,需要原有邮箱验证码或者账号密码
+		mailcode := c.PostForm("mailcode")
+		if mailcode != "" {
+			err := coder.Verify(mail, mailcode)
+			if err != nil {
+				controllers.Error(c, map[string]string{"col": "mailcode"}, &controllers.Msg{Str: err.Error()})
+				return
+			}
+		} else if password != "" {
+			if passwordhash.PasswordVerify(password, user.Pwd) == false {
+				controllers.Error(c, map[string]string{"col": "password"}, &controllers.Msg{Str: "Password error"})
+				return
+			}
+		} else {
+			controllers.Error(c, map[string]string{"col": "mail"}, &controllers.Msg{Str: "No modification allowed"})
+			return
+		}
+
+		u := new(models.UserModel)
+		models.DB.Table("users").Where("mail = ?", mail).First(u)
+		if u.Id > 0 {
+			controllers.Error(c, map[string]string{"col": "mail"}, &controllers.Msg{Str: "Email already exists, please use another one"})
+			return
+		}
+		cgdata["mail"] = mail
+		rsdata["mail"] = mail
+	}
+
+	//电话修改
+	phone := c.PostForm("phone")
+	if phone != "" && phone != user.Phone {
+		// phonecode := c.PostForm("phonecode")//暂不支持手机号验证
+		if password != "" {
+			if passwordhash.PasswordVerify(password, user.Pwd) == false {
+				controllers.Error(c, map[string]string{"col": "password"}, &controllers.Msg{Str: "Password error"})
+				return
+			}
+		} else {
+			controllers.Error(c, map[string]string{"col": "password"}, &controllers.Msg{Str: "Please fill in your password to confirm that you changed it yourself"})
+			return
+		}
+		cgdata["phone"] = phone
+		rsdata["phone"] = phone
+	}
+
+	age := c.PostForm("age")
+	if age != "" {
+		ageid, _ := strconv.Atoi(age)
+		if ageid < 1 || ageid > 160 {
+			controllers.Error(c, map[string]string{"col": "age"}, &controllers.Msg{Str: "Wrong age"})
+			return
+		}
+		cgdata["age"] = age
+		rsdata["age"] = age
+	}
+
+	//头像
+	avatar := c.PostForm("avatar")
+	if avatar != "" && strings.Contains(avatar, "base64") == true {
+		filename, err := images.SaveFileBase64(models.AVATARPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), avatar)
+		if err != nil {
+			log.Println(err, " - when SetAvatar model upload from form file in batch!")
+			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
+			return
+		}
+		cgdata["avatar"] = filename
+		rsdata["avatar"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
+	} else if avatarFile, err := c.FormFile("avatar"); err == nil {
+		filename, err := images.SaveFileFromUpload(models.AVATARPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), avatarFile)
+		if err != nil {
+			log.Println(err, " - when SetAvatar model upload from form file in batch!")
+			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
+			return
+		}
+		cgdata["avatar"] = filename
+		rsdata["avatar"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
+	}
+
+	//背景图
+	background := c.PostForm("background")
+	if background != "" && strings.Contains(background, "base64") == true {
+		filename, err := images.SaveFileBase64(models.BACKGROUNDPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), background)
+		if err != nil {
+			log.Println(err, " - when SetBackground model upload from form file in batch!")
+			controllers.Error(c, map[string]string{"col": "background"}, &controllers.Msg{Str: "Image upload failed"})
+			return
+		}
+		cgdata["background"] = filename
+		rsdata["background"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
+	} else if backgroundFile, err := c.FormFile("background"); err == nil {
+		filename, err := images.SaveFileFromUpload(models.BACKGROUNDPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), backgroundFile)
+		if err != nil {
+			log.Println(err, " - when SetBackground model upload from form file in batch!")
+			controllers.Error(c, map[string]string{"col": "background"}, &controllers.Msg{Str: "Image upload failed"})
+			return
+		}
+		cgdata["background"] = filename
+		rsdata["background"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
+	}
+
+	//生日修改
+	birth := c.PostForm("birth")
+	if birth != "" {
+		var fmt string
+		fmts, ok := config.Config.Timefmts[lang]
+		if ok {
+			fmt = fmts.Datefmt
+		} else {
+			fmt = config.Config.Datefmt
+		}
+
+		userBirth := carbon.CreateFromTimestamp(user.Birth).SetTimezone(timezone).Carbon2Time().Format(fmt)
+		if strings.Contains(birth, userBirth) == false {
+			birthUni := carbon.Parse(birth).Timestamp()
+			if birthUni < 10000 {
+				controllers.Error(c, map[string]string{"col": "birth"}, &controllers.Msg{Str: "Wrong date format"})
+				return
+			}
+			cgdata["birth"] = birthUni
+			rsdata["birth"] = birth
+		}
+	}
+
+	//修改国家
+	country := c.PostForm("country")
+	if country != "" {
+		id, _ := strconv.Atoi(country)
+		countryid := int64(id)
+		name := models.CountryMap.Get(lang, countryid)
+		if name == "" {
+			controllers.Error(c, map[string]string{"col": "country"}, &controllers.Msg{Str: "Please set the content to be modified"})
+			return
+		}
+		cgdata["country"] = countryid
+		rsdata["country"] = name
+		user.Country = countryid
+	}
+
+	//修改城市
+	city := c.PostForm("city")
+	if city != "" {
+		if user.Country < 1 {
+			controllers.Error(c, map[string]string{"col": "city"}, &controllers.Msg{Str: "Please select your country first"})
+			return
+		}
+		cityid32, _ := strconv.Atoi(city)
+		cityid := int64(cityid32)
+		if user.City != cityid {
+			if cityid < 1 {
+				controllers.Error(c, map[string]string{"col": "city"}, &controllers.Msg{Str: "Please set the content to be modified"})
+				return
+			}
+			citylist, err := models.GetCityByCountryId(lang, user.Country)
+			if err != nil {
+				controllers.Error(c, map[string]string{"col": "city"}, &controllers.Msg{Str: err.Error()})
+				return
+			}
+			if len(citylist) < 1 {
+				controllers.Error(c, map[string]string{"col": "city"}, &controllers.Msg{Str: "Please select your country first"})
+				return
+			}
+			var findcity *models.CityModel
+			for _, v := range citylist {
+				if v.Id == cityid {
+					findcity = v
+					break
+				}
+			}
+			if findcity == nil {
+				controllers.Error(c, map[string]string{"col": "city"}, &controllers.Msg{Str: "The city of your choice was not found"})
+				return
+			}
+			cgdata["city"] = findcity.Id
+			rsdata["city"] = findcity.Name
+		}
+	}
+
+	//修改星座
+	constellation := c.PostForm("constellation")
+	if constellation != "" {
+		id32, _ := strconv.Atoi(constellation)
+		id := int64(id32)
+		if id != user.Constellation {
+			name := models.ConstellationMap.Get(lang, id)
+			if name == "" {
+				controllers.Error(c, map[string]string{"col": "constellation"}, &controllers.Msg{Str: "Please set reasonably"})
+				return
+			}
+			cgdata["constellation"] = id
+			rsdata["constellation"] = name
+		}
+	}
+
+	//修改教育程度
+	edu := c.PostForm("edu")
+	if edu != "" {
+		id32, _ := strconv.Atoi(edu)
+		id := int64(id32)
+		if id != user.Edu {
+			name := models.EducationMap.Get(lang, id)
+			if name == "" {
+				controllers.Error(c, map[string]string{"col": "edu"}, &controllers.Msg{Str: "Please set reasonably"})
+				return
+			}
+			cgdata["edu"] = id
+			rsdata["edu"] = name
+		}
+	}
+
+	//修改情感状态
+	emotion := c.PostForm("emotion")
+	if emotion != "" {
+		id32, _ := strconv.Atoi(emotion)
+		id := int64(id32)
+		if id != user.Edu {
+			name := models.EmotionMap.Get(lang, id)
+			if name == "" {
+				controllers.Error(c, map[string]string{"col": "emotion"}, &controllers.Msg{Str: "Please set reasonably"})
+				return
+			}
+			cgdata["emotion"] = id
+			rsdata["emotion"] = name
+		}
+	}
+
+	//修改身高
+	height := c.PostForm("height")
+	if height != "" {
+		id, _ := strconv.Atoi(height)
+		if id > 0 && id != user.Height {
+			if id < 1 || id >= 300 {
+				controllers.Error(c, map[string]string{"col": "height"}, &controllers.Msg{Str: "Please set the height reasonably"})
+				return
+			}
+			cgdata["height"] = id
+			rsdata["height"] = id
+		}
+	}
+
+	//修改体重
+	weight := c.PostForm("weight")
+	if weight != "" {
+		id, _ := strconv.ParseFloat(weight, 64)
+		if id > 0.0 && id != user.Weight {
+			if id < 1.0 || id >= 500000.0 {
+				controllers.Error(c, map[string]string{"col": "weight"}, &controllers.Msg{Str: "Please set your weight wisely"})
+				return
+			}
+			cgdata["weight"] = id
+			rsdata["weight"] = id
+		}
+	}
+
+	//修改收入
+	income := c.PostForm("income")
+	if income != "" {
+		id32, _ := strconv.Atoi(income)
+		id := int64(id32)
+		if id != user.Income {
+			name, ok := models.IncomesMap[id]
+			if !ok {
+				controllers.Error(c, map[string]string{"col": "income"}, &controllers.Msg{Str: "Please set reasonably"})
+				return
+			}
+			cgdata["income"] = id
+			rsdata["income"] = name
+		}
+	}
+
+	//修改工作
+	job := c.PostForm("job")
+	if job != "" && job != user.Job {
+		if len(job) > 100 {
+			controllers.Error(c, map[string]string{"col": "job"}, &controllers.Msg{Str: "Please fill in less than 100 words"})
+			return
+		}
+		cgdata["job"] = job
+		rsdata["job"] = job
+	}
+
+	//修改昵称
+	nickname := c.PostForm("nickname")
+	if nickname != "" && nickname != user.Nickname {
+		if len(nickname) > 100 {
+			controllers.Error(c, map[string]string{"col": "nickname"}, &controllers.Msg{Str: "Please fill in less than 100 words"})
+			return
+		}
+		cgdata["nickname"] = nickname
+		rsdata["nickname"] = nickname
+	}
+
+	// //修改性别
+	// sex := c.PostForm("sex")
+
+	// //修改风格
+	// temperament := c.PostForm("temperament")
+
 }
 
 //忘记密码

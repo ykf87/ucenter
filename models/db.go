@@ -99,6 +99,13 @@ func DBToCache(ch chan error) (err error) {
 		}
 		return
 	}
+	err = SetEmotionMap()
+	if err != nil {
+		if ch != nil {
+			ch <- err
+		}
+		return
+	}
 	_, err = GetAllIncomes(true)
 	if err != nil {
 		if ch != nil {

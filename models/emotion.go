@@ -1,4 +1,4 @@
-//学历
+//情感状态
 package models
 
 import (
@@ -6,10 +6,10 @@ import (
 	"ucenter/app/config"
 )
 
-var EducationMap GlobalMapStruct = make(GlobalMapStruct)
+var EmotionMap GlobalMapStruct = make(GlobalMapStruct)
 
-//初始化学历到map
-func SetEducationMap() error {
+//初始化情感状态到map
+func SetEmotionMap() error {
 	langs, err := GetAllLanguages(false)
 	if err != nil {
 		return err
@@ -21,13 +21,13 @@ func SetEducationMap() error {
 			ttmmp[code] = tmp
 		}
 	}
-	EducationMap = ttmmp
+	EmotionMap = ttmmp
 	return nil
 }
 
-func setEducationMapByLang(lang string) (map[int64]string, error) {
+func setEmotionMapByLang(lang string) (map[int64]string, error) {
 	var dts []*IdNameModel
-	rs := DB.Table(lang + "_educations").Find(&dts)
+	rs := DB.Table(lang + "_emotions").Find(&dts)
 	if rs.Error != nil {
 		return nil, rs.Error
 	}
@@ -38,11 +38,11 @@ func setEducationMapByLang(lang string) (map[int64]string, error) {
 	return cl, nil
 }
 
-//返回学历列表
-func EducationList(lang, filter, kv string) (ddt interface{}) {
-	ors, ok := EducationMap[lang]
+//返回情感状态列表
+func EmotionList(lang, filter, kv string) (ddt interface{}) {
+	ors, ok := EmotionMap[lang]
 	if !ok {
-		ors, ok = EducationMap[strings.ToLower(config.Config.Lang)]
+		ors, ok = EmotionMap[strings.ToLower(config.Config.Lang)]
 		if !ok {
 			return nil
 		}

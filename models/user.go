@@ -26,6 +26,11 @@ import (
 	// "ucenter/app/safety/rsautil"
 )
 
+const (
+	AVATARPATH     = "static/user/avatars/"
+	BACKGROUNDPATH = "static/user/background/"
+)
+
 type UserModel struct {
 	Id            int64   `json:"id"`
 	Pid           int64   `json:"pid"`
@@ -49,7 +54,7 @@ type UserModel struct {
 	Age           int     `json:"age"`
 	Job           string  `json:"job"`
 	Income        int64   `json:"income"`
-	Emotion       string  `json:"emotion"`
+	Emotion       int64   `json:"emotion"`
 	Constellation int64   `json:"constellation"`
 	Edu           int64   `json:"edu"`
 	Temperament   string  `json:"temperament"`
@@ -334,6 +339,8 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 			data[k] = ConstellationMap.Get(lang, v.Int())
 		} else if k == "edu" {
 			data[k] = EducationMap.Get(lang, v.Int())
+		} else if k == "emotion" {
+			data[k] = EmotionMap.Get(lang, v.Int())
 		} else if k == "income" {
 			tmp, ok := IncomesMap[v.Int()]
 			if ok == true {
@@ -367,13 +374,13 @@ func (this Editers) SetAccount(user *UserModel, args ...interface{}) (err error,
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("account", newAccount)
 	if rs.Error != nil {
-		err = rs.Error
+		err = errors.New("Modification failure")
 		return
 	}
 	dt = map[string]interface{}{
 		"account": newAccount,
 	}
-	user.Account = newAccount
+	// user.Account = newAccount
 	return
 }
 
@@ -415,7 +422,7 @@ func (this Editers) SetEmail(user *UserModel, args ...interface{}) (err error, d
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Updates(ud)
 	if rs.Error != nil {
-		err = rs.Error
+		err = errors.New("Modification failure")
 		return
 	}
 	user.Mail = newAccount
@@ -448,13 +455,13 @@ func (this Editers) SetPhone(user *UserModel, args ...interface{}) (err error, d
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("phone", newAccount)
 	if rs.Error != nil {
-		err = rs.Error
+		err = errors.New("Modification failure")
 		return
 	}
 	dt = map[string]interface{}{
 		"phone": newAccount,
 	}
-	user.Phone = newAccount
+	// user.Phone = newAccount
 	return
 }
 
@@ -472,7 +479,7 @@ func (this Editers) SetPassword(user *UserModel, args ...interface{}) (err error
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Updates(dtn)
 	if rs.Error != nil {
-		err = rs.Error
+		err = errors.New("Modification failure")
 		return
 	}
 	dt = map[string]interface{}{"token": user.Token()}
@@ -486,12 +493,16 @@ func (this Editers) SetNickname(user *UserModel, args ...interface{}) (err error
 		err = errors.New("Please set the content to be modified")
 		return
 	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("nickname", changeto)
-	if rs.Error != nil {
-		err = rs.Error
+	if len(changeto) > 200 {
+		err = errors.New("Please set reasonably")
 		return
 	}
-	user.Nickname = changeto
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("nickname", changeto)
+	if rs.Error != nil {
+		err = errors.New("Modification failure")
+		return
+	}
+	// user.Nickname = changeto
 	dt = map[string]interface{}{
 		"nickname": changeto,
 	}
@@ -501,7 +512,7 @@ func (this Editers) SetNickname(user *UserModel, args ...interface{}) (err error
 //修改头像
 func (this Editers) SetAvatar(user *UserModel, args ...interface{}) (error, map[string]interface{}) {
 	changeto := args[0].(string)
-	avatarPath := "static/user/avatars/"
+	avatarPath := AVATARPATH
 	var filename string
 	var err error
 	oldFilename := user.Avatar
@@ -527,12 +538,12 @@ func (this Editers) SetAvatar(user *UserModel, args ...interface{}) (error, map[
 	if filename != "" {
 		rs := DB.Table("users").Where("id = ?", user.Id).Update("avatar", filename)
 		if rs.Error != nil {
-			return rs.Error, nil
+			return errors.New("Modification failure"), nil
 		}
 		if strings.Contains(oldFilename, filename) != true {
 			os.Remove(oldFilename)
 		}
-		user.Avatar = filename
+		// user.Avatar = filename
 		return nil, map[string]interface{}{"avatar": config.Config.Domain + filename}
 	}
 	return errors.New("System error, please try again later"), nil
@@ -541,7 +552,7 @@ func (this Editers) SetAvatar(user *UserModel, args ...interface{}) (error, map[
 //修改背景图片
 func (this Editers) SetBackground(user *UserModel, args ...interface{}) (error, map[string]interface{}) {
 	changeto := args[0].(string)
-	avatarPath := "static/user/background/"
+	avatarPath := BACKGROUNDPATH
 	var filename string
 	var err error
 	oldFilename := user.Background
@@ -567,12 +578,12 @@ func (this Editers) SetBackground(user *UserModel, args ...interface{}) (error, 
 	if filename != "" {
 		rs := DB.Table("users").Where("id = ?", user.Id).Update("background", filename)
 		if rs.Error != nil {
-			return rs.Error, nil
+			return errors.New("Modification failure"), nil
 		}
 		if strings.Contains(oldFilename, filename) != true {
 			os.Remove(oldFilename)
 		}
-		user.Background = filename
+		// user.Background = filename
 		return nil, map[string]interface{}{"background": filename}
 	}
 	return errors.New("System error, please try again later"), nil
@@ -591,13 +602,13 @@ func (this Editers) SetSex(user *UserModel, args ...interface{}) (err error, dt 
 	cgt, _ := strconv.Atoi(changeto)
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("sex", cgt)
 	if rs.Error != nil {
-		err = rs.Error
+		err = errors.New("Modification failure")
 		return
 	}
 	dt = map[string]interface{}{
 		"sex": cgt,
 	}
-	user.Sex = cgt
+	// user.Sex = cgt
 	return
 }
 
@@ -615,13 +626,13 @@ func (this Editers) SetHeight(user *UserModel, args ...interface{}) (err error, 
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("height", cgt)
 	if rs.Error != nil {
-		err = rs.Error
+		err = errors.New("Modification failure")
 		return
 	}
 	dt = map[string]interface{}{
 		"height": cgt,
 	}
-	user.Height = cgt
+	// user.Height = cgt
 	return
 }
 
@@ -639,13 +650,13 @@ func (this Editers) SetWeight(user *UserModel, args ...interface{}) (err error, 
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("weight", cgt)
 	if rs.Error != nil {
-		err = rs.Error
+		err = errors.New("Modification failure")
 		return
 	}
 	dt = map[string]interface{}{
 		"weight": cgt,
 	}
-	user.Weight = cgt
+	// user.Weight = cgt
 	return
 }
 
@@ -663,13 +674,13 @@ func (this Editers) SetAge(user *UserModel, args ...interface{}) (err error, dt 
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("age", cgt)
 	if rs.Error != nil {
-		err = rs.Error
+		err = errors.New("Modification failure")
 		return
 	}
 	dt = map[string]interface{}{
 		"age": cgt,
 	}
-	user.Age = cgt
+	// user.Age = cgt
 	return
 }
 
@@ -687,13 +698,13 @@ func (this Editers) SetBirth(user *UserModel, args ...interface{}) (err error, d
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("birth", cgt)
 	if rs.Error != nil {
-		err = rs.Error
+		err = errors.New("Modification failure")
 		return
 	}
 	dt = map[string]interface{}{
 		"birth": changeto,
 	}
-	user.Birth = cgt
+	// user.Birth = cgt
 	return
 }
 
@@ -706,10 +717,10 @@ func (this Editers) SetJob(user *UserModel, args ...interface{}) (err error, dt 
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("job", changeto)
 	if rs.Error != nil {
-		err = rs.Error
+		err = errors.New("Modification failure")
 		return
 	}
-	user.Job = changeto
+	// user.Job = changeto
 	dt = map[string]interface{}{
 		"job": changeto,
 	}
@@ -736,13 +747,13 @@ func (this Editers) SetIncome(user *UserModel, args ...interface{}) (err error, 
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("income", ccgt)
 	if rs.Error != nil {
-		err = rs.Error
+		err = errors.New("Modification failure")
 		return
 	}
 	dt = map[string]interface{}{
 		"income": ins,
 	}
-	user.Income = ccgt
+	// user.Income = ccgt
 	return
 }
 
@@ -753,15 +764,28 @@ func (this Editers) SetEmotion(user *UserModel, args ...interface{}) (err error,
 		err = errors.New("Please set the content to be modified")
 		return
 	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("emotion", changeto)
+
+	c := args[1].(*gin.Context)
+	langob, _ := c.Get("_lang")
+	lang := langob.(string)
+
+	id32, _ := strconv.Atoi(changeto)
+	id := int64(id32)
+	name := EmotionMap.Get(lang, id)
+	if name == "" {
+		err = errors.New("Please set reasonably")
+		return
+	}
+
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("emotion", id)
 	if rs.Error != nil {
-		err = rs.Error
+		err = errors.New("Modification failure")
 		return
 	}
 	dt = map[string]interface{}{
-		"emotion": changeto,
+		"emotion": name,
 	}
-	user.Emotion = changeto
+	// user.Emotion = id
 	return
 }
 
@@ -772,22 +796,26 @@ func (this Editers) SetConstellation(user *UserModel, args ...interface{}) (err 
 		err = errors.New("Please set the content to be modified")
 		return
 	}
-	cgt, _ := strconv.Atoi(changeto)
-	if cgt < 1 || cgt > 12 {
-		err = errors.New("Please set reasonably")
-		return
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("constellation", cgt)
-	if rs.Error != nil {
-		err = rs.Error
-		return
-	}
-	user.Constellation = int64(cgt)
+
 	c := args[1].(*gin.Context)
 	langob, _ := c.Get("_lang")
 	lang := langob.(string)
+
+	id32, _ := strconv.Atoi(changeto)
+	id := int64(id32)
+	name := ConstellationMap.Get(lang, id)
+	if name == "" {
+		err = errors.New("Please set reasonably")
+		return
+	}
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("constellation", id)
+	if rs.Error != nil {
+		err = errors.New("Modification failure")
+		return
+	}
+	// user.Constellation = id
 	dt = map[string]interface{}{
-		"constellation": ConstellationMap.Get(lang, int64(cgt)),
+		"constellation": name,
 	}
 	return
 }
@@ -820,10 +848,10 @@ func (this Editers) SetTemperament(user *UserModel, args ...interface{}) (err er
 		changeto = strings.Join(ids, ",")
 		rs := DB.Table("users").Where("id = ?", user.Id).Update("temperament", changeto)
 		if rs.Error != nil {
-			err = rs.Error
+			err = errors.New("Modification failure")
 			return
 		}
-		user.Temperament = changeto
+		// user.Temperament = changeto
 	} else {
 		err = errors.New("Please set reasonably")
 		return
@@ -832,6 +860,44 @@ func (this Editers) SetTemperament(user *UserModel, args ...interface{}) (err er
 	dt = map[string]interface{}{
 		"constellation": vals,
 	}
+	return
+}
+
+//修改学历
+func (this Editers) SetEdu(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
+	changeto := args[0].(string)
+	if changeto == "" {
+		err = errors.New("Please set the content to be modified")
+		return
+	}
+	id32, _ := strconv.Atoi(changeto)
+	id := int64(id32)
+	if id < 1 {
+		err = errors.New("Please set the content to be modified")
+		return
+	}
+	if user.Edu == id {
+		err = errors.New("No changes")
+		return
+	}
+
+	c := args[1].(*gin.Context)
+	langob, _ := c.Get("_lang")
+	lang := langob.(string)
+
+	eduname := EducationMap.Get(lang, id)
+	if eduname == "" {
+		err = errors.New("Please set the content to be modified")
+		return
+	}
+
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("edu", id)
+	if rs.Error != nil {
+		err = errors.New("Modification failure")
+		return
+	}
+	// user.Edu = id
+	dt = map[string]interface{}{"edu": eduname}
 	return
 }
 
@@ -849,53 +915,72 @@ func (this Editers) SetCountry(user *UserModel, args ...interface{}) (err error,
 	}
 	rs := DB.Table("users").Where("id = ?", user.Id).Update("country", id)
 	if rs.Error != nil {
-		err = rs.Error
+		err = errors.New("Modification failure")
 		return
 	}
-	user.Country = int64(id)
+	// user.Country = int64(id)
 	c := args[1].(*gin.Context)
 	langob, _ := c.Get("_lang")
 	lang := langob.(string)
 	dt = map[string]interface{}{
-		"country": CountryMap.Get(lang, user.Country),
+		"country": CountryMap.Get(lang, int64(id)),
 	}
 	return
 }
 
 //修改城市
-func (this Editers) SetCity(user *UserModel, args ...interface{}) error {
+func (this Editers) SetCity(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
 	changeto := args[0].(string)
 	if changeto == "" {
-		return errors.New("Please set the content to be modified")
+		err = errors.New("Please set the content to be modified")
+		return
+	}
+	if user.Country < 1 {
+		err = errors.New("Please select your country first")
+		return
+	}
+	cityid32, _ := strconv.Atoi(changeto)
+	cityid := int64(cityid32)
+	if user.City == cityid {
+		err = errors.New("No changes")
+		return
 	}
 
-	var provid, cityid int
-	if strings.Contains(changeto, "-") {
-		tmp := strings.Split(changeto, "-")
-		provid, _ = strconv.Atoi(tmp[0])
-		cityid, _ = strconv.Atoi(tmp[1])
-	} else {
-		provid, _ = strconv.Atoi(changeto)
+	c := args[1].(*gin.Context)
+	langob, _ := c.Get("_lang")
+	citylist, errs := GetCityByCountryId(langob.(string), user.Country)
+	if err != nil {
+		err = errs
+		return
+	}
+	if len(citylist) < 1 {
+		err = errors.New("Please select your country first")
+		return
+	}
+	var findcity *CityModel
+	for _, v := range citylist {
+		if v.Id == cityid {
+			findcity = v
+			break
+		}
+	}
+	if findcity == nil {
+		err = errors.New("The city of your choice was not found")
+		return
 	}
 
-	if provid < 1 {
-		return errors.New("Please set the content to be modified")
+	if cityid < 1 {
+		err = errors.New("Please set the content to be modified")
+		return
 	}
-	uppdt := map[string]int{
-		"province": provid,
-	}
-	if cityid > 0 {
-		uppdt["city"] = cityid
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Updates(uppdt)
+	rs := DB.Table("users").Where("id = ?", user.Id).Update("city", cityid)
 	if rs.Error != nil {
-		return rs.Error
+		err = errors.New("Modification failure")
+		return
 	}
-	if cityid > 0 {
-		user.City = int64(cityid)
-	}
-	user.Province = int64(provid)
-	return nil
+	// user.City = int64(cityid)
+	dt = map[string]interface{}{"city": findcity.Name}
+	return
 }
 
 //修改密码

@@ -28,7 +28,7 @@ func Media(c *gin.Context) {
 
 func Country(c *gin.Context) {
 	filter := c.Query("q")
-	pc := strings.Trim(c.Param("procity"), "/")
+	iso := strings.Trim(c.Param("iso"), "/")
 	page, _ := strconv.Atoi(c.Query("page"))
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	langs, _ := c.Get("_lang")
@@ -37,28 +37,16 @@ func Country(c *gin.Context) {
 	var err error
 	var rs interface{}
 
-	if pc != "" {
-		if strings.Contains(pc, "/") {
-			ids := strings.Split(pc, "/")
-			iso := strings.ToUpper(ids[0])
-			provId, _ := strconv.Atoi(ids[1])
-			country, ok := models.Countries[iso]
-			if ok {
-				rs, err = models.GetCityFilterAndPage(lang, filter, country.Id, provId, page, limit, kv)
-			} else {
-				err = errors.New("No results found")
-			}
+	if iso != "" {
+		iso = strings.ToLower(iso)
+		country, ok := models.Countries[iso]
+		if ok {
+			rs, err = models.GetCityFilterAndPage(lang, filter, country.Id, 0, page, limit, kv)
 		} else {
-			pc = strings.ToUpper(pc)
-			country, ok := models.Countries[pc]
-			if ok {
-				rs, err = models.GetProvinceByFilterAndPage(lang, filter, country.Id, page, limit, kv)
-			} else {
-				err = errors.New("No results found")
-			}
+			err = errors.New("No results found")
 		}
 	} else {
-		rs, err = models.GetCountryByFilterAndPage(lang, filter, page, limit, kv)
+		rs, err = models.GetCountryLists(lang, kv, filter, "name", page, limit)
 	}
 
 	if err != nil {
@@ -87,6 +75,8 @@ func Lists(c *gin.Context) {
 		res = models.IncomesList(filter, kv)
 	case "educations":
 		res = models.EducationList(lang, filter, kv)
+	case "emotions":
+		res = models.EmotionList(lang, filter, kv)
 	case "constellations":
 		res = models.GetAllConstellations(lang, filter, kv)
 	case "temperaments":
@@ -150,7 +140,7 @@ func CountryPhoneCode(c *gin.Context) {
 			}
 		}
 	} else {
-		rs, err := models.CountryPhoneCode(lang, kv, filter, page, limit)
+		rs, err := models.GetCountryLists(lang, kv, filter, "", page, limit)
 		if err == nil {
 			controllers.Success(c, rs, &controllers.Msg{Str: "Success"})
 			return
@@ -165,13 +155,16 @@ func Totals(c *gin.Context) {
 	langobj, _ := c.Get("_lang")
 	lang := langobj.(string)
 
+	kv := c.Query("kv")
+
 	ddt := make(map[string]interface{})
-	ddt["countrycode"], _ = models.CountryPhoneCode(lang, "", "", 0, -1)
+	ddt["countrycode"], _ = models.GetCountryLists(lang, kv, "", "", 0, -1)
 	ddt["languages"], _ = models.GetAllLanguages(false)
-	ddt["temperaments"] = models.GetAllTemperaments(lang, "", "", 0)
-	ddt["constellations"] = models.GetAllConstellations(lang, "", "")
-	ddt["incomes"] = models.IncomesList("", "")
-	ddt["educations"] = models.EducationList(lang, "", "")
+	ddt["temperaments"] = models.GetAllTemperaments(lang, "", kv, 0)
+	ddt["constellations"] = models.GetAllConstellations(lang, "", kv)
+	ddt["incomes"] = models.IncomesList("", kv)
+	ddt["educations"] = models.EducationList(lang, "", kv)
+	ddt["emotions"] = models.EmotionList(lang, "", kv)
 
 	controllers.Success(c, ddt, &controllers.Msg{Str: "Success"})
 }

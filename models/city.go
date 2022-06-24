@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"ucenter/app/config"
 )
@@ -24,7 +25,7 @@ func GetCityById(id int64, lang string) (*CityModel, error) {
 	if rs.Error == nil {
 		return tbs, nil
 	}
-	return nil, rs.Error
+	return nil, errors.New("City not found")
 }
 
 func GetCityByNameAndCountryId(name string, countryId int64, lang string) (*CityModel, error) {
@@ -39,8 +40,26 @@ func GetCityByNameAndCountryId(name string, countryId int64, lang string) (*City
 	return nil, errors.New("City not found")
 }
 
+//获取国家下的城市
+func GetCityByCountryId(lang string, countryid int64) ([]*CityModel, error) {
+	if lang == "" || countryid < 1 {
+		return nil, errors.New("Missing queries")
+	}
+
+	var lrs []*CityModel
+	rs := DB.Table(lang+"_cities").Where("country_id = ?", countryid).Find(&lrs)
+	if rs.Error != nil {
+		log.Println(rs.Error, " - 获取国家城市列表出错!")
+		return nil, errors.New("No city list found")
+	}
+	if lrs == nil {
+		return nil, errors.New("No city list found")
+	}
+	return lrs, nil
+}
+
 func GetCityFilterAndPage(lang, filter string, countryid int64, provinceid, page, limit int, kv string) (dts interface{}, err error) {
-	if countryid < 1 || provinceid < 1 {
+	if countryid < 1 && provinceid < 1 {
 		err = errors.New("Missing queries")
 		return
 	}
@@ -51,14 +70,20 @@ func GetCityFilterAndPage(lang, filter string, countryid int64, provinceid, page
 		limit = config.Config.Limit
 	}
 
-	lang = strings.ToLower(lang)
-	dbs := DB.Table(lang+"_cities").Where("country_id = ? and province_id = ?", countryid, provinceid).Order("name ASC")
+	dbs := DB.Table(lang + "_cities")
+	if countryid > 0 {
+		dbs = dbs.Where("country_id = ?", countryid)
+	}
+	if provinceid > 0 {
+		dbs = dbs.Where("province_id = ?", provinceid)
+	}
 	if limit > 0 {
 		dbs = dbs.Limit(limit).Offset((page - 1) * limit)
 	}
 	if filter != "" {
 		dbs = dbs.Where("name like ?", "%"+filter+"%")
 	}
+	dbs = dbs.Order("name ASC")
 	var ctmds []*CityModel
 	rs := dbs.Find(&ctmds)
 	if rs.Error != nil {

@@ -31,6 +31,7 @@ func (this *AppClient) WebRouter() {
 		{
 			authorized.POST("", user.Index)                     //用户信息
 			authorized.POST("/editer", user.Editer)             //修改信息
+			authorized.POST("/editerbatch", user.EditBatch)     //个人信息批量修改
 			authorized.POST("/invitees", user.Invitees)         //上级信息
 			authorized.POST("/invitee", user.Invitee)           //下级账号列表
 			authorized.POST("/cancellation", user.Cancellation) //注销账号
@@ -42,7 +43,7 @@ func (this *AppClient) WebRouter() {
 		}
 
 		mainGroup.GET("/media/:path", index.Media)                 //静态内容,经过解密处理的返回,目的是加密存储一些敏感内容,并解密后显示
-		mainGroup.GET("/country/*procity", index.Country)          //国家,省份和城市列表
+		mainGroup.GET("/country/*iso", index.Country)              //国家,省份和城市列表
 		mainGroup.GET("/countrycode/*iso", index.CountryPhoneCode) //国家手机区号获取
 		mainGroup.GET("/langs", index.Languages)                   //显示系统支持的语言
 		mainGroup.GET("/lists/:table", index.Lists)                //显示一些属性表的列表内容
@@ -104,11 +105,6 @@ func Auth() gin.HandlerFunc {
 			c.Abort()
 		} else {
 			c.Set("_user", user)
-			if user.Lang != "" {
-				lang := strings.ToLower(user.Lang)
-				c.Header("language", lang)
-				c.Set("_lang", lang)
-			}
 			if user.Timezone != "" {
 				c.Set("_timezone", user.Timezone)
 			}
