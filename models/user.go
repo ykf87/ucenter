@@ -1025,15 +1025,15 @@ func (this *UserModel) ChangePwd(pwd string) error {
 }
 
 //获取用户im签名
-func (this *UserModel) ImSignature(expire int) string {
+func (this *UserModel) ImSignature() string {
 	imo, err := im.Get(config.Config.Useim)
 	if err != nil {
-		log.Println(err, "初始化Im出错,请检查IM")
+		log.Println(err, " - 初始化Im出错,请检查IM")
 		return ""
 	}
-	str, _, err := imo.GenUserSig(fmt.Sprintf("%d", this.Id), expire)
+	str, err := imo.GenUserSig(fmt.Sprintf("%d", this.Id), 86400)
 	if err != nil {
-		log.Println(err, "获取签名错误,请检查IM")
+		log.Println(err, " - 获取签名错误,请检查IM")
 		return ""
 	}
 	return str

@@ -6,7 +6,7 @@ import (
 )
 
 type Im interface {
-	GenUserSig(userid string, expire int) (string, int, error)
+	GenUserSig(userid string, expire int) (string, error)
 }
 
 func Get(s string) (Im, error) {

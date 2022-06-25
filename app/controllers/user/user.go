@@ -86,7 +86,7 @@ func Sign(c *gin.Context) {
 	controllers.Success(c, map[string]interface{}{
 		"token":     token,
 		"id":        user.Id,
-		"signature": user.ImSignature(86400),
+		"signature": user.ImSignature(),
 	}, nil)
 	return
 }
@@ -139,7 +139,7 @@ func Login(c *gin.Context) {
 						controllers.Success(c, map[string]interface{}{
 							"token":     token,
 							"id":        user.Id,
-							"signature": user.ImSignature(86400),
+							"signature": user.ImSignature(),
 						}, nil)
 						return
 					} else {
@@ -637,7 +637,8 @@ func Forgot(c *gin.Context) {
 func Signa(c *gin.Context) {
 	rs, _ := c.Get("_user")
 	user, _ := rs.(*models.UserModel)
-	controllers.Success(c, map[string]string{"signature": user.ImSignature(86400)}, &controllers.Msg{Str: "Success"})
+
+	controllers.Success(c, map[string]string{"signature": user.ImSignature()}, &controllers.Msg{Str: "Success"})
 }
 
 //获取用户的邀请人信息,也就是上级
