@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 	"ucenter/app/config"
+	"ucenter/app/i18n"
 	"ucenter/app/mails/sender/coder"
 	"ucenter/app/safety/aess"
 	"ucenter/app/safety/base34"
@@ -348,6 +349,15 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 			} else {
 				data[k] = ""
 			}
+		} else if k == "sex" {
+			sex2name := "Confidential"
+			id := v.Int()
+			if id == 1 {
+				sex2name = "Male"
+			} else if id == 2 {
+				sex2name = "Female"
+			}
+			data[k] = i18n.T(lang, sex2name)
 		} else {
 			data[k] = v.String()
 		}

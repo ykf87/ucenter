@@ -9,6 +9,7 @@ import (
 	"time"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
+	"ucenter/app/i18n"
 	"ucenter/app/mails/sender/bye"
 	"ucenter/app/mails/sender/coder"
 	"ucenter/app/mails/sender/sign"
@@ -287,50 +288,6 @@ func EditBatch(c *gin.Context) {
 		rsdata["age"] = age
 	}
 
-	//头像
-	avatar := c.PostForm("avatar")
-	if avatar != "" && strings.Contains(avatar, "base64") == true {
-		filename, err := images.SaveFileBase64(models.AVATARPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), avatar)
-		if err != nil {
-			log.Println(err, " - when SetAvatar model upload from form file in batch!")
-			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
-			return
-		}
-		cgdata["avatar"] = filename
-		rsdata["avatar"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
-	} else if avatarFile, err := c.FormFile("avatar"); err == nil {
-		filename, err := images.SaveFileFromUpload(models.AVATARPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), avatarFile)
-		if err != nil {
-			log.Println(err, " - when SetAvatar model upload from form file in batch!")
-			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
-			return
-		}
-		cgdata["avatar"] = filename
-		rsdata["avatar"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
-	}
-
-	//背景图
-	background := c.PostForm("background")
-	if background != "" && strings.Contains(background, "base64") == true {
-		filename, err := images.SaveFileBase64(models.BACKGROUNDPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), background)
-		if err != nil {
-			log.Println(err, " - when SetBackground model upload from form file in batch!")
-			controllers.Error(c, map[string]string{"col": "background"}, &controllers.Msg{Str: "Image upload failed"})
-			return
-		}
-		cgdata["background"] = filename
-		rsdata["background"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
-	} else if backgroundFile, err := c.FormFile("background"); err == nil {
-		filename, err := images.SaveFileFromUpload(models.BACKGROUNDPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), backgroundFile)
-		if err != nil {
-			log.Println(err, " - when SetBackground model upload from form file in batch!")
-			controllers.Error(c, map[string]string{"col": "background"}, &controllers.Msg{Str: "Image upload failed"})
-			return
-		}
-		cgdata["background"] = filename
-		rsdata["background"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
-	}
-
 	//生日修改
 	birth := c.PostForm("birth")
 	if birth != "" {
@@ -523,11 +480,111 @@ func EditBatch(c *gin.Context) {
 	}
 
 	// //修改性别
-	// sex := c.PostForm("sex")
+	sex := c.PostForm("sex")
+	if sex != "" {
+		id, _ := strconv.Atoi(sex)
+		if id != user.Sex {
+			if id > 2 || id < 0 {
+				controllers.Error(c, map[string]string{"col": "sex"}, &controllers.Msg{Str: "Please set reasonably"})
+				return
+			}
+			sex2name := "Confidential"
+			if id == 1 {
+				sex2name = "Male"
+			} else if id == 2 {
+				sex2name = "Female"
+			}
+			cgdata["sex"] = id
+			rsdata["sex"] = i18n.T(lang, sex2name)
+		}
+	}
 
 	// //修改风格
-	// temperament := c.PostForm("temperament")
+	temperament := c.PostForm("temperament")
+	if temperament != "" {
+		sp := strings.Split(temperament, ",")
+		if user.Temperament != "" { //验证是否修改
+			usp := strings.Split(user.Temperament, ",")
+			ul := len(usp)
+			ucl := 0
+			var tids []string
+			var tstrs []string
+			for _, u := range sp {
+				tmp, _ := strconv.Atoi(u)
+				tid := int64(tmp)
+				tname := models.TemperamentMap.Get(lang, tid)
+				if tname != "" {
+					tids = append(tids, fmt.Sprintf("%d", tid))
+					tstrs = append(tstrs, tname)
+					for _, v := range usp {
+						if u == v {
+							ucl = ucl + 1
+						}
+					}
+				}
+			}
+			if len(tids) < 1 {
+				controllers.Error(c, map[string]string{"col": "temperament"}, &controllers.Msg{Str: "Please set reasonably"})
+				return
+			}
+			if ucl != ul { //有改动,不是原有的内容
+				cgdata["temperament"] = strings.Join(tids, ",")
+				rsdata["temperament"] = strings.Join(tstrs, ",")
+			}
+		}
+	}
 
+	//头像
+	avatar := c.PostForm("avatar")
+	if avatar != "" && strings.Contains(avatar, "base64") == true {
+		filename, err := images.SaveFileBase64(models.AVATARPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), avatar)
+		if err != nil {
+			log.Println(err, " - when SetAvatar model upload from form file in batch!")
+			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
+			return
+		}
+		cgdata["avatar"] = filename
+		rsdata["avatar"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
+	} else if avatarFile, err := c.FormFile("avatar"); err == nil {
+		filename, err := images.SaveFileFromUpload(models.AVATARPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), avatarFile)
+		if err != nil {
+			log.Println(err, " - when SetAvatar model upload from form file in batch!")
+			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
+			return
+		}
+		cgdata["avatar"] = filename
+		rsdata["avatar"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
+	}
+
+	//背景图
+	background := c.PostForm("background")
+	if background != "" && strings.Contains(background, "base64") == true {
+		filename, err := images.SaveFileBase64(models.BACKGROUNDPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), background)
+		if err != nil {
+			log.Println(err, " - when SetBackground model upload from form file in batch!")
+			controllers.Error(c, map[string]string{"col": "background"}, &controllers.Msg{Str: "Image upload failed"})
+			return
+		}
+		cgdata["background"] = filename
+		rsdata["background"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
+	} else if backgroundFile, err := c.FormFile("background"); err == nil {
+		filename, err := images.SaveFileFromUpload(models.BACKGROUNDPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), backgroundFile)
+		if err != nil {
+			log.Println(err, " - when SetBackground model upload from form file in batch!")
+			controllers.Error(c, map[string]string{"col": "background"}, &controllers.Msg{Str: "Image upload failed"})
+			return
+		}
+		cgdata["background"] = filename
+		rsdata["background"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
+	}
+
+	if cgdata != nil && len(cgdata) > 0 {
+		rs := models.DB.Table("users").Where("id = ?", user.Id).Updates(cgdata)
+		if rs.Error != nil {
+			controllers.Error(c, map[string]string{"col": "temperament"}, &controllers.Msg{Str: "Please set reasonably"})
+			return
+		}
+	}
 }
 
 //忘记密码
