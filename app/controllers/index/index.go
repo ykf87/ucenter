@@ -71,18 +71,32 @@ func Lists(c *gin.Context) {
 	lang = strings.ToLower(lang)
 	var res interface{}
 	switch tb {
+	case "countrycode":
+		res, _ = models.GetCountryLists(lang, kv, "", "", 0, -1)
+	case "languages":
+		if kv != "" {
+			res = models.GetAllLanguagesResKv()
+		} else {
+			res, _ = models.GetAllLanguages(false)
+		}
+	case "temperaments":
+		sexstr := c.Query("sex")
+		sex, _ := strconv.Atoi(sexstr)
+		res = models.GetAllTemperaments(lang, filter, kv, int64(sex))
+	case "constellations":
+		res = models.GetAllConstellations(lang, filter, kv)
 	case "incomes":
 		res = models.IncomesList(filter, kv)
 	case "educations":
 		res = models.EducationList(lang, filter, kv)
 	case "emotions":
 		res = models.EmotionList(lang, filter, kv)
-	case "constellations":
-		res = models.GetAllConstellations(lang, filter, kv)
-	case "temperaments":
-		sexstr := c.Query("sex")
-		sex, _ := strconv.Atoi(sexstr)
-		res = models.GetAllTemperaments(lang, filter, kv, int64(sex))
+	case "sex":
+		if kv != "" {
+			res = models.GetSexListByKv(lang)
+		} else {
+			res = models.GetSexList(lang)
+		}
 	}
 	if res == nil {
 		controllers.Resp(c, nil, &controllers.Msg{Str: "No results found"}, 404)
@@ -94,28 +108,14 @@ func Lists(c *gin.Context) {
 //获取系统支持的语言列表
 func Languages(c *gin.Context) {
 	kv := c.Query("kv")
-	l, err := models.GetAllLanguages(false)
-	if err != nil {
-		controllers.Error(c, nil, &controllers.Msg{Str: "No results found"})
+	var rs interface{}
+	if kv != "" {
+		rs = models.GetAllLanguagesResKv()
 	} else {
-		if kv != "" {
-			mp := make(map[string]interface{})
-			for _, v := range l {
-				mp[v.Iso] = v.Name
-			}
-			controllers.Success(c, mp, nil)
-		} else {
-			var mp []map[string]interface{}
-			for _, v := range l {
-				nns := make(map[string]interface{})
-				nns["id"] = v.Id
-				nns["iso"] = v.Iso
-				nns["name"] = v.Name
-				mp = append(mp, nns)
-			}
-			controllers.Success(c, mp, nil)
-		}
+		rs, _ = models.GetAllLanguages(false)
 	}
+
+	controllers.Success(c, rs, &controllers.Msg{Str: "Success"})
 }
 
 //获取国家手机区号
@@ -159,12 +159,18 @@ func Totals(c *gin.Context) {
 
 	ddt := make(map[string]interface{})
 	ddt["countrycode"], _ = models.GetCountryLists(lang, kv, "", "", 0, -1)
-	ddt["languages"], _ = models.GetAllLanguages(false)
 	ddt["temperaments"] = models.GetAllTemperaments(lang, "", kv, 0)
 	ddt["constellations"] = models.GetAllConstellations(lang, "", kv)
 	ddt["incomes"] = models.IncomesList("", kv)
 	ddt["educations"] = models.EducationList(lang, "", kv)
 	ddt["emotions"] = models.EmotionList(lang, "", kv)
+	if kv != "" {
+		ddt["sex"] = models.GetSexListByKv(lang)
+		ddt["languages"] = models.GetAllLanguagesResKv()
+	} else {
+		ddt["sex"] = models.GetSexList(lang)
+		ddt["languages"], _ = models.GetAllLanguages(false)
+	}
 
 	controllers.Success(c, ddt, &controllers.Msg{Str: "Success"})
 }

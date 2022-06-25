@@ -25,14 +25,8 @@ func Resp(c *gin.Context, data interface{}, msg *Msg, code int) {
 		code = 200
 	}
 
-	var lang string
-	lang = c.GetHeader("lang")
-	if lang == "" {
-		l, e := c.Cookie("lang")
-		if e == nil {
-			lang = l
-		}
-	}
+	langobj, _ := c.Get("_lang")
+	lang := langobj.(string)
 
 	var msgStr template.HTML
 	if msg != nil {

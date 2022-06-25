@@ -36,6 +36,8 @@ func (this *AppClient) WebRouter() {
 			authorized.POST("/invitee", user.Invitee)           //下级账号列表
 			authorized.POST("/cancellation", user.Cancellation) //注销账号
 
+			authorized.POST("/imsigna", user.Signa) //Im签名
+
 			authorized.POST("/like", userlikes.Like)   //喜欢一个人
 			authorized.POST("/liked", userlikes.Liked) //用户喜欢列表
 			authorized.POST("/liker", userlikes.Liker) //喜欢当前用户的列表
@@ -58,12 +60,15 @@ func (this *AppClient) WebRouter() {
 func Middle() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var lang string
-		if c.GetHeader("lang") != "" {
+		if cc, err := c.GetQuery("lang"); err == true {
+			lang = cc
+		} else if c.GetHeader("lang") != "" {
 			lang = c.GetHeader("lang")
 		} else if cc, err := c.Cookie("lang"); err == nil {
 			lang = cc
-		} else if cc, err := c.GetQuery("lang"); err == true {
-			lang = cc
+		} else if c.GetHeader("Accept-Language") != "" {
+			langs := strings.Split(c.GetHeader("Accept-Language"), ",")
+			lang = langs[0]
 		} else {
 			lang = config.Config.Lang
 		}

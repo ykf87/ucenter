@@ -16,7 +16,7 @@ func SetEmotionMap() error {
 	}
 	ttmmp := make(GlobalMapStruct)
 	for code, _ := range langs {
-		tmp, err := setEducationMapByLang(code)
+		tmp, err := setEmotionMapByLang(code)
 		if err == nil {
 			ttmmp[code] = tmp
 		}

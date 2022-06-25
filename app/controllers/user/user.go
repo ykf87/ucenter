@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"log"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -83,8 +84,9 @@ func Sign(c *gin.Context) {
 	}
 
 	controllers.Success(c, map[string]interface{}{
-		"token": token,
-		"id":    user.Id,
+		"token":     token,
+		"id":        user.Id,
+		"signature": user.ImSignature(86400),
 	}, nil)
 	return
 }
@@ -135,8 +137,9 @@ func Login(c *gin.Context) {
 					token := user.Token()
 					if token != "" {
 						controllers.Success(c, map[string]interface{}{
-							"token": token,
-							"id":    user.Id,
+							"token":     token,
+							"id":        user.Id,
+							"signature": user.ImSignature(86400),
 						}, nil)
 						return
 					} else {
@@ -502,34 +505,20 @@ func EditBatch(c *gin.Context) {
 	// //修改风格
 	temperament := c.PostForm("temperament")
 	if temperament != "" {
-		sp := strings.Split(temperament, ",")
-		if user.Temperament != "" { //验证是否修改
-			usp := strings.Split(user.Temperament, ",")
-			ul := len(usp)
-			ucl := 0
-			var tids []string
-			var tstrs []string
-			for _, u := range sp {
-				tmp, _ := strconv.Atoi(u)
-				tid := int64(tmp)
-				tname := models.TemperamentMap.Get(lang, tid)
-				if tname != "" {
-					tids = append(tids, fmt.Sprintf("%d", tid))
-					tstrs = append(tstrs, tname)
-					for _, v := range usp {
-						if u == v {
-							ucl = ucl + 1
-						}
-					}
+		tst, err := user.TemSet(lang, temperament)
+		if err == nil {
+			if tst != nil && len(tst) > 0 {
+				var toDb []string
+				var toRes []string
+				for _, v := range tst {
+					toDb = append(toDb, fmt.Sprintf("%d", v.Id))
+					toRes = append(toRes, v.Name)
 				}
-			}
-			if len(tids) < 1 {
+				cgdata["temperament"] = strings.Join(toDb, ",")
+				rsdata["temperament"] = strings.Join(toRes, ",")
+			} else {
 				controllers.Error(c, map[string]string{"col": "temperament"}, &controllers.Msg{Str: "Please set reasonably"})
 				return
-			}
-			if ucl != ul { //有改动,不是原有的内容
-				cgdata["temperament"] = strings.Join(tids, ",")
-				rsdata["temperament"] = strings.Join(tstrs, ",")
 			}
 		}
 	}
@@ -537,7 +526,7 @@ func EditBatch(c *gin.Context) {
 	//头像
 	avatar := c.PostForm("avatar")
 	if avatar != "" && strings.Contains(avatar, "base64") == true {
-		filename, err := images.SaveFileBase64(models.AVATARPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), avatar)
+		filename, err := images.SaveFileBase64(models.AVATARPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), avatar)
 		if err != nil {
 			log.Println(err, " - when SetAvatar model upload from form file in batch!")
 			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
@@ -546,7 +535,7 @@ func EditBatch(c *gin.Context) {
 		cgdata["avatar"] = filename
 		rsdata["avatar"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
 	} else if avatarFile, err := c.FormFile("avatar"); err == nil {
-		filename, err := images.SaveFileFromUpload(models.AVATARPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), avatarFile)
+		filename, err := images.SaveFileFromUpload(models.AVATARPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), avatarFile)
 		if err != nil {
 			log.Println(err, " - when SetAvatar model upload from form file in batch!")
 			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
@@ -559,7 +548,7 @@ func EditBatch(c *gin.Context) {
 	//背景图
 	background := c.PostForm("background")
 	if background != "" && strings.Contains(background, "base64") == true {
-		filename, err := images.SaveFileBase64(models.BACKGROUNDPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), background)
+		filename, err := images.SaveFileBase64(models.BACKGROUNDPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), background)
 		if err != nil {
 			log.Println(err, " - when SetBackground model upload from form file in batch!")
 			controllers.Error(c, map[string]string{"col": "background"}, &controllers.Msg{Str: "Image upload failed"})
@@ -568,7 +557,7 @@ func EditBatch(c *gin.Context) {
 		cgdata["background"] = filename
 		rsdata["background"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
 	} else if backgroundFile, err := c.FormFile("background"); err == nil {
-		filename, err := images.SaveFileFromUpload(models.BACKGROUNDPATH, fmt.Sprintf("%s%d", user.Invite, time.Now().Unix()), backgroundFile)
+		filename, err := images.SaveFileFromUpload(models.BACKGROUNDPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), backgroundFile)
 		if err != nil {
 			log.Println(err, " - when SetBackground model upload from form file in batch!")
 			controllers.Error(c, map[string]string{"col": "background"}, &controllers.Msg{Str: "Image upload failed"})
@@ -581,9 +570,28 @@ func EditBatch(c *gin.Context) {
 	if cgdata != nil && len(cgdata) > 0 {
 		rs := models.DB.Table("users").Where("id = ?", user.Id).Updates(cgdata)
 		if rs.Error != nil {
-			controllers.Error(c, map[string]string{"col": "temperament"}, &controllers.Msg{Str: "Please set reasonably"})
+			controllers.Error(c, nil, &controllers.Msg{Str: "Modification failure"})
 			return
 		}
+		_, ok := cgdata["background"]
+		if ok {
+			os.Remove(user.Background)
+		}
+		_, ok = cgdata["avatar"]
+		if ok {
+			os.Remove(user.Avatar)
+		}
+		controllers.Success(c, rsdata, &controllers.Msg{Str: "Success"})
+	} else {
+		cs, ok := cgdata["background"]
+		if ok {
+			os.Remove(cs.(string))
+		}
+		cs, ok = cgdata["avatar"]
+		if ok {
+			os.Remove(cs.(string))
+		}
+		controllers.Error(c, nil, &controllers.Msg{Str: "No changes"})
 	}
 }
 
@@ -623,6 +631,13 @@ func Forgot(c *gin.Context) {
 		}
 	}
 	controllers.Error(c, nil, &controllers.Msg{Str: msg})
+}
+
+//获取签名
+func Signa(c *gin.Context) {
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
+	controllers.Success(c, map[string]string{"signature": user.ImSignature(86400)}, &controllers.Msg{Str: "Success"})
 }
 
 //获取用户的邀请人信息,也就是上级

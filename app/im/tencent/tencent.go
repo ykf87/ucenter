@@ -296,7 +296,7 @@ func hmacsha256(sdkappid int, key string, identifier string, currTime int64, exp
 
 	h := hmac.New(sha256.New, []byte(key))
 	h.Write([]byte(contentToBeSigned))
-	return base64.StdEncoding.EncodeToString(h.Sum(nil))
+	return base64urlEncode(h.Sum(nil))
 }
 
 func genSig(sdkappid int, key string, identifier string, expire int, userbuf []byte) (string, error) {
@@ -363,7 +363,7 @@ type userSig struct {
 }
 
 func newUserSig(usersig string) (userSig, error) {
-	b, err := base64.URLEncoding.DecodeString(usersig)
+	b, err := base64urlDecode(usersig)
 	if err != nil {
 		return userSig{}, err
 	}

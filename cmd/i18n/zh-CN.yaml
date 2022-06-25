@@ -1,4 +1,4 @@
-zh-CN:
+zh-cn:
   Login: "登录"
   Please Login: "请先登录"
   Account cannot be logged in with password,password not set: "账号无法使用密码登录,密码未设置"
@@ -58,3 +58,4 @@ zh-CN:
   "Male": "男"
   "Female": "女"
   "Confidential": "保密"
+  "Transgender": "变性人"

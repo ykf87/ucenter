@@ -30,3 +30,11 @@ func GetAllLanguages(reget bool) (list map[string]*LanguageModel, err error) {
 	LangLists = list
 	return
 }
+
+func GetAllLanguagesResKv() (list map[string]string) {
+	list = make(map[string]string)
+	for _, v := range LangLists {
+		list[v.Iso] = v.Name
+	}
+	return
+}

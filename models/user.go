@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 	"ucenter/app/config"
-	"ucenter/app/i18n"
+	"ucenter/app/im"
 	"ucenter/app/mails/sender/coder"
 	"ucenter/app/safety/aess"
 	"ucenter/app/safety/base34"
@@ -329,13 +329,14 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 			vals := strings.Split(v.String(), ",")
 			var ssds []string
 			for _, v := range vals {
-				id, _ := strconv.Atoi(v)
-				name := TemperamentMap.Get(lang, int64(id))
+				id32, _ := strconv.Atoi(v)
+				id := int64(id32)
+				name := TemperamentMap.Get(lang, id)
 				if name != "" {
 					ssds = append(ssds, name)
 				}
 			}
-			data[k] = ssds //strings.Join(ssds, ",")
+			data[k] = strings.Join(ssds, ",")
 		} else if k == "constellation" && v.Int() > 0 {
 			data[k] = ConstellationMap.Get(lang, v.Int())
 		} else if k == "edu" {
@@ -349,15 +350,20 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 			} else {
 				data[k] = ""
 			}
-		} else if k == "sex" {
-			sex2name := "Confidential"
-			id := v.Int()
-			if id == 1 {
-				sex2name = "Male"
-			} else if id == 2 {
-				sex2name = "Female"
+		} else if k == "avatar" {
+			s := v.String()
+			if s != "" {
+				data[k] = strings.TrimRight(config.Config.Domain, "/") + "/" + s
+			} else {
+				data[k] = ""
 			}
-			data[k] = i18n.T(lang, sex2name)
+		} else if k == "background" {
+			s := v.String()
+			if s != "" {
+				data[k] = strings.TrimRight(config.Config.Domain, "/") + "/" + s
+			} else {
+				data[k] = ""
+			}
 		} else {
 			data[k] = v.String()
 		}
@@ -1015,6 +1021,67 @@ func (this *UserModel) ChangePwd(pwd string) error {
 	} else {
 		return rs.Error
 	}
+}
+
+//获取用户im签名
+func (this *UserModel) ImSignature(expire int) string {
+	imo, err := im.Get(config.Config.Useim)
+	if err != nil {
+		log.Println(err, "初始化Im出错,请检查IM")
+		return ""
+	}
+	str, _, err := imo.GenUserSig(fmt.Sprintf("%d", this.Id), expire)
+	if err != nil {
+		log.Println(err, "获取签名错误,请检查IM")
+		return ""
+	}
+	return str
+}
+
+//修改风格
+func (this *UserModel) TemSet(lang, str string) (res []*IdNameModel, err error) {
+	if str == "" {
+		err = errors.New("Please set the content to be modified")
+		return
+	}
+	newTemp := this.temSet(lang, str)
+	var userTemp []*IdNameModel
+	if this.Temperament != "" {
+		userTemp = this.temSet(lang, this.Temperament)
+	}
+	if userTemp != nil && len(userTemp) > 0 { //如果原来有设置,则要验证是否重复
+		var newTotal, userTotal int64
+		for _, v := range newTemp {
+			newTotal = newTotal + v.Id
+		}
+		for _, v := range userTemp {
+			userTotal = userTotal + v.Id
+		}
+		if userTotal == newTotal {
+			err = errors.New("No changes")
+			return
+		}
+		res = newTemp
+	} else {
+		res = newTemp
+	}
+	return
+}
+func (this *UserModel) temSet(lang, str string) []*IdNameModel {
+	strs := strings.Split(str, ",")
+	var ress []*IdNameModel
+	for _, v := range strs {
+		id32, _ := strconv.Atoi(v)
+		id := int64(id32)
+		name := TemperamentMap.Get(lang, id)
+		if name != "" {
+			idm := new(IdNameModel)
+			idm.Id = id
+			idm.Name = name
+			ress = append(ress, idm)
+		}
+	}
+	return ress
 }
 
 //注销账号,账号信息存储至其他表格,并删除user表内容
