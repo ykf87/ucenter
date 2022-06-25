@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 	"ucenter/app/config"
+	"ucenter/app/funcs"
 	"ucenter/app/im"
 	"ucenter/app/mails/sender/coder"
 	"ucenter/app/safety/aess"
@@ -1044,10 +1045,13 @@ func (this *UserModel) TemSet(lang, str string) (res []*IdNameModel, err error) 
 		err = errors.New("Please set the content to be modified")
 		return
 	}
-	newTemp := this.temSet(lang, str)
+	//先对str去重
+	strs := funcs.RemoveRepByMap(strings.Split(str, ","))
+
+	newTemp := this.temSet(lang, strs)
 	var userTemp []*IdNameModel
 	if this.Temperament != "" {
-		userTemp = this.temSet(lang, this.Temperament)
+		userTemp = this.temSet(lang, strings.Split(this.Temperament, ","))
 	}
 	if userTemp != nil && len(userTemp) > 0 { //如果原来有设置,则要验证是否重复
 		var newTotal, userTotal int64
@@ -1067,8 +1071,7 @@ func (this *UserModel) TemSet(lang, str string) (res []*IdNameModel, err error) 
 	}
 	return
 }
-func (this *UserModel) temSet(lang, str string) []*IdNameModel {
-	strs := strings.Split(str, ",")
+func (this *UserModel) temSet(lang string, strs []string) []*IdNameModel {
 	var ress []*IdNameModel
 	for _, v := range strs {
 		id32, _ := strconv.Atoi(v)
