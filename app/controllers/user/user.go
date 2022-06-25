@@ -164,7 +164,7 @@ func Index(c *gin.Context) {
 	user, _ := rs.(*models.UserModel)
 	langob, _ := c.Get("_lang")
 	timezones, _ := c.Get("_timezone")
-	controllers.Success(c, user.Info(langob.(string), timezones.(string)), nil)
+	controllers.Success(c, user.Info(langob.(string), timezones.(string)), &controllers.Msg{Str: "Success"})
 }
 
 //编辑信息
