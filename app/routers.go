@@ -4,6 +4,7 @@ import (
 	"strings"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
+	"ucenter/app/controllers/albums"
 	"ucenter/app/controllers/index"
 	"ucenter/app/controllers/user"
 	"ucenter/app/controllers/userlikes"
@@ -38,10 +39,21 @@ func (this *AppClient) WebRouter() {
 
 			authorized.POST("/imsigna", user.Signa) //Im签名
 
+			//喜欢相关
 			authorized.POST("/like", userlikes.Like)   //喜欢一个人
 			authorized.POST("/liked", userlikes.Liked) //用户喜欢列表
 			authorized.POST("/liker", userlikes.Liker) //喜欢当前用户的列表
 			authorized.POST("/likes", userlikes.Likes) //相互喜欢列表
+		}
+
+		//相册相关
+		albumsRoute := this.Engine.Group("/user/albums").Use(Auth())
+		{
+			albumsRoute.GET("", albums.Albums)          //公共相册列表
+			albumsRoute.GET("/private", albums.Private) //私密相册列表
+			albumsRoute.POST("", albums.UploadAlb)      //上传相册
+			albumsRoute.POST("/remove", albums.Remove)  //删除照片
+			albumsRoute.POST("/exg", albums.AlbumsExg)  //相册公共私密互转
 		}
 
 		mainGroup.GET("/media/:path", index.Media)                 //静态内容,经过解密处理的返回,目的是加密存储一些敏感内容,并解密后显示

@@ -354,14 +354,14 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 		} else if k == "avatar" {
 			s := v.String()
 			if s != "" {
-				data[k] = strings.TrimRight(config.Config.Domain, "/") + "/" + s
+				data[k] = images.FullPath(s)
 			} else {
 				data[k] = ""
 			}
 		} else if k == "background" {
 			s := v.String()
 			if s != "" {
-				data[k] = strings.TrimRight(config.Config.Domain, "/") + "/" + s
+				data[k] = images.FullPath(s)
 			} else {
 				data[k] = ""
 			}
@@ -539,13 +539,13 @@ func (this Editers) SetAvatar(user *UserModel, args ...interface{}) (error, map[
 		if err != nil {
 			return errors.New("Please set the content to be modified"), nil
 		}
-		filename, err = images.SaveFileFromUpload(avatarPath, user.Invite, f)
+		filename, err = images.SaveFileFromUpload(avatarPath, user.Invite, f, nil, nil)
 		if err != nil {
 			log.Println(err, " - when SetAvatar model upload from form file")
 			return errors.New("System error, please try again later"), nil
 		}
 	} else {
-		filename, err = images.SaveFileBase64(avatarPath, user.Invite, changeto)
+		filename, err = images.SaveFileBase64(avatarPath, user.Invite, changeto, nil, nil)
 		if err != nil {
 			log.Println(err, " - when SetAvatar model upload from form file")
 			return errors.New("System error, please try again later"), nil
@@ -579,13 +579,13 @@ func (this Editers) SetBackground(user *UserModel, args ...interface{}) (error, 
 		if err != nil {
 			return errors.New("Please set the content to be modified"), nil
 		}
-		filename, err = images.SaveFileFromUpload(avatarPath, user.Invite, f)
+		filename, err = images.SaveFileFromUpload(avatarPath, user.Invite, f, nil, nil)
 		if err != nil {
 			log.Println(err, " - when SetBackground model upload from form file")
 			return errors.New("System error, please try again later"), nil
 		}
 	} else {
-		filename, err = images.SaveFileBase64(avatarPath, user.Invite, changeto)
+		filename, err = images.SaveFileBase64(avatarPath, user.Invite, changeto, nil, nil)
 		if err != nil {
 			log.Println(err, " - when SetAvatar model upload from form file")
 			return errors.New("System error, please try again later"), nil

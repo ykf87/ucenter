@@ -526,45 +526,45 @@ func EditBatch(c *gin.Context) {
 	//头像
 	avatar := c.PostForm("avatar")
 	if avatar != "" && strings.Contains(avatar, "base64") == true {
-		filename, err := images.SaveFileBase64(models.AVATARPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), avatar)
+		filename, err := images.SaveFileBase64(models.AVATARPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), avatar, nil, nil)
 		if err != nil {
 			log.Println(err, " - when SetAvatar model upload from form file in batch!")
 			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
 			return
 		}
 		cgdata["avatar"] = filename
-		rsdata["avatar"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
+		rsdata["avatar"] = images.FullPath(filename)
 	} else if avatarFile, err := c.FormFile("avatar"); err == nil {
-		filename, err := images.SaveFileFromUpload(models.AVATARPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), avatarFile)
+		filename, err := images.SaveFileFromUpload(models.AVATARPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), avatarFile, nil, nil)
 		if err != nil {
 			log.Println(err, " - when SetAvatar model upload from form file in batch!")
 			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
 			return
 		}
 		cgdata["avatar"] = filename
-		rsdata["avatar"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
+		rsdata["avatar"] = images.FullPath(filename)
 	}
 
 	//背景图
 	background := c.PostForm("background")
 	if background != "" && strings.Contains(background, "base64") == true {
-		filename, err := images.SaveFileBase64(models.BACKGROUNDPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), background)
+		filename, err := images.SaveFileBase64(models.BACKGROUNDPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), background, nil, nil)
 		if err != nil {
 			log.Println(err, " - when SetBackground model upload from form file in batch!")
 			controllers.Error(c, map[string]string{"col": "background"}, &controllers.Msg{Str: "Image upload failed"})
 			return
 		}
 		cgdata["background"] = filename
-		rsdata["background"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
+		rsdata["background"] = images.FullPath(filename)
 	} else if backgroundFile, err := c.FormFile("background"); err == nil {
-		filename, err := images.SaveFileFromUpload(models.BACKGROUNDPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), backgroundFile)
+		filename, err := images.SaveFileFromUpload(models.BACKGROUNDPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), backgroundFile, nil, nil)
 		if err != nil {
 			log.Println(err, " - when SetBackground model upload from form file in batch!")
 			controllers.Error(c, map[string]string{"col": "background"}, &controllers.Msg{Str: "Image upload failed"})
 			return
 		}
 		cgdata["background"] = filename
-		rsdata["background"] = strings.TrimRight(config.Config.Domain, "/") + "/" + filename
+		rsdata["background"] = images.FullPath(filename)
 	}
 
 	if cgdata != nil && len(cgdata) > 0 {

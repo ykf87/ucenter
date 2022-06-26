@@ -14,6 +14,14 @@ type SmtpConf struct {
 	Sender string
 }
 
+type OssConf struct {
+	Endpoint    string
+	Accesskeyid string
+	Secret      string
+	Bucket      string
+	Ssl         bool
+}
+
 type ImConf struct {
 	Id  string
 	Key string
@@ -38,6 +46,7 @@ type ConfigStruct struct {
 	Datefmt          string `default:"2006-01-02"`
 	Timefmt          string `default:"15:04:05"`
 	Useim            string `required:"true"` //使用的im
+	Useoss           string `required:"true"`
 
 	DB []struct {
 		Type string
@@ -46,6 +55,7 @@ type ConfigStruct struct {
 	} `required:"true"`
 
 	Smtp map[string]*SmtpConf `required:"true"`
+	Oss  map[string]*OssConf  `required:"true"`
 
 	Timefmts map[string]struct {
 		Datetimefmt string
@@ -62,8 +72,9 @@ var Cpath string
 func Init(path string) (err error) {
 	cc := new(ConfigStruct)
 	err = configor.Load(cc, path)
-	if err == nil {
-		Config = cc
+	if err != nil {
+		return
 	}
+	Config = cc
 	return
 }

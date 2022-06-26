@@ -3,15 +3,15 @@
 
  Source Server         : 127.0.0.1
  Source Server Type    : MySQL
- Source Server Version : 50734
- Source Host           : 127.0.0.1:3306
+ Source Server Version : 50737
+ Source Host           : localhost:3306
  Source Schema         : ucenter
 
  Target Server Type    : MySQL
- Target Server Version : 50734
+ Target Server Version : 50737
  File Encoding         : 65001
 
- Date: 24/06/2022 17:37:22
+ Date: 26/06/2022 17:24:14
 */
 
 SET NAMES utf8mb4;
@@ -33,7 +33,7 @@ CREATE TABLE `countries`  (
   `currency` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '默认货币',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `iso`(`iso`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 237 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 237 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of countries
@@ -287,7 +287,7 @@ CREATE TABLE `currencies`  (
   `rate` double(20, 10) NULL DEFAULT NULL COMMENT '对于default币种的汇率',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `code`(`code`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 159 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 159 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of currencies
@@ -470,7 +470,11 @@ CREATE TABLE `en_articles`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `key`(`key`) USING BTREE,
   INDEX `title`(`title`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of en_articles
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for en_cities
@@ -484,7 +488,7 @@ CREATE TABLE `en_cities`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `country_id`(`country_id`) USING BTREE,
   INDEX `name`(`name`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3628 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3628 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_cities
@@ -4122,7 +4126,7 @@ CREATE TABLE `en_constellations`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '星座' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '星座' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_constellations
@@ -4148,7 +4152,7 @@ CREATE TABLE `en_countries`  (
   `id` smallint(1) UNSIGNED NOT NULL,
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_countries
@@ -4398,7 +4402,7 @@ CREATE TABLE `en_currencies`  (
   `id` smallint(1) NOT NULL,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_currencies
@@ -4570,7 +4574,7 @@ CREATE TABLE `en_educations`  (
   `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '学历名称',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '学历表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '学历表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_educations
@@ -4588,7 +4592,7 @@ CREATE TABLE `en_emotions`  (
   `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '情感状态' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '情感状态' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_emotions
@@ -4607,7 +4611,7 @@ CREATE TABLE `en_provinces`  (
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `country_id`(`country_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3324 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3324 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_provinces
@@ -7947,7 +7951,7 @@ CREATE TABLE `en_regions`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id`(`id`) USING BTREE,
   INDEX `pid`(`pid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_regions
@@ -7991,7 +7995,7 @@ CREATE TABLE `en_temperaments`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `sex`(`sex`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '性格表,分性别' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '性格表,分性别' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_temperaments
@@ -8039,7 +8043,7 @@ CREATE TABLE `incomes`  (
   `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of incomes
@@ -8063,7 +8067,7 @@ CREATE TABLE `languages`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `iso`(`iso`) USING BTREE,
   INDEX `status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of languages
@@ -8076,6 +8080,30 @@ INSERT INTO `languages` VALUES (5, 'it', 'Italiano', 0, 0);
 INSERT INTO `languages` VALUES (6, 'fr', 'Français', 0, 0);
 INSERT INTO `languages` VALUES (7, 'de', 'Deutsch', 0, 0);
 INSERT INTO `languages` VALUES (8, 'ru', 'Русский', 0, 0);
+
+-- ----------------------------
+-- Table structure for user_albums
+-- ----------------------------
+DROP TABLE IF EXISTS `user_albums`;
+CREATE TABLE `user_albums`  (
+  `id` bigint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uid` bigint(1) UNSIGNED NOT NULL COMMENT '用户id',
+  `src` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件地址',
+  `private` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '是否私密 0公开, 1私密',
+  `likes` int(1) NULL DEFAULT 0 COMMENT '喜欢人数',
+  `addtime` bigint(1) UNSIGNED NULL DEFAULT NULL COMMENT '添加时间',
+  `addtimefmt` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '为了程序的兼容',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `uid`(`uid`) USING BTREE,
+  INDEX `private`(`private`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户相册表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user_albums
+-- ----------------------------
+INSERT INTO `user_albums` VALUES (23, 39355, 'meet/user/album/00101H/21209-3738-7723-5540-1656233734.png', 0, 0, 1656233739, '');
+INSERT INTO `user_albums` VALUES (24, 39355, 'meet/user/album/00101H/98103-9922-3496-1041-1656233746.jpg', 1, 0, 1656233760, '');
+INSERT INTO `user_albums` VALUES (25, 39355, 'meet/user/album/00101H/38488-2491-4973-9329-1656233746.png', 1, 0, 1656233760, '');
 
 -- ----------------------------
 -- Table structure for user_attrs
@@ -8092,7 +8120,11 @@ CREATE TABLE `user_attrs`  (
   INDEX `constellationid`(`constellationid`) USING BTREE,
   INDEX `emotionid`(`emotionid`) USING BTREE,
   INDEX `temperamentid`(`temperamentid`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户一些属性,主要用于搜索' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户一些属性,主要用于搜索' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of user_attrs
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for user_invitees
@@ -8102,7 +8134,7 @@ CREATE TABLE `user_invitees`  (
   `id` bigint(1) UNSIGNED NOT NULL COMMENT '邀请人id',
   `uid` bigint(1) UNSIGNED NOT NULL COMMENT '被邀请人id',
   PRIMARY KEY (`id`, `uid`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户邀请下级列表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户邀请下级列表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user_invitees
@@ -8120,7 +8152,7 @@ CREATE TABLE `user_likes`  (
   `addtime` bigint(1) UNSIGNED NULL DEFAULT NULL COMMENT '喜欢的时间',
   PRIMARY KEY (`id`, `likeid`) USING BTREE,
   INDEX `mutual`(`mutual`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户喜欢列表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户喜欢列表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user_likes
@@ -8171,7 +8203,7 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `account`(`account`) USING BTREE,
   UNIQUE INDEX `mail`(`mail`) USING BTREE,
   UNIQUE INDEX `phone`(`phone`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39358 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 39360 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
@@ -8191,9 +8223,11 @@ INSERT INTO `users` VALUES (13, 12, '00000D', '10,12', NULL, 'bbbbbaaa@gmail.com
 INSERT INTO `users` VALUES (14, 12, '00000E', '10,12', NULL, NULL, 'bbbbbaaa@gmail.com', 0, 0, '$2a$10$oEvGCTZhfkTD8L3OKlkWBuCqb/72jKbdwvZPpEuEaiqBrxW4GvqOW', NULL, NULL, NULL, 1655114205, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL, 0);
 INSERT INTO `users` VALUES (39350, 1111111111111111111, NULL, NULL, 'aaa', NULL, NULL, 0, NULL, '$2y$10$YtTGQpR89tBaHBJAR6uKsuIylIcGOBtER336oFPCq1i4q39uP32xW', NULL, '', NULL, 1654743271, 1, 0, 254, 900.56, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4294967295, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 INSERT INTO `users` VALUES (39352, 0, '00101E', NULL, NULL, 'dfsf@qc.bb', NULL, 0, 0, '$2a$10$rg/ETWOhhQZv3aRYQnsXpuYpveukeWURZs0RAnumhMgrSIM8UjWgK', NULL, NULL, NULL, 1655128163, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 3117694941, 227, 3242, NULL, 0, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (39355, 3, '00101H', '3', NULL, '1603601628@qq.com', NULL, 1, 0, '$2a$10$UC56Xn8/JXYNsvIVyMFxSe2/G71kM3g0RM1CX9pr8VpcXgcYeT1iu', '1603601628', NULL, NULL, 1655455507, 1, 0, 0, 0.00, NULL, 18, NULL, NULL, NULL, NULL, 2, NULL, 2130706433, 1, NULL, 14, 1, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (39355, 3, '00101H', '3', NULL, '1603601628@qq.com', NULL, 1, 0, '$2a$10$UC56Xn8/JXYNsvIVyMFxSe2/G71kM3g0RM1CX9pr8VpcXgcYeT1iu', '1603601628', 'meet/user/avatars/165622892200101H.jpg', 'meet/images/165621812900101H.png', 1655455507, 1, 0, 0, 0.00, NULL, 18, NULL, NULL, NULL, NULL, 2, NULL, 2130706433, 1, NULL, 14, 3, NULL, NULL, NULL, 0);
 INSERT INTO `users` VALUES (39356, 0, '00101J', NULL, NULL, '1603601628@qq.comt', NULL, 1, 0, NULL, '1603601628', NULL, NULL, 1655714181, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2584805404, 132, 1779, NULL, 1, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (39357, 0, '00101K', NULL, NULL, '784471540@qq.com', NULL, 1, 0, '$2a$10$/GS0OeQUTm5/ttqy9jQBAO70mmrGE7Xitu/XwTQWG/vesM.FL0pVa', '784471540', NULL, NULL, 1655778346, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3748146605, 1, NULL, 115, 4, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (39357, 0, '00101K', NULL, NULL, '784471540@qq.com', NULL, 1, 0, '$2a$10$/GS0OeQUTm5/ttqy9jQBAO70mmrGE7Xitu/XwTQWG/vesM.FL0pVa', '啦啦啦', NULL, NULL, 1655778346, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3748146605, 1, NULL, 115, 14, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (39358, 0, '00101L', NULL, NULL, '17700000000@qq.com', NULL, 1, 0, '$2a$10$D4CTaXAhxpz4EeLqw3ZgAuGKrDnMAaThEqij35HTBrdYexafvEZI2', '17700000000', NULL, NULL, 1656163873, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 1882184851, 0, NULL, NULL, 1, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (39359, 0, '00101M', NULL, NULL, '177000@qq.com', NULL, 1, 0, '$2a$10$Lz/0d4S0DoE6Lv6KK1/MX.5A4.lVsd5UhxN1SVxJd8zdqBwEqUpxy', '177啊', NULL, NULL, 1656163902, 1, 1, 0, 0.00, 816537600, NULL, NULL, NULL, 0, NULL, NULL, '3,12,13', 1882184851, 1, NULL, 287, 1, NULL, NULL, NULL, 0);
 
 -- ----------------------------
 -- Table structure for users_removed
@@ -8234,7 +8268,7 @@ CREATE TABLE `users_removed`  (
   `currency` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户手动选择的币种',
   `timezone` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户时区',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39353 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 39353 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users_removed
@@ -8274,7 +8308,11 @@ CREATE TABLE `zh-cn_articles`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `key`(`key`) USING BTREE,
   INDEX `title`(`title`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of zh-cn_articles
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for zh-cn_cities
@@ -8288,7 +8326,7 @@ CREATE TABLE `zh-cn_cities`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `country_id`(`country_id`) USING BTREE,
   INDEX `name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3628 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3628 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_cities
@@ -11926,7 +11964,7 @@ CREATE TABLE `zh-cn_constellations`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '星座' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '星座' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_constellations
@@ -11952,7 +11990,7 @@ CREATE TABLE `zh-cn_countries`  (
   `id` smallint(1) UNSIGNED NOT NULL,
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_countries
@@ -12202,7 +12240,7 @@ CREATE TABLE `zh-cn_currencies`  (
   `id` smallint(1) NOT NULL,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_currencies
@@ -12374,7 +12412,7 @@ CREATE TABLE `zh-cn_educations`  (
   `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '学历名称',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '学历表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '学历表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_educations
@@ -12392,7 +12430,7 @@ CREATE TABLE `zh-cn_emotions`  (
   `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '情感状态' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '情感状态' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_emotions
@@ -12411,7 +12449,7 @@ CREATE TABLE `zh-cn_provinces`  (
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `country_id`(`country_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3324 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3324 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_provinces
@@ -15751,7 +15789,7 @@ CREATE TABLE `zh-cn_regions`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id`(`id`) USING BTREE,
   INDEX `pid`(`pid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_regions
@@ -15795,7 +15833,7 @@ CREATE TABLE `zh-cn_temperaments`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `sex`(`sex`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '性格表,分性别' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '性格表,分性别' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_temperaments
