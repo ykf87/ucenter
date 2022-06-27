@@ -163,8 +163,30 @@ func Index(c *gin.Context) {
 	rs, _ := c.Get("_user")
 	user, _ := rs.(*models.UserModel)
 	langob, _ := c.Get("_lang")
+	lang := langob.(string)
 	timezones, _ := c.Get("_timezone")
-	controllers.Success(c, user.Info(langob.(string), timezones.(string)), &controllers.Msg{Str: "Success"})
+	timezone := timezones.(string)
+
+	id := c.Param("id")
+	if id != "" {
+		uid, _ := strconv.Atoi(id)
+		us := models.GetUser(int64(uid), "", "", "")
+		if us == nil || us.Id < 1 {
+			controllers.ErrorNotFound(c)
+			return
+		}
+		go us.AddVisits()
+		us.Visits = us.Visits + 1
+		user = us
+	}
+
+	info := user.Info(lang, timezone)
+	albums := models.GetAlbumList(user.Id, 0, 0, false)
+	for _, v := range albums {
+		v.Fmt(timezone, lang)
+	}
+	info["albums"] = albums
+	controllers.Success(c, info, &controllers.Msg{Str: "Success"})
 }
 
 //编辑信息
@@ -222,6 +244,10 @@ func EditBatch(c *gin.Context) {
 	account := c.PostForm("account")
 	if account != "" {
 		if account != user.Account {
+			if len(account) > 60 {
+				controllers.Error(c, map[string]string{"col": "account"}, &controllers.Msg{Str: "Please fill in less than {{$1}} words", Args: []interface{}{60}})
+				return
+			}
 			u := new(models.UserModel)
 			models.DB.Table("users").Where("account = ?", account).First(u)
 			if u.Id > 0 {
@@ -464,18 +490,29 @@ func EditBatch(c *gin.Context) {
 	job := c.PostForm("job")
 	if job != "" && job != user.Job {
 		if len(job) > 100 {
-			controllers.Error(c, map[string]string{"col": "job"}, &controllers.Msg{Str: "Please fill in less than 100 words"})
+			controllers.Error(c, map[string]string{"col": "job"}, &controllers.Msg{Str: "Please fill in less than {{$1}} words", Args: []interface{}{100}})
 			return
 		}
 		cgdata["job"] = job
 		rsdata["job"] = job
 	}
 
+	//修改签名
+	signature := c.PostForm("signature")
+	if signature != "" && signature != user.Signature {
+		if len(signature) > 250 {
+			controllers.Error(c, map[string]string{"col": "signature"}, &controllers.Msg{Str: "Please fill in less than {{$1}} words", Args: []interface{}{250}})
+			return
+		}
+		cgdata["signature"] = signature
+		rsdata["signature"] = signature
+	}
+
 	//修改昵称
 	nickname := c.PostForm("nickname")
 	if nickname != "" && nickname != user.Nickname {
 		if len(nickname) > 100 {
-			controllers.Error(c, map[string]string{"col": "nickname"}, &controllers.Msg{Str: "Please fill in less than 100 words"})
+			controllers.Error(c, map[string]string{"col": "nickname"}, &controllers.Msg{Str: "Please fill in less than {{$1}} words", Args: []interface{}{100}})
 			return
 		}
 		cgdata["nickname"] = nickname
@@ -523,6 +560,7 @@ func EditBatch(c *gin.Context) {
 		}
 	}
 
+	//以下两个涉及文件上传的,必须在最后进行判断,否则将有多余的冗余
 	//头像
 	avatar := c.PostForm("avatar")
 	if avatar != "" && strings.Contains(avatar, "base64") == true {
@@ -591,7 +629,7 @@ func EditBatch(c *gin.Context) {
 		if ok {
 			os.Remove(cs.(string))
 		}
-		controllers.Error(c, nil, &controllers.Msg{Str: "No changes"})
+		controllers.Success(c, nil, &controllers.Msg{Str: "No changes"})
 	}
 }
 

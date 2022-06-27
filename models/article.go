@@ -1,7 +1,12 @@
 package models
 
 import (
-	"strings"
+	"encoding/json"
+	"log"
+	"ucenter/app/config"
+
+	carbon "github.com/golang-module/carbon/v2"
+	"github.com/tidwall/gjson"
 )
 
 type ArticleModel struct {
@@ -19,12 +24,12 @@ type ArticleModel struct {
 }
 
 func GetArticleRow(id int64, key, lang string) *ArticleModel {
-	tableName := strings.ToLower(lang + "_articles")
+	tableName := "`" + lang + "_articles`"
 	dbob := DB.Table(tableName)
 	if id > 0 {
 		dbob = dbob.Where("id = ?", id)
 	} else if key != "" {
-		dbob = dbob.Where("key = ?", key)
+		dbob = dbob.Where("`key` = ?", key)
 	} else {
 		return nil
 	}
@@ -34,4 +39,32 @@ func GetArticleRow(id int64, key, lang string) *ArticleModel {
 		return nil
 	}
 	return art
+}
+
+//格式化内容
+func (this *ArticleModel) Fmt(lang, timezone string) map[string]interface{} {
+	var fmt string
+	fmts, ok := config.Config.Timefmts[lang]
+	if ok {
+		fmt = fmts.Datetimefmt
+	} else {
+		fmt = config.Config.Datetimefmt
+	}
+
+	b, err := json.Marshal(this)
+	if err != nil {
+		log.Println(err, "格式化 article 时出错, models/article.go")
+		return nil
+	}
+
+	dt := make(map[string]interface{})
+
+	for k, v := range gjson.ParseBytes(b).Map() {
+		if k == "addtime" {
+			dt[k] = carbon.CreateFromTimestamp(v.Int()).SetTimezone(timezone).Carbon2Time().Format(fmt)
+		} else {
+			dt[k] = v.String()
+		}
+	}
+	return dt
 }

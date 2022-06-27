@@ -173,6 +173,32 @@ func UploadFileByFileProcess(savePath string, f []*multipart.FileHeader) (filena
 	return
 }
 
+//协程上传文件-base64格式
+func UploadFileByBase64Process(savePath string, f []string) (filenames []string) {
+	max := len(f)
+	if max < 1 {
+		return
+	}
+	maxCh := make(chan byte, 10)
+	ch := make(chan string)
+	for _, v := range f {
+		name := fmt.Sprintf("%d-%d-%d-%d-%d", funcs.Random(10000, 99999), funcs.Random(1000, 9999), funcs.Random(1000, 9999), funcs.Random(1000, 9999), time.Now().Unix())
+		go SaveFileBase64(savePath, name, v, ch, maxCh)
+	}
+	for {
+		max = max - 1
+		if max < 0 {
+			break
+		}
+		str := <-ch
+		<-maxCh
+		if str != "" {
+			filenames = append(filenames, str)
+		}
+	}
+	return
+}
+
 //上传到oss
 func OssUploadByFileName(filename, ossSaveFileNameWithPath string) (string, error) {
 	object, err := oss.GetOss(config.Config.Useoss)

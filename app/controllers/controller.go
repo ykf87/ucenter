@@ -16,6 +16,18 @@ func Success(c *gin.Context, data interface{}, msg *Msg) {
 	Resp(c, data, msg, 200)
 }
 
+func SuccessStr(c *gin.Context, data interface{}, msg string, args ...interface{}) {
+	Resp(c, data, &Msg{Str: msg, Args: args}, 200)
+}
+
+func ErrorNoData(c *gin.Context, str string, args ...interface{}) {
+	Resp(c, nil, &Msg{Str: str, Args: args}, 500)
+}
+
+func ErrorNotFound(c *gin.Context) {
+	Resp(c, nil, &Msg{Str: "No results found"}, 404)
+}
+
 func Error(c *gin.Context, data interface{}, msg *Msg) {
 	Resp(c, data, msg, 500)
 }

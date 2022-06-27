@@ -5,6 +5,7 @@ import (
 	"ucenter/app/config"
 	"ucenter/app/controllers"
 	"ucenter/app/controllers/albums"
+	"ucenter/app/controllers/article"
 	"ucenter/app/controllers/index"
 	"ucenter/app/controllers/user"
 	"ucenter/app/controllers/userlikes"
@@ -21,6 +22,12 @@ func Init() {
 func (this *AppClient) WebRouter() {
 	mainGroup := this.Engine.Use(Middle())
 	{
+		articleRouter := this.Engine.Group("/article")
+		{
+			articleRouter.GET("/:key", article.Index) //文章详情
+		}
+
+		//和用户相关的不需要验证权限的接口
 		userNoAuth := this.Engine.Group("/")
 		{
 			userNoAuth.POST("login", user.Login)         //登录
@@ -28,10 +35,24 @@ func (this *AppClient) WebRouter() {
 			userNoAuth.POST("forgot", user.Forgot)       //忘记密码
 			userNoAuth.POST("emailcode", user.Emailcode) //邮件发送,考虑做ip限流
 		}
+
+		//相册相关
+		albumsRoute := this.Engine.Group("/user/albums").Use(Auth())
+		{
+			albumsRoute.GET("", albums.Albums)                  //公共相册列表
+			albumsRoute.GET("/private/*id", albums.Private)     //私密相册列表
+			albumsRoute.GET("/list/:id", albums.Albums)         //他人相册列表
+			albumsRoute.POST("", albums.UploadAlb)              //上传相册
+			albumsRoute.POST("/base64", albums.UploadAlbBase64) //上传相册
+			albumsRoute.POST("/remove", albums.Remove)          //删除照片
+			albumsRoute.POST("/exg", albums.AlbumsExg)          //相册公共私密互转
+		}
+
 		authorized := this.Engine.Group("/user").Use(Auth())
 		{
-			authorized.POST("", user.Index)                     //用户信息
-			authorized.POST("/editer", user.Editer)             //修改信息
+			authorized.GET("", user.Index)          //用户信息
+			authorized.GET("/info/:id", user.Index) //用户信息
+			// authorized.POST("/editer", user.Editer)             //修改信息
 			authorized.POST("/editerbatch", user.EditBatch)     //个人信息批量修改
 			authorized.POST("/invitees", user.Invitees)         //上级信息
 			authorized.POST("/invitee", user.Invitee)           //下级账号列表
@@ -44,16 +65,6 @@ func (this *AppClient) WebRouter() {
 			authorized.POST("/liked", userlikes.Liked) //用户喜欢列表
 			authorized.POST("/liker", userlikes.Liker) //喜欢当前用户的列表
 			authorized.POST("/likes", userlikes.Likes) //相互喜欢列表
-		}
-
-		//相册相关
-		albumsRoute := this.Engine.Group("/user/albums").Use(Auth())
-		{
-			albumsRoute.GET("", albums.Albums)          //公共相册列表
-			albumsRoute.GET("/private", albums.Private) //私密相册列表
-			albumsRoute.POST("", albums.UploadAlb)      //上传相册
-			albumsRoute.POST("/remove", albums.Remove)  //删除照片
-			albumsRoute.POST("/exg", albums.AlbumsExg)  //相册公共私密互转
 		}
 
 		mainGroup.GET("/media/:path", index.Media)                 //静态内容,经过解密处理的返回,目的是加密存储一些敏感内容,并解密后显示

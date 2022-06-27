@@ -47,6 +47,8 @@ type UserModel struct {
 	Nickname      string  `json:"nickname"`
 	Avatar        string  `json:"avatar"`
 	Background    string  `json:"background"`
+	Signature     string  `json:"signature"`
+	Visits        int64   `json:"visits"`
 	Addtime       int64   `json:"addtime"`
 	Status        int     `json:"status"`
 	Sex           int     `json:"sex"`
@@ -96,6 +98,9 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip s
 				return
 			}
 			insertData["mailvery"] = 1
+		} else if pwd == "" {
+			err = errors.New("Please set a password")
+			return
 		}
 
 		if nickname == "" {
@@ -1085,6 +1090,11 @@ func (this *UserModel) temSet(lang string, strs []string) []*IdNameModel {
 		}
 	}
 	return ress
+}
+
+//增加访问量
+func (this *UserModel) AddVisits() {
+	DB.Table("users").Where("id = ?", this.Id).Update("visits", this.Visits+1)
 }
 
 //注销账号,账号信息存储至其他表格,并删除user表内容

@@ -24,9 +24,22 @@ func Albums(c *gin.Context) {
 	page, _ := strconv.Atoi(c.Query("page"))
 	limit, _ := strconv.Atoi(c.Query("limit"))
 
-	list := models.GetAlbumList(user.Id, page, limit, false)
+	uid := user.Id
+
+	id := c.Param("id")
+	if id != "" {
+		id32, _ := strconv.Atoi(id)
+		if id32 > 0 {
+			uid = int64(id32)
+		} else {
+			controllers.ErrorNotFound(c)
+			return
+		}
+	}
+
+	list := models.GetAlbumList(uid, page, limit, false)
 	if list == nil || len(list) < 1 {
-		controllers.Resp(c, nil, &controllers.Msg{Str: "No results found"}, 404)
+		controllers.Success(c, nil, &controllers.Msg{Str: "No results found"})
 	} else {
 		for _, v := range list {
 			v.Fmt(timezone, lang)
@@ -47,9 +60,27 @@ func Private(c *gin.Context) {
 	page, _ := strconv.Atoi(c.Query("page"))
 	limit, _ := strconv.Atoi(c.Query("limit"))
 
-	list := models.GetAlbumList(user.Id, page, limit, true)
+	uid := user.Id
+
+	id := strings.Trim(c.Param("id"), "/")
+	if id != "" {
+		id32, _ := strconv.Atoi(id)
+		if id32 < 1 {
+			controllers.ErrorNotFound(c)
+			return
+		}
+		uid = int64(id32)
+
+		//如果要开放用户私密相册给其他用户看,则屏蔽下面4行代码
+		if user.Id != uid {
+			controllers.ErrorNoData(c, "Private content is not allowed to be viewed")
+			return
+		}
+	}
+
+	list := models.GetAlbumList(uid, page, limit, true)
 	if list == nil || len(list) < 1 {
-		controllers.Resp(c, nil, &controllers.Msg{Str: "No results found"}, 404)
+		controllers.Success(c, nil, &controllers.Msg{Str: "No results found"})
 	} else {
 		for _, v := range list {
 			v.Fmt(timezone, lang)
@@ -85,6 +116,45 @@ func UploadAlb(c *gin.Context) {
 		isPrivate = 1
 	}
 	filenames := images.UploadFileByFileProcess(path, files)
+	ls, err := models.AddAlbumList(user.Id, filenames, isPrivate)
+	if err != nil {
+		controllers.Error(c, nil, &controllers.Msg{Str: "Image upload failed"})
+	} else {
+		for _, v := range ls {
+			v.Fmt(timezone, lang)
+		}
+		controllers.Success(c, ls, &controllers.Msg{Str: "Success"})
+	}
+}
+
+//base64上传相册图片
+func UploadAlbBase64(c *gin.Context) {
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
+
+	timezoneo, _ := c.Get("_timezone")
+	timezone := timezoneo.(string)
+
+	langobj, _ := c.Get("_lang")
+	lang := langobj.(string)
+
+	path := fmt.Sprintf("%s/%s", models.ALBUMSAVEPATH, user.Invite)
+	var isPrivate int
+
+	var dts []string
+	pub64 := c.PostFormArray("public")
+	pri64 := c.PostFormArray("private")
+	if len(pub64) > 0 {
+		dts = pub64
+	} else if len(pri64) > 0 {
+		dts = pri64
+		isPrivate = 1
+	} else {
+		controllers.Error(c, nil, &controllers.Msg{Str: "Missing editorial content"})
+		return
+	}
+
+	filenames := images.UploadFileByBase64Process(path, dts)
 	ls, err := models.AddAlbumList(user.Id, filenames, isPrivate)
 	if err != nil {
 		controllers.Error(c, nil, &controllers.Msg{Str: "Image upload failed"})
