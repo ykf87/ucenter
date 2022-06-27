@@ -11,7 +11,7 @@
  Target Server Version : 50734
  File Encoding         : 65001
 
- Date: 27/06/2022 16:25:10
+ Date: 27/06/2022 17:37:59
 */
 
 SET NAMES utf8mb4;
@@ -8092,7 +8092,7 @@ CREATE TABLE `user_albums`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `uid`(`uid`) USING BTREE,
   INDEX `private`(`private`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户相册表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户相册表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_albums
@@ -8106,6 +8106,7 @@ INSERT INTO `user_albums` VALUES (28, 39355, 'meet/static/user/album/00101H/1588
 INSERT INTO `user_albums` VALUES (30, 39357, 'meet/static/user/album/00101K/51187-4234-8762-5011-1656299474.png', 0, 0, 1656299475, '');
 INSERT INTO `user_albums` VALUES (31, 39357, 'meet/static/user/album/00101K/99221-6325-4895-5527-1656299831.png', 0, 0, 1656299832, '');
 INSERT INTO `user_albums` VALUES (32, 39357, 'meet/static/user/album/00101K/46657-9762-5013-4378-1656299843.png', 0, 0, 1656299843, '');
+INSERT INTO `user_albums` VALUES (34, 39362, 'meet/static/user/album/00101Q/93070-3808-8094-9285-1656320588.png', 0, 0, 1656320588, '');
 
 -- ----------------------------
 -- Table structure for user_attrs
@@ -8123,6 +8124,24 @@ CREATE TABLE `user_attrs`  (
   INDEX `emotionid`(`emotionid`) USING BTREE,
   INDEX `temperamentid`(`temperamentid`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户一些属性,主要用于搜索' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for user_devices
+-- ----------------------------
+DROP TABLE IF EXISTS `user_devices`;
+CREATE TABLE `user_devices`  (
+  `id` bigint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uid` bigint(1) UNSIGNED NULL DEFAULT NULL COMMENT '用户编号',
+  `md5` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'uid+deviceid+version md5散列',
+  `deviceid` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '设备唯一编号',
+  `platform` tinyint(1) UNSIGNED NULL DEFAULT NULL COMMENT '平台,1-Android 2-IOS 3-web',
+  `version` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '版本',
+  `brand` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '品牌',
+  `devicemodel` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机型号',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `md5`(`md5`) USING BTREE,
+  INDEX `uid`(`uid`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user_invitees
@@ -8203,7 +8222,7 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `account`(`account`) USING BTREE,
   UNIQUE INDEX `mail`(`mail`) USING BTREE,
   UNIQUE INDEX `phone`(`phone`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39364 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 39365 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of users
@@ -8228,10 +8247,11 @@ INSERT INTO `users` VALUES (39356, 0, '00101J', NULL, NULL, '1603601628@qq.comt'
 INSERT INTO `users` VALUES (39357, 0, '00101K', NULL, NULL, '784471540@qq.com', NULL, 1, 0, '$2a$10$/GS0OeQUTm5/ttqy9jQBAO70mmrGE7Xitu/XwTQWG/vesM.FL0pVa', '啦啦啦', NULL, NULL, NULL, 6, 1655778346, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3748146605, 1, NULL, 115, 15, NULL, NULL, NULL, 0);
 INSERT INTO `users` VALUES (39358, 0, '00101L', NULL, NULL, '17700000000@qq.com', NULL, 1, 0, '$2a$10$D4CTaXAhxpz4EeLqw3ZgAuGKrDnMAaThEqij35HTBrdYexafvEZI2', '17700000000', NULL, NULL, NULL, 0, 1656163873, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 1882184851, 0, NULL, NULL, 1, NULL, NULL, NULL, 0);
 INSERT INTO `users` VALUES (39359, 0, '00101M', NULL, NULL, '177000@qq.com', NULL, 1, 0, '$2a$10$Lz/0d4S0DoE6Lv6KK1/MX.5A4.lVsd5UhxN1SVxJd8zdqBwEqUpxy', '177啊', NULL, NULL, NULL, 0, 1656163902, 1, 1, 0, 0.00, 816537600, NULL, NULL, NULL, 0, NULL, NULL, '3,12,13', 1882184851, 1, NULL, 287, 1, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (39360, 0, '00101N', NULL, '卡哇伊', '123456789@qq.com', NULL, 1, 0, '$2a$10$pCslzH0gjjR81ESXhEqnY.kbW9sCwSJpGT.IrDSNykXs.KADY.pbu', '123456789', NULL, NULL, NULL, 0, 1656315842, 1, 2, 0, 0.00, 962035200, NULL, NULL, NULL, 0, NULL, NULL, '28,26,34', 2015387098, 1, NULL, 119, 12, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (39360, 0, '00101N', NULL, '卡哇伊', '123456789@qq.com', NULL, 1, 0, '$2a$10$pCslzH0gjjR81ESXhEqnY.kbW9sCwSJpGT.IrDSNykXs.KADY.pbu', '123456789', NULL, NULL, NULL, 0, 1656315842, 1, 2, 0, 0.00, 1088265600, NULL, NULL, NULL, 1, 3, NULL, '19,26,33', 2015387098, 1, NULL, 119, 14, NULL, NULL, NULL, 0);
 INSERT INTO `users` VALUES (39361, 0, '00101P', NULL, NULL, '1224@cc.cc', NULL, 0, 0, '$2a$10$Ew09oW6CMhBebn.KGJI1Uu..OpMww3QqeUjQExNGCvCnCz3NPzhnG', '巴比Q了', NULL, NULL, NULL, 0, 1656317510, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 2130706433, 0, NULL, NULL, 1, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (39362, 0, '00101Q', NULL, NULL, '178@qq.com', NULL, 1, 0, '$2a$10$VqPTf.dIT0tLxDhCd3E8Ru0i5Joyblq9TEkvJhGraEqX9sFAoKiHm', '178', NULL, NULL, NULL, 0, 1656317840, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 3748146633, 0, NULL, NULL, 1, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (39362, 0, '00101Q', NULL, NULL, '178@qq.com', NULL, 1, 0, '$2a$10$VqPTf.dIT0tLxDhCd3E8Ru0i5Joyblq9TEkvJhGraEqX9sFAoKiHm', '178', NULL, NULL, NULL, 0, 1656317840, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 3748146633, 0, NULL, NULL, 2, NULL, NULL, NULL, 0);
 INSERT INTO `users` VALUES (39363, 0, '00101R', NULL, NULL, '1780@qq.com', NULL, 1, 0, '$2a$10$9I/RRIc9GYFqS8YYNcMKmuAyObwKuH21e5qwJj63h92cNwiT6gv5K', '1780', NULL, NULL, NULL, 0, 1656318006, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 3748146633, 0, NULL, NULL, 1, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (39364, 0, '00101S', NULL, NULL, '110@qq.com', NULL, 1, 0, '$2a$10$0rXpXh9JPInhrgi2oYLv0Of4nZFFyRqI.9HiCoeI8OD8j8W3hrgCy', 'KKK', NULL, NULL, NULL, 0, 1656318909, 1, 1, 0, 0.00, 721929600, NULL, NULL, NULL, 0, NULL, NULL, '3,5', 3748146633, 1, NULL, 332, 1, NULL, NULL, NULL, 0);
 
 -- ----------------------------
 -- Table structure for users_removed
