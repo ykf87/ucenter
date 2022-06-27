@@ -571,7 +571,7 @@ func EditBatch(c *gin.Context) {
 	//以下两个涉及文件上传的,必须在最后进行判断,否则将有多余的冗余
 	//头像
 	avatar := c.PostForm("avatar")
-	if avatar != "" && strings.Contains(avatar, "base64") == true {
+	if avatar != "" {
 		filename, err := images.SaveFileBase64(models.AVATARPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), avatar, nil, nil)
 		if err != nil {
 			log.Println(err, " - when SetAvatar model upload from form file in batch!")

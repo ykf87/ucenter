@@ -93,7 +93,9 @@ func SaveFileFromUpload(savePath, saveName string, f *multipart.FileHeader, ch c
 
 //保存base64格式内容
 func SaveFileBase64(savePath, saveName string, base64_image_content string, ch chan string, maxch chan byte) (string, error) {
-	maxch <- 0
+	if maxch != nil {
+		maxch <- 0
+	}
 	b, _ := regexp.MatchString(`^data:\s*image\/(\w+);base64,`, base64_image_content)
 	if !b {
 		if ch != nil {

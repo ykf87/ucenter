@@ -2,6 +2,7 @@ package albums
 
 import (
 	"fmt"
+	"log"
 	"mime/multipart"
 	"strconv"
 	"strings"
@@ -103,7 +104,12 @@ func UploadAlb(c *gin.Context) {
 	path := fmt.Sprintf("%s/%s", models.ALBUMSAVEPATH, user.Invite)
 	var isPrivate int
 
-	form, _ := c.MultipartForm()
+	form, err := c.MultipartForm()
+	if err != nil {
+		log.Println(err)
+		controllers.ErrorNoData(c, "")
+		return
+	}
 	if form.File == nil {
 		controllers.ErrorNoData(c, "Missing editorial content")
 	}
