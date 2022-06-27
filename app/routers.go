@@ -22,11 +22,6 @@ func Init() {
 func (this *AppClient) WebRouter() {
 	mainGroup := this.Engine.Use(Middle())
 	{
-		articleRouter := this.Engine.Group("/article")
-		{
-			articleRouter.GET("/:key", article.Index) //文章详情
-		}
-
 		//和用户相关的不需要验证权限的接口
 		userNoAuth := this.Engine.Group("/")
 		{
@@ -77,6 +72,10 @@ func (this *AppClient) WebRouter() {
 		mainGroup.GET("/search", index.Search) //搜索用户
 	}
 
+	articleRouter := this.Engine.Group("/article")
+	{
+		articleRouter.GET("/info/:key", article.Index) //文章详情
+	}
 	this.Engine.POST("/34598fds93/panic", index.Panics)
 }
 

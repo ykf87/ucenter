@@ -19,7 +19,11 @@ func Index(c *gin.Context) {
 		row := models.GetArticleRow(0, key, lang)
 		if row != nil && row.Id > 0 {
 			dt := row.Fmt(lang, timezone)
-			controllers.SuccessStr(c, dt, "Success")
+			c.HTML(200, "article.html", gin.H{
+				"title": row.Title,
+				"dt":    dt,
+			})
+			// controllers.SuccessStr(c, dt, "Success")
 			return
 		}
 	} else if idstr := c.Query("id"); idstr != "" {
@@ -33,5 +37,6 @@ func Index(c *gin.Context) {
 			}
 		}
 	}
-	controllers.ErrorNotFound(c)
+	c.AbortWithStatus(404)
+	// controllers.ErrorNotFound(c)
 }

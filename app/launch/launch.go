@@ -31,7 +31,7 @@ func Start(filename string) {
 	rsautil.Generate()
 
 	go func() {
-		app.App.Static(config.Config.Static, config.Config.Staticname).Run(config.Config.Port)
+		app.App.Static(config.Config.Static, config.Config.Staticname).Template("templates/*").Run(config.Config.Port)
 	}()
 	<-config.Och
 	log.Println("Panic from post!")

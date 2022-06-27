@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"os"
@@ -47,6 +48,16 @@ func (this *AppClient) Static(path, name string) *AppClient {
 		this.Engine.Static(name, path)
 	}
 	return App
+}
+
+func (this *AppClient) Template(str string) *AppClient {
+	strtmp := strings.Trim(str, "*")
+	if _, err := os.Stat(strtmp); err != nil {
+		log.Println(err)
+		return this
+	}
+	this.Engine.LoadHTMLGlob(str)
+	return this
 }
 
 func (this *AppClient) Run(port int) {

@@ -42,7 +42,7 @@ func Resp(c *gin.Context, data interface{}, msg *Msg, code int) {
 
 	var msgStr template.HTML
 	if msg != nil {
-		if msg.Args == nil {
+		if msg.Args == nil || len(msg.Args) < 1 {
 			msgStr = i18n.T(lang, msg.Str)
 		} else {
 			msgStr = i18n.T(lang, msg.Str, msg.Args...)

@@ -34,7 +34,7 @@ func GetArticleRow(id int64, key, lang string) *ArticleModel {
 		return nil
 	}
 	art := new(ArticleModel)
-	dbob.Find(art)
+	dbob.Where("status = 1").Find(art)
 	if art == nil || art.Id < 1 {
 		return nil
 	}

@@ -3,15 +3,15 @@
 
  Source Server         : 127.0.0.1
  Source Server Type    : MySQL
- Source Server Version : 50734
- Source Host           : 127.0.0.1:3306
+ Source Server Version : 50737
+ Source Host           : localhost:3306
  Source Schema         : ucenter
 
  Target Server Type    : MySQL
- Target Server Version : 50734
+ Target Server Version : 50737
  File Encoding         : 65001
 
- Date: 27/06/2022 17:37:59
+ Date: 27/06/2022 22:08:18
 */
 
 SET NAMES utf8mb4;
@@ -33,7 +33,7 @@ CREATE TABLE `countries`  (
   `currency` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '默认货币',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `iso`(`iso`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 237 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 237 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of countries
@@ -287,7 +287,7 @@ CREATE TABLE `currencies`  (
   `rate` double(20, 10) NULL DEFAULT NULL COMMENT '对于default币种的汇率',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `code`(`code`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 159 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 159 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of currencies
@@ -469,8 +469,14 @@ CREATE TABLE `en_articles`  (
   `views` int(1) UNSIGNED NULL DEFAULT 0 COMMENT '浏览量',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `key`(`key`) USING BTREE,
-  INDEX `title`(`title`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+  INDEX `title`(`title`) USING BTREE,
+  INDEX `status`(`status`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of en_articles
+-- ----------------------------
+INSERT INTO `en_articles` VALUES (1, 'privacy-policy', 'Frisky Meets Privacy Policy', NULL, NULL, 'Welcome to the Frisky Meets Privacy Policy (“Policy”)! This explains how we collect, store, protect and share your information, and with whom we share it. We suggest you read this in conjunction with our Terms and Conditions of Use.\r\n\r\nWhilst you’re enjoying the Frisky Meets mobile application (including the desktop version) (“App”), our websites and microsites (such as Frisky Meets.com) or using our digital products and services (such as our competitions or surveys) (together, referred to in this Privacy Policy as our “Sites”), we collect some information about you. In addition, you may choose to use the App or Sites to share information with other Frisky Meets members including your friends and contacts (“Users”). We may also need to share your information sometimes.\r\n\r\nFrisky Meets’s App and Sites are global, and your information will be sent to and used in the United States and the UK regardless of the country you reside in. This Policy explains how we protect your personal data when we transfer it overseas, so please read very carefully!\r\n\r\n\r\n\r\n1. COLLECTION OF INFORMATION\r\nRegistration information\r\nWhen you download the App and create an account (“Account”), we may collect certain information (“Registration Information”) about you, such as:\r\n\r\nName;\r\nUsername;\r\nEmail address\r\nMobile number\r\nGender identity;\r\nDate of birth;\r\nSexual preference;\r\nPhotographs;\r\nLocation, and\r\nLogin information for social media accounts that you connect to your Frisky Meets Account (this could include, for example, your Facebook and Instagram accounts). For more information about this, see “Linking other accounts to Frisky Meets” in section 7 below.\r\nYou will also be required to create a password in connection with the registration of your Account. Once you register, you will be able to review and change this information at any time just by logging in to Frisky Meets (other than your location, which, if you have given Frisky Meets access to your location in your device settings, is automatically updated based on the location of your device) or contacting Frisky Meets’s Customer Support Team. It is your responsibility to ensure that your account details are kept up to date. If your phone number changes, please ensure that you update this in your account.\r\n\r\nThe information we collect helps to enhance the App and verify our Users (robots are not welcome!). Registration Information such as your sexual preference, name and username may be visible to other Users who view your profile page.\r\n\r\nFor users who are California residents, the data we may collect falls within the following categories of “personal information,” as defined by the California Consumer Privacy Act (CCPA):\r\n\r\nA. Identifiers, such as name and location;\r\nB. Personal information, as defined in the California customer records law, such as contact (including email and telephone number) and financial information;\r\nC. Characteristics of protected classifications under California or federal law (if you choose to provide them), such as age, gender identity, marital status, sexual orientation, race, ancestry, national origin, religion, and medical conditions;\r\nD. Commercial information, such as transaction information and purchase history;\r\nE. Biometric information, such as faceprint;\r\nF. Internet or network activity information, such as browsing history and interactions with our Sites and App;\r\nG. Geolocation data, such as mobile device location;\r\nH. Audio, electronic, visual and similar information, such as photos and videos;\r\nI. Professional or employment-related information, such as work history and prior employer;\r\nJ. Non-public education information; and\r\nK. Inferences drawn from any of the personal\r\n\r\n\r\nurpose for which data is used Data Source Legal basis\r\nTo provide you with the Frisky Meets social networking service Name, email address, date of birth, location (CCPA Categories A and B) You provide your name, email address and date of birth to us. We obtain location data from the device that you use to access the service Contractual necessity\r\nTo facilitate networking opportunities on the Frisky Meets site Optional information that you choose to provide in your profile, including through profile verification, which may include information about your sexual preferences, non-binary gender, religion, ethnic background, photos, interests, etc. (CCPA Categories B, C, H, I, J) You provide this information to us Contractual necessity and our legitimate interests – it is in our legitimate interests to facilitate networking opportunities in the Frisky Meets app. For special category/sensitive personal data, we rely on your explicit consent.\r\nTo verify your identity and prevent fraud and to ensure the safety and security of Users Phone number and if requested or permitted, photo provided as part of profile verification (CCPA Category B and H) You provide this information to us Legitimate interests – it is in our legitimate interests to ensure that accounts are not set up fraudulently and to safeguard Users of the site\r\nTo take payment for premium services (not applicable for Users making payments via the Apple App Store) Payment card details (CCPA Categories B and D) You provide this information to us Contractual necessity\r\n\r\n\r\nTo allow our Advertising Partners to serve targeted advertisements on our App and Sites (this includes rewarded video ads) Advertising identifier associated with your device (Device ID), age, gender, and IP address (and your estimated locations based on your IP address) (CCPA Categories A, C and G) We obtain age and gender from you, and Device ID and IP address from the device that you use to access the service Consent – as indicated by you in your Privacy Settings/Cookie Settings preferences and via your browser or device privacy preferences (where required by your device manufacturer (for example Apple devices using iOS 14.5)\r\nTo serve advertisements to Users of our Sites/App on third party networks and measure the effectiveness of such ads Data about your visit to our Sites or App and action taken on those (for example if you downloaded our App or created an account with Badoo) IP address (and your estimated location based on your IP address) age, gender, Device ID (CCPA Categories A, C, G, F and K) We obtain age and gender from you and we obtain other information from the device or browser that you use to access the service Consent – as indicated by you in your Privacy Settings/Cookie Settings preferences and via your browser or device privacy preferences (where required by your device manufacturer (for example Apple devices using iOS 14.5)\r\n\r\n\r\nTo serve promo cards and advertisements on the App Location, gender, age, and information that you have optionally provided us with via your profile (CCPA Categories A, C and G) We obtain age, gender and profile information from you, and location data from the device that you use to access the service Legitimate interests – it is in our legitimate interests to target advertisements so that Users see relevant advertisements and to allow us to generate income from advertising revenue\r\nTo send you marketing information about our events, offers and services Name, email address, postal address, Instagram handle and mobile phone number (CCPA Categories A and B) You provide this information to us Consent or legitimate interests and in accordance with the laws applying to our marketing activities. We have a legitimate interest in promoting our business and products\r\nTo contact you in order to run surveys for research purposes and to obtain feedback, and to find out if you want to take part in marketing campaigns Email address and mobile phone number (CCPA Category B) You provide this information to us Legitimate interests – it is in our legitimate interests to carry out research so that we can further develop the app and improve the service\r\nTo enable Users to create and enhance their Frisky Meets profile and log into the app via third party accounts Data from Facebook and other third party accounts (see section 7 of this policy for more details) (CCPA Categories A, B, C, and H) We obtain this information from Facebook or the providers of any other accounts you use to log in or connect with your Frisky Meets account Legitimate interests – it is in our legitimate interests to facilitate access to our services\r\nTo carry out research and analysis to help us improve the App Log and usage data, including IP address, browser type, referring domain, pages accessed, mobile carrier and search terms, images and videos (CCPA Categories F and H) You provide photos and videos to use. We obtain the log and usage information from the device that you use to access the service Legitimate interests – it is in our interests to analyse the way in which Users are accessing and using our services so that we can further develop the App, implement security measures and improve the service\r\nTo respond to correspondence and queries that you submit to us, including social media queries Email address, IP address, social media name, phone number (CCPA Categories B and F) You provide your email address, social media name and phone number to us when you contact us and we obtain your IP address from the device that you use to contact us Legitimate interests – it is in our legitimate interests to respond to your queries to ensure that we pr\r\n\r\n\r\n\r\n\r\n\r\n\r\nMarketing Services Providers - To help us serve marketing and advertising on third party websites and applications and measure the effectiveness of our advertising campaigns. More information on this is available below. Advertising identifier associated with your device (Device ID), estimated location (based on your IP address), age, gender and data about your visit to our Sites or App and action taken on those (for example if you downloaded our App or created an account with our App), hashed email address (for ‘custom audiences’ only) (CCPA Categories B, C, G, F and K)\r\nPayment processing and telecommunications companies - To facilitate payments for our premium services Cardholder name, cardholder address, card number, payment amount, transaction date/time (CCPA Categories A, B, and D)\r\nBusiness Transfers - In the event that a Frisky Meets Group entity or any of its affiliates undergoes a business transition or change of ownership, such as a merger, acquisition by another company, re-organisation, or sale of all or a portion of its assets, or in the event of insolvency or administration, we may be required to disclose your personal data to a purchaser of all or part of the business or to an insolvency practitioner This could include all personal data that Frisky Meets holds about you, including all CCPA Categories listed above\r\nAnti-Spam and Anti-Fraud - Your data may be shared with other Frisky Meets Group companies, for example, to block accounts and suspected fraudulent payment transactions as part of our anti-spam and anti-fraud procedures. This could include email address, phone number, IP address and IP session information, social network ID, username, user agent string, and transaction and payment data (CCPA Categories B, F and D)\r\nAggregated Information - We may share aggregated information with third parties that includes your personal data (but which doesn’t identify you directly) together with other information including log data for industry analysis and demographic profiling.\r\n\r\n\r\n\r\nMORE INFORMATION ABOUT DISCLOSURES\r\nSharing your personal data with Service Providers\r\nWe engage certain trusted third parties to perform functions and provide services to us (“Service Providers”). The suppliers with which Frisky Meets shares User personal data vary depending on a variety of factors, such as which of our Apps and Sites a User engages with. For example, to provide our services to Frisky Meets App Users, we typically use the following suppliers:\r\n\r\nBilling services - to allow customers to purchase paid features of our App (for example, Google Play)\r\nAuthentication services - to allow customers to authenticate their account (for example, Twilio)\r\nSocial media providers - to allow customers to create/connect their Frisky Meets account with their account(s) on such platforms (for example Facebook or Instagram)\r\nProduct improvement and market research - we use third party platforms (such as Typeform) and agencies (such as Kantar) to carry out customer surveys and market research to improve our products and services\r\nGrowth marketing services - to allow us to market and advertise Frisky Meets to potential customers (for example AppsFlyer and Facebook)\r\n\r\n\r\nIT services - some of the third-party software providers used in the operation of our business may process customers’ personal data \r\nWe carry out due diligence on all Service Providers we engage to ensure they have adequate data protection and information security measures in place and only provide them with the personal data necessary to the service they are providing. Our suppliers are also subject to extensive obligations under our contractual arrangements, including strict data retention limits.\r\n\r\nSharing your personal data with Marketing Service Providers and Advertising Partners\r\nWe may partner with advertising publishers to place third party adverts on our App and Sites (‘Advertising Partners’). We also partner with providers of marketing services (such as Facebook for example) (‘Marketing Services Providers’) to help us market and advertise our App and services on third party websites and applications and measure the effectiveness of our advertising campaigns. For example:\r\n\r\nto exclude you from advertising campaigns aimed at finding new users, if you already have a Frisky Meets account;\r\nto show Frisky Meets adverts to users who have visited the Frisky Meets App/Sites but haven’t yet created a Frisky Meets account;\r\nto create an audience for our advertisements of other potential users who have similar characteristics to you based on the information the Marketing Service Providers hold about you (also known as a Lookalike Audience); or\r\nto include you in a ‘custom audience’ that will receive Frisky Meets advertising content (a custom audience is essentially a list of people who we think are most likely to be interested in a particular advertisement).\r\nWe share a limited amount of your personal data with companies that help us with marketing and advertising, such as:\r\nthe advertising identifier associated with your device (this is a random number assigned by your mobile device manufacturer (for example Apple or Google) to your device to help advertisers (including the manufacturer), know when an ad has been viewed or clicked on in the App or sites, and when an ad causes a “conversion” (for example downloading the app advertised to you))\r\nyour estimated location (based on your IP address)\r\n\r\n\r\nage and gender\r\ndata about your visit to our Sites or App and action taken on those (for example if you download our App or created an Account with our App)\r\na hashed* version of your email address (to create ‘custom audiences’).\r\n*Hashing is a way of encrypting information by turning it into a combination of random numbers and letters - this code cannot be traced back to the email address. When hashed email addresses are sent to a Marketing Service Provider, they’re then matched against the Provider’s own existing list of their own users’ hashed information and our ads are served to those of our users who have successfully been matched with the Provider’s. Matched and unmatched hashes are then deleted by the Provider.\r\n\r\nFor more information about how we use cookies and other tracking technologies, including how you can set and manage your preferences with regards to such technologies, please see our Cookie Policy.\r\n\r\nSome platforms require user consent before Frisky Meets is permitted to use data gained through the platform for advertising purposes and where it is the case, Frisky Meets will only use this data where the necessary consent has been obtained. Through your device’s security settings, you also have the option to prevent or limit device identifiers being shared with third party advertisers and what use is made of the device identifiers. If you would like more information about this practice and to know your choices about not having this information used by these companies, please visit this page.\r\n\r\nIn some cases, these third parties will also use the data that they collect for their own purposes, for example they may aggregate your data with other data they hold and use this to inform advertising related services provided to other clients.\r\n\r\nSharing with Facebook\r\nWhere we share data with Facebook as our Marketing Service Provider (including via the Facebook “Like” function), we are Joint Data Controllers with Facebook Ireland for this processing. This arrangement means that Frisky Meets\r\nhas to provide you this notice, but you should contact Facebook if you wish to exercise your data protection rights. Further information, including how Facebook enables you to exercise your data protection rights, and subsequently processes your information as an independent data controller can be found in Facebook Ireland’s Data Policy. If you want more information relating to the nature of the arrangement we have in place with Facebook, please email DPO@corp.Frisky Meets.com.\r\n\r\nThis data referred to above can include actions that you take on our website such as your interactions with our website or other information collected from cookies or similar technologies including the Facebook pixel. This allows us to measure the effectiveness of our advertising, improve our marketing practices, and helps us deliver more relevant advertising to you and people like you (including on social media such as Facebook).\r\n\r\n\r\n\r\n\r\n9. YOUR RIGHTS.\r\nPrivacy laws applicable in your country may give you the following rights:\r\n\r\nRight to be informed: what personal data an organisation is processing and why (this notice).\r\nRight of access: you can request a copy of your data.\r\nRight of rectification: if the data held is inaccurate, you have the right to have it corrected.\r\nRight to erasure: you have the right to have your data deleted in certain circumstances.\r\nRight to restrict processing: in limited circumstances, you have the right to request that processing is stopped but the data retained.\r\nRight to data portability: you can request a copy of your data in a machine-readable form that can be transferred to another provider.\r\nRight to object: in certain circumstances (including where data is processed on the basis of legitimate interests or for the purposes of marketing) you may object to that processing.\r\nRights related to automated decision-making including profiling: there are several rights in this area where processing carried out on a solely automated basis results in a decision which has legal or significant effects for the individual. In these circumstances your rights include the right to ensure that there is human intervention in the decision-making process.\r\nThe particular rights which are applicable to you (which might inclu\r\n\r\n10. DATA LOCATIONS.\r\nWe want you to be able to access Frisky Meets wherever you happen to be in the world. To enable us to provide that service, we operate a global network of servers including in the US, UK, EU, and (for Users located in Russia) Russia. The hardware is located in third-party data centres but is owned by the Frisky Meets Group. Data collected by Advertising Partners and other Service Providers may also be held outside the UK and the European Economic Area. We ensure that the data is adequately protected by ensuring that valid, legal mechanisms are in place such as: EU approved model clauses (which can be found here), and implementing robust contractual standards. If you want more information relating to the nature of the safeguards we have in place, please email DPO@corp.Frisky Meets.com.\r\n\r\n11. DATA RETENTION AND DELETION.\r\nWe keep your personal information only as long as we need it for the legal basis relied upon (as set out in Section 2 above) and as permitted by applicable law. Please see “Profile Verification Information (Including Biometric Information)” in Section 1, above, to learn about our retention policy with respect to biometric information.\r\n\r\nWhen you delete your Account or it is deactivated by us, we make sure it is no longer viewable on the App. For up to 28 days it is still possible to restore your Account if it was accidentally deleted or wrongfully deactivated. After 28 days, we begin the process of deleting your personal information from our systems, unless:\r\n\r\nwe must keep it to comply with applicable law (for instance, if you make purchases within the App, some personal data may need to be kept for tax and accounting purposes);\r\nwe must keep it to evidence our compliance with applicable law (for example, if an account is blocked, we keep some account information and a record of the behaviour that led to the block - this information is retained for evidential purposes in case of queries or legal claims concerning the block);\r\nthere is an outstanding issue, claim or dispute requiring us to keep the relevant information until it is resolved; or\r\nthe information must be kept for our legitimate business interests, such as fraud prevention and enhancing Users’ safety and security (for example, information may need to be kept to prevent a user who was banned for unsafe behaviour or security incidents from opening a new account).\r\nWarning: Even after you remove information from your profile or delete your Account, copies of that information may still be viewable and/or accessed to the extent such information has been previously shared with others, or copied or stored by others. We cannot control this, nor do we accept any liability for this. If you have given third party applications or websites access to your personal information, they may retain such information to the extent permitted under their terms of service or privacy policies.\r\n\r\nThanks for reading, we hope we didn’t drone on for too long!\r\n\r\n\r\n12. CHANGES TO THIS POLICY.\r\nAs Frisky Meets evolves, we may revise this Privacy Policy from time to time. The most current version of the policy will govern our use of your information and will always be at https://Frisky Meets.com/privacy/. If we make a change to this policy that, in our sole discretion, is material, we will notify you, for example, via an email to the email associated with your Account or by posting a notice within Frisky Meets.\r\n\r\nEffective date. This Privacy Policy was last updated on 31 March 2022.\r\n', 1656334276, NULL, 1, 0, 0);
 
 -- ----------------------------
 -- Table structure for en_cities
@@ -484,7 +490,7 @@ CREATE TABLE `en_cities`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `country_id`(`country_id`) USING BTREE,
   INDEX `name`(`name`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3628 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3628 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_cities
@@ -4122,7 +4128,7 @@ CREATE TABLE `en_constellations`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '星座' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '星座' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_constellations
@@ -4148,7 +4154,7 @@ CREATE TABLE `en_countries`  (
   `id` smallint(1) UNSIGNED NOT NULL,
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_countries
@@ -4398,7 +4404,7 @@ CREATE TABLE `en_currencies`  (
   `id` smallint(1) NOT NULL,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_currencies
@@ -4570,7 +4576,7 @@ CREATE TABLE `en_educations`  (
   `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '学历名称',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '学历表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '学历表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_educations
@@ -4588,7 +4594,7 @@ CREATE TABLE `en_emotions`  (
   `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '情感状态' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '情感状态' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_emotions
@@ -4607,7 +4613,7 @@ CREATE TABLE `en_provinces`  (
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `country_id`(`country_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3324 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3324 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_provinces
@@ -7947,7 +7953,7 @@ CREATE TABLE `en_regions`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id`(`id`) USING BTREE,
   INDEX `pid`(`pid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_regions
@@ -7991,7 +7997,7 @@ CREATE TABLE `en_temperaments`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `sex`(`sex`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '性格表,分性别' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '性格表,分性别' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of en_temperaments
@@ -8039,7 +8045,7 @@ CREATE TABLE `incomes`  (
   `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of incomes
@@ -8063,7 +8069,7 @@ CREATE TABLE `languages`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `iso`(`iso`) USING BTREE,
   INDEX `status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of languages
@@ -8092,7 +8098,7 @@ CREATE TABLE `user_albums`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `uid`(`uid`) USING BTREE,
   INDEX `private`(`private`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户相册表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户相册表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user_albums
@@ -8107,6 +8113,8 @@ INSERT INTO `user_albums` VALUES (30, 39357, 'meet/static/user/album/00101K/5118
 INSERT INTO `user_albums` VALUES (31, 39357, 'meet/static/user/album/00101K/99221-6325-4895-5527-1656299831.png', 0, 0, 1656299832, '');
 INSERT INTO `user_albums` VALUES (32, 39357, 'meet/static/user/album/00101K/46657-9762-5013-4378-1656299843.png', 0, 0, 1656299843, '');
 INSERT INTO `user_albums` VALUES (34, 39362, 'meet/static/user/album/00101Q/93070-3808-8094-9285-1656320588.png', 0, 0, 1656320588, '');
+INSERT INTO `user_albums` VALUES (35, 39355, 'meet/user/album/00101H/79483-8705-1033-4427-1656331074.jpg', 0, 0, 1656331076, '');
+INSERT INTO `user_albums` VALUES (36, 39355, 'meet/static/user/album/00101H/15654-6846-8414-5551-1656331085.jpeg', 0, 0, 1656331086, '');
 
 -- ----------------------------
 -- Table structure for user_attrs
@@ -8123,7 +8131,11 @@ CREATE TABLE `user_attrs`  (
   INDEX `constellationid`(`constellationid`) USING BTREE,
   INDEX `emotionid`(`emotionid`) USING BTREE,
   INDEX `temperamentid`(`temperamentid`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户一些属性,主要用于搜索' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户一些属性,主要用于搜索' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of user_attrs
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for user_devices
@@ -8141,7 +8153,11 @@ CREATE TABLE `user_devices`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `md5`(`md5`) USING BTREE,
   INDEX `uid`(`uid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of user_devices
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for user_invitees
@@ -8151,7 +8167,7 @@ CREATE TABLE `user_invitees`  (
   `id` bigint(1) UNSIGNED NOT NULL COMMENT '邀请人id',
   `uid` bigint(1) UNSIGNED NOT NULL COMMENT '被邀请人id',
   PRIMARY KEY (`id`, `uid`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户邀请下级列表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户邀请下级列表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user_invitees
@@ -8169,7 +8185,7 @@ CREATE TABLE `user_likes`  (
   `addtime` bigint(1) UNSIGNED NULL DEFAULT NULL COMMENT '喜欢的时间',
   PRIMARY KEY (`id`, `likeid`) USING BTREE,
   INDEX `mutual`(`mutual`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户喜欢列表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户喜欢列表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of user_likes
@@ -8222,7 +8238,7 @@ CREATE TABLE `users`  (
   UNIQUE INDEX `account`(`account`) USING BTREE,
   UNIQUE INDEX `mail`(`mail`) USING BTREE,
   UNIQUE INDEX `phone`(`phone`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39365 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 39365 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
@@ -8242,7 +8258,7 @@ INSERT INTO `users` VALUES (13, 12, '00000D', '10,12', NULL, 'bbbbbaaa@gmail.com
 INSERT INTO `users` VALUES (14, 12, '00000E', '10,12', NULL, NULL, 'bbbbbaaa@gmail.com', 0, 0, '$2a$10$oEvGCTZhfkTD8L3OKlkWBuCqb/72jKbdwvZPpEuEaiqBrxW4GvqOW', NULL, NULL, NULL, NULL, 0, 1655114205, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 2130706433, 0, NULL, NULL, 0, NULL, NULL, NULL, 0);
 INSERT INTO `users` VALUES (39350, 1111111111111111111, NULL, NULL, 'aaa', NULL, NULL, 0, NULL, '$2y$10$YtTGQpR89tBaHBJAR6uKsuIylIcGOBtER336oFPCq1i4q39uP32xW', NULL, '', NULL, NULL, 0, 1654743271, 1, 0, 254, 900.56, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4294967295, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 INSERT INTO `users` VALUES (39352, 0, '00101E', NULL, NULL, 'dfsf@qc.bb', NULL, 0, 0, '$2a$10$rg/ETWOhhQZv3aRYQnsXpuYpveukeWURZs0RAnumhMgrSIM8UjWgK', NULL, NULL, NULL, NULL, 0, 1655128163, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, 0, NULL, NULL, 3117694941, 227, 3242, NULL, 0, NULL, NULL, NULL, 0);
-INSERT INTO `users` VALUES (39355, 3, '00101H', '3', NULL, '1603601628@qq.com', NULL, 1, 0, '$2a$10$UC56Xn8/JXYNsvIVyMFxSe2/G71kM3g0RM1CX9pr8VpcXgcYeT1iu', '1603601628', 'meet/user/avatars/165622892200101H.jpg', 'meet/images/165621812900101H.png', '四道口附近', 0, 1655455507, 1, 0, 0, 0.00, NULL, 18, NULL, NULL, NULL, NULL, 2, NULL, 2130706433, 1, NULL, 14, 3, NULL, NULL, NULL, 0);
+INSERT INTO `users` VALUES (39355, 3, '00101H', '3', NULL, '1603601628@qq.com', NULL, 1, 0, '$2a$10$UC56Xn8/JXYNsvIVyMFxSe2/G71kM3g0RM1CX9pr8VpcXgcYeT1iu', 'sfsfsdf', 'meet/user/avatars/165633643100101H.jpg', 'meet/user/background/165633283400101H.jpg', '四道口附近', 0, 1655455507, 1, 0, 0, 0.00, NULL, 18, NULL, NULL, NULL, NULL, 2, NULL, 2130706433, 1, NULL, 14, 5, NULL, NULL, NULL, 0);
 INSERT INTO `users` VALUES (39356, 0, '00101J', NULL, NULL, '1603601628@qq.comt', NULL, 1, 0, NULL, '1603601628', NULL, NULL, NULL, 0, 1655714181, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2584805404, 132, 1779, NULL, 1, NULL, NULL, NULL, 0);
 INSERT INTO `users` VALUES (39357, 0, '00101K', NULL, NULL, '784471540@qq.com', NULL, 1, 0, '$2a$10$/GS0OeQUTm5/ttqy9jQBAO70mmrGE7Xitu/XwTQWG/vesM.FL0pVa', '啦啦啦', NULL, NULL, NULL, 6, 1655778346, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3748146605, 1, NULL, 115, 15, NULL, NULL, NULL, 0);
 INSERT INTO `users` VALUES (39358, 0, '00101L', NULL, NULL, '17700000000@qq.com', NULL, 1, 0, '$2a$10$D4CTaXAhxpz4EeLqw3ZgAuGKrDnMAaThEqij35HTBrdYexafvEZI2', '17700000000', NULL, NULL, NULL, 0, 1656163873, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, 1882184851, 0, NULL, NULL, 1, NULL, NULL, NULL, 0);
@@ -8292,7 +8308,7 @@ CREATE TABLE `users_removed`  (
   `currency` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户手动选择的币种',
   `timezone` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户时区',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39353 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 39353 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users_removed
@@ -8332,7 +8348,11 @@ CREATE TABLE `zh-cn_articles`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `key`(`key`) USING BTREE,
   INDEX `title`(`title`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of zh-cn_articles
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for zh-cn_cities
@@ -8346,7 +8366,7 @@ CREATE TABLE `zh-cn_cities`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `country_id`(`country_id`) USING BTREE,
   INDEX `name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3628 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3628 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_cities
@@ -11984,7 +12004,7 @@ CREATE TABLE `zh-cn_constellations`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '星座' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '星座' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_constellations
@@ -12010,7 +12030,7 @@ CREATE TABLE `zh-cn_countries`  (
   `id` smallint(1) UNSIGNED NOT NULL,
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_countries
@@ -12260,7 +12280,7 @@ CREATE TABLE `zh-cn_currencies`  (
   `id` smallint(1) NOT NULL,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_currencies
@@ -12432,7 +12452,7 @@ CREATE TABLE `zh-cn_educations`  (
   `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '学历名称',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '学历表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '学历表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_educations
@@ -12450,7 +12470,7 @@ CREATE TABLE `zh-cn_emotions`  (
   `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '情感状态' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '情感状态' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_emotions
@@ -12469,7 +12489,7 @@ CREATE TABLE `zh-cn_provinces`  (
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `country_id`(`country_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3324 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3324 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_provinces
@@ -15809,7 +15829,7 @@ CREATE TABLE `zh-cn_regions`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id`(`id`) USING BTREE,
   INDEX `pid`(`pid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_regions
@@ -15853,7 +15873,7 @@ CREATE TABLE `zh-cn_temperaments`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `sex`(`sex`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '性格表,分性别' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '性格表,分性别' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of zh-cn_temperaments

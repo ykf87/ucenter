@@ -186,7 +186,8 @@ func Index(c *gin.Context) {
 		v.Fmt(timezone, lang)
 	}
 	info["albums"] = albums
-	controllers.Success(c, info, &controllers.Msg{Str: "Success"})
+	controllers.SuccessStr(c, info, "Success")
+	// controllers.Success(c, info, &controllers.Msg{Str: "Success"})
 }
 
 //编辑信息

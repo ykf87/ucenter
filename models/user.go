@@ -306,28 +306,44 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 		if k == "pwd" || k == "status" || k == "Singleid" || k == "chain" || k == "Edinfo" || k == "ip" || k == "pid" {
 			continue
 		}
-		if k == "birth" && v.Int() > 0 {
-			var fmt string
-			fmts, ok := config.Config.Timefmts[lang]
-			if ok {
-				fmt = fmts.Datefmt
-			} else {
-				fmt = config.Config.Datefmt
-			}
-			data[k] = carbon.CreateFromTimestamp(v.Int()).SetTimezone(timezone).Carbon2Time().Format(fmt)
-		} else if k == "country" && v.Int() > 0 {
-			data[k] = CountryMap.Get(lang, v.Int())
-		} else if k == "province" && v.Int() > 0 {
-			r, e := GetProvinceById(v.Int(), lang)
-			if e == nil {
-				data[k] = r.Name
+		if k == "birth" {
+			if v.Int() > 0 {
+				var fmt string
+				fmts, ok := config.Config.Timefmts[lang]
+				if ok {
+					fmt = fmts.Datefmt
+				} else {
+					fmt = config.Config.Datefmt
+				}
+				data[k] = carbon.CreateFromTimestamp(v.Int()).SetTimezone(timezone).Carbon2Time().Format(fmt)
 			} else {
 				data[k] = ""
 			}
-		} else if k == "city" && v.Int() > 0 {
-			r, e := GetCityById(v.Int(), lang)
-			if e == nil {
-				data[k] = r.Name
+		} else if k == "country" {
+			if v.Int() > 0 {
+				data[k] = CountryMap.Get(lang, v.Int())
+			} else {
+				data[k] = ""
+			}
+		} else if k == "province" {
+			if v.Int() > 0 {
+				r, e := GetProvinceById(v.Int(), lang)
+				if e == nil {
+					data[k] = r.Name
+				} else {
+					data[k] = ""
+				}
+			} else {
+				data[k] = ""
+			}
+		} else if k == "city" {
+			if v.Int() > 0 {
+				r, e := GetCityById(v.Int(), lang)
+				if e == nil {
+					data[k] = r.Name
+				} else {
+					data[k] = ""
+				}
 			} else {
 				data[k] = ""
 			}
@@ -343,8 +359,12 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 				}
 			}
 			data[k] = strings.Join(ssds, ",")
-		} else if k == "constellation" && v.Int() > 0 {
-			data[k] = ConstellationMap.Get(lang, v.Int())
+		} else if k == "constellation" {
+			if v.Int() > 0 {
+				data[k] = ConstellationMap.Get(lang, v.Int())
+			} else {
+				data[k] = ""
+			}
 		} else if k == "edu" {
 			data[k] = EducationMap.Get(lang, v.Int())
 		} else if k == "emotion" {
