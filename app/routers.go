@@ -82,6 +82,11 @@ func (this *AppClient) WebRouter() {
 
 func Middle() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// signature := c.GetHeader("signature")
+		// if signature == "" {
+		// 	c.AbortWithStatus(http.StatusNotFound)
+		// 	return
+		// }
 		var lang string
 		if cc, err := c.GetQuery("lang"); err == true {
 			lang = cc

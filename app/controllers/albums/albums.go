@@ -104,6 +104,9 @@ func UploadAlb(c *gin.Context) {
 	var isPrivate int
 
 	form, _ := c.MultipartForm()
+	if form.File == nil {
+		controllers.ErrorNoData(c, "Missing editorial content")
+	}
 	var files []*multipart.FileHeader
 	var ok bool
 	files, ok = form.File["public"]

@@ -293,14 +293,22 @@ func EditBatch(c *gin.Context) {
 	phone := c.PostForm("phone")
 	if phone != "" && phone != user.Phone {
 		// phonecode := c.PostForm("phonecode")//暂不支持手机号验证
-		if password != "" {
-			if passwordhash.PasswordVerify(password, user.Pwd) == false {
-				controllers.Error(c, map[string]string{"col": "password"}, &controllers.Msg{Str: "Password error"})
+		u := new(models.UserModel)
+		models.DB.Table("users").Where("phone = ?", phone).First(u)
+		if u.Id > 0 {
+			controllers.Error(c, map[string]string{"col": "phone"}, &controllers.Msg{Str: "Phone already exists, please use another one"})
+			return
+		}
+		if user.Phone != "" {
+			if password != "" {
+				if passwordhash.PasswordVerify(password, user.Pwd) == false {
+					controllers.Error(c, map[string]string{"col": "password"}, &controllers.Msg{Str: "Password error"})
+					return
+				}
+			} else {
+				controllers.Error(c, map[string]string{"col": "password"}, &controllers.Msg{Str: "Please fill in your password to confirm that you changed it yourself"})
 				return
 			}
-		} else {
-			controllers.Error(c, map[string]string{"col": "password"}, &controllers.Msg{Str: "Please fill in your password to confirm that you changed it yourself"})
-			return
 		}
 		cgdata["phone"] = phone
 		rsdata["phone"] = phone
