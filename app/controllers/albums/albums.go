@@ -138,6 +138,10 @@ func UploadAlb(c *gin.Context) {
 
 //base64上传相册图片
 func UploadAlbBase64(c *gin.Context) {
+	// fmt.Println(c.Request.PostForm)
+	// c.Request.ParseMultipartForm(128)
+	// fmt.Println(c.Request.Form)
+
 	rs, _ := c.Get("_user")
 	user, _ := rs.(*models.UserModel)
 
@@ -152,6 +156,7 @@ func UploadAlbBase64(c *gin.Context) {
 
 	var dts []string
 	pub64 := c.PostFormArray("public")
+
 	pri64 := c.PostFormArray("private")
 	if len(pub64) > 0 {
 		dts = pub64
