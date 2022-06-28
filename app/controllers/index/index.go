@@ -8,6 +8,7 @@ import (
 	"strings"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
+	"ucenter/app/safety/aess"
 	"ucenter/models"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,7 @@ func Media(c *gin.Context) {
 
 func Country(c *gin.Context) {
 	filter := c.Query("q")
-	iso := strings.Trim(c.Param("iso"), "/")
+	idstr := strings.Trim(c.Param("cid"), "/")
 	page, _ := strconv.Atoi(c.Query("page"))
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	langs, _ := c.Get("_lang")
@@ -37,11 +38,10 @@ func Country(c *gin.Context) {
 	var err error
 	var rs interface{}
 
-	if iso != "" {
-		iso = strings.ToLower(iso)
-		country, ok := models.Countries[iso]
-		if ok {
-			rs, err = models.GetCityFilterAndPage(lang, filter, country.Id, 0, page, limit, kv)
+	if idstr != "" {
+		id, _ := strconv.Atoi(idstr)
+		if id > 0 {
+			rs, err = models.GetCityFilterAndPage(lang, filter, int64(id), 0, page, limit, kv)
 		} else {
 			err = errors.New("No results found")
 		}
@@ -243,6 +243,31 @@ func Search(c *gin.Context) {
 		}
 		controllers.Success(c, lll, &controllers.Msg{Str: "Success"})
 	}
+}
+
+//邀请用户
+func Invitation(c *gin.Context) {
+	invi := c.Query("invicode")
+	if invi != "" {
+		ccmt := aess.EcbEncrypt(invi, nil)
+		c.SetCookie("invo", ccmt, 31536000, "/", "/", true, true)
+		c.Redirect(301, "/invitation")
+		return
+	}
+	invi, err := c.Cookie("invo")
+	var inviUser map[string]interface{}
+	if err == nil {
+		inviUser = models.InviUser(invi)
+
+		c.JSON(200, gin.H{
+			"invi": inviUser,
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"invi": "未找到",
+		})
+	}
+
 }
 
 //强行停止服务器

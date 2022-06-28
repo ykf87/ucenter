@@ -1,7 +1,6 @@
 package app
 
 import (
-	"strings"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
 	"ucenter/app/controllers/albums"
@@ -20,10 +19,11 @@ func Init() {
 
 //web的路由
 func (this *AppClient) WebRouter() {
-	mainGroup := this.Engine.Use(Middle())
+	mainGroup := this.Engine.Group("")
+	mainGroup.Use(Api())
 	{
 		//和用户相关的不需要验证权限的接口
-		userNoAuth := this.Engine.Group("/")
+		userNoAuth := mainGroup.Group("/")
 		{
 			userNoAuth.POST("login", user.Login)         //登录
 			userNoAuth.POST("sign", user.Sign)           //注册
@@ -31,39 +31,40 @@ func (this *AppClient) WebRouter() {
 			userNoAuth.POST("emailcode", user.Emailcode) //邮件发送,考虑做ip限流
 		}
 
-		//相册相关
-		albumsRoute := this.Engine.Group("/user/albums").Use(Auth())
+		//需要登录的接口
+		mustLoginRouter := mainGroup.Group("/user")
+		mustLoginRouter.Use(Auth())
 		{
-			albumsRoute.GET("", albums.Albums)                  //公共相册列表
-			albumsRoute.GET("/private/*id", albums.Private)     //私密相册列表
-			albumsRoute.GET("/list/:id", albums.Albums)         //他人相册列表
-			albumsRoute.POST("", albums.UploadAlb)              //上传相册
-			albumsRoute.POST("/base64", albums.UploadAlbBase64) //上传相册
-			albumsRoute.POST("/remove", albums.Remove)          //删除照片
-			albumsRoute.POST("/exg", albums.AlbumsExg)          //相册公共私密互转
-		}
+			albumsAuters := mustLoginRouter.Group("/albums")
+			{
+				albumsAuters.GET("", albums.Albums)                  //公共相册列表
+				albumsAuters.GET("/private/*id", albums.Private)     //私密相册列表
+				albumsAuters.GET("/list/:id", albums.Albums)         //他人相册列表
+				albumsAuters.POST("", albums.UploadAlb)              //上传相册
+				albumsAuters.POST("/base64", albums.UploadAlbBase64) //上传相册
+				albumsAuters.POST("/remove", albums.Remove)          //删除照片
+				albumsAuters.POST("/exg", albums.AlbumsExg)          //相册公共私密互转
+			}
 
-		authorized := this.Engine.Group("/user").Use(Auth())
-		{
-			authorized.GET("", user.Index)          //用户信息
-			authorized.GET("/info/:id", user.Index) //用户信息
-			// authorized.POST("/editer", user.Editer)             //修改信息
-			authorized.POST("/editerbatch", user.EditBatch)     //个人信息批量修改
-			authorized.POST("/invitees", user.Invitees)         //上级信息
-			authorized.POST("/invitee", user.Invitee)           //下级账号列表
-			authorized.POST("/cancellation", user.Cancellation) //注销账号
+			mustLoginRouter.GET("", user.Index)          //用户信息
+			mustLoginRouter.GET("/info/:id", user.Index) //用户信息
+			// authorized.POST("/editer", user.Editer)             //修改信息-弃用
+			mustLoginRouter.POST("/editerbatch", user.EditBatch)     //个人信息批量修改
+			mustLoginRouter.POST("/invitees", user.Invitees)         //上级信息
+			mustLoginRouter.POST("/invitee", user.Invitee)           //下级账号列表
+			mustLoginRouter.POST("/cancellation", user.Cancellation) //注销账号
 
-			authorized.POST("/imsigna", user.Signa) //Im签名
+			mustLoginRouter.POST("/imsigna", user.Signa) //Im签名
 
 			//喜欢相关
-			authorized.POST("/like", userlikes.Like)   //喜欢一个人
-			authorized.POST("/liked", userlikes.Liked) //用户喜欢列表
-			authorized.POST("/liker", userlikes.Liker) //喜欢当前用户的列表
-			authorized.POST("/likes", userlikes.Likes) //相互喜欢列表
+			mustLoginRouter.POST("/like", userlikes.Like)   //喜欢一个人
+			mustLoginRouter.POST("/liked", userlikes.Liked) //用户喜欢列表
+			mustLoginRouter.POST("/liker", userlikes.Liker) //喜欢当前用户的列表
+			mustLoginRouter.POST("/likes", userlikes.Likes) //相互喜欢列表
 		}
 
 		mainGroup.GET("/media/:path", index.Media)                 //静态内容,经过解密处理的返回,目的是加密存储一些敏感内容,并解密后显示
-		mainGroup.GET("/country/*iso", index.Country)              //国家,省份和城市列表
+		mainGroup.GET("/country/*cid", index.Country)              //国家,省份和城市列表
 		mainGroup.GET("/countrycode/*iso", index.CountryPhoneCode) //国家手机区号获取
 		mainGroup.GET("/langs", index.Languages)                   //显示系统支持的语言
 		mainGroup.GET("/lists/:table", index.Lists)                //显示一些属性表的列表内容
@@ -72,52 +73,67 @@ func (this *AppClient) WebRouter() {
 		mainGroup.GET("/search", index.Search) //搜索用户
 	}
 
+	//首页
+	this.Engine.Use(Web()).GET("", func(c *gin.Context) {
+		c.AbortWithStatus(404)
+	})
+
+	this.Engine.Use(Web()).GET("/invitation", index.Invitation)
+
 	articleRouter := this.Engine.Group("/article")
+	articleRouter.Use(Web())
 	{
 		articleRouter.GET("/info/:key", article.Index) //文章详情
 	}
+
 	this.Engine.POST("/34598fds93/panic", index.Panics)
+}
+
+func Api() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if Signature(c) == false {
+			c.AbortWithStatus(404)
+			return
+		}
+		Headers(c)
+		c.Next()
+	}
+}
+
+func Web() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		Headers(c)
+		c.Next()
+	}
+}
+
+func Signature(c *gin.Context) bool {
+	// signature := c.GetHeader("signature")
+	// if signature == "" {
+	// 	c.AbortWithStatus(http.StatusNotFound)
+	// 	return
+	// }
+	return true
+}
+
+func Headers(c *gin.Context) {
+	lang := models.GetClientLang(c)
+	c.Set("_lang", lang)
+	c.Header("language", lang)
+
+	country, err := models.GetCountryByIp(c.ClientIP())
+	if err != nil {
+		c.Set("_timezone", config.Config.Timezone)
+	} else {
+		c.Set("_timezone", country.Timezone)
+	}
+
+	c.Header("server", config.Config.APPName)
+	c.Header("auther", config.Config.Auther)
 }
 
 func Middle() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// signature := c.GetHeader("signature")
-		// if signature == "" {
-		// 	c.AbortWithStatus(http.StatusNotFound)
-		// 	return
-		// }
-		var lang string
-		if cc, err := c.GetQuery("lang"); err == true {
-			lang = cc
-		} else if c.GetHeader("lang") != "" {
-			lang = c.GetHeader("lang")
-		} else if cc, err := c.Cookie("lang"); err == nil {
-			lang = cc
-		} else if c.GetHeader("Accept-Language") != "" {
-			langs := strings.Split(c.GetHeader("Accept-Language"), ",")
-			lang = langs[0]
-		} else {
-			lang = config.Config.Lang
-		}
-		lang = strings.ToLower(lang)
-		if _, ok := models.LangLists[lang]; !ok {
-			lang = strings.ToLower(config.Config.Lang)
-		}
-		c.Set("_lang", lang)
-
-		country, err := models.GetCountryByIp(c.ClientIP())
-		if err != nil {
-			c.Set("_timezone", config.Config.Timezone)
-			// c.Header("timezone", config.Config.Timezone)
-		} else {
-			c.Set("_timezone", country.Timezone)
-			// c.Header("timezone", country.Timezone)
-		}
-
-		c.Header("language", lang)
-		c.Header("server", config.Config.APPName)
-		// c.Header("appname", config.Config.APPName)
-		c.Header("auther", config.Config.Auther)
 
 		// c.Header("Access-Control-Allow-Origin", "*")
 		// c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, token")

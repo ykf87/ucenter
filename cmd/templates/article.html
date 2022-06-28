@@ -2,10 +2,36 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="HandheldFriendly" content="true">
+	<meta content="yes" name="apple-mobile-web-app-capable">
+	<meta content="white" name="apple-mobile-web-app-status-bar-style">
+	<meta name="description" content="{{.dt.desc}}"/>
+	<meta name="keywords" content="{{.dt.keyword}}"/>
+	<link href="https://fonts.googlefonts.cn/css?family=Oswald" rel="stylesheet">
 	<title>{{.title}}</title>
+	<style type="text/css">
+		body{
+			font-family: 'Oswald', sans-serif;
+			font-size: 62.5%;
+		}
+		.flex{
+			display: flex;
+		}
+		.flex1{
+			flex: 1;
+		}
+		.flex.v{
+			align-items: center;
+		}
+	</style>
 </head>
 <body>
-
+	<h4>{{.title}}</h4>
+	<div class="infos flex v">
+		<div class=""></div>
+	</div>
+	<div class="content">{{.dt.cont}}</div>
 </body>
 </html>

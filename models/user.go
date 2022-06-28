@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -17,7 +16,7 @@ import (
 	"ucenter/app/im"
 	"ucenter/app/mails/sender/coder"
 	"ucenter/app/safety/aess"
-	"ucenter/app/safety/base34"
+	"ucenter/app/safety/invicode"
 	"ucenter/app/safety/passwordhash"
 	"ucenter/app/uploadfile/images"
 
@@ -175,7 +174,7 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip s
 		if user.Pid > 0 {
 			go AddUserInvitee(user.Pid, user.Id)
 		}
-		DB.Table("users").Where("id = ?", user.Id).Update("invite", string(base34.Base34(uint64(user.Id))))
+		DB.Table("users").Where("id = ?", user.Id).Update("invite", string(invicode.Encode(uint64(user.Id))))
 	}
 
 	return
@@ -208,6 +207,8 @@ func GetUserList(page, limit int, q, rd string, noids []int64) []*UserModel {
 		page = 1
 	}
 	if limit < 1 {
+		limit = config.Config.Limit
+	} else if limit > 100 {
 		limit = config.Config.Limit
 	}
 	dbob := DB.Table("users")
@@ -315,13 +316,14 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 				} else {
 					fmt = config.Config.Datefmt
 				}
-				data[k] = carbon.CreateFromTimestamp(v.Int()).SetTimezone(timezone).Carbon2Time().Format(fmt)
+				data[k] = carbon.SetTimezone(timezone).CreateFromTimestamp(v.Int()).Carbon2Time().Format(fmt)
 			} else {
 				data[k] = ""
 			}
 		} else if k == "country" {
 			if v.Int() > 0 {
 				data[k] = CountryMap.Get(lang, v.Int())
+				data["countryid"] = v.Int()
 			} else {
 				data[k] = ""
 			}
@@ -395,634 +397,6 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 		}
 	}
 	return data
-}
-
-//账号名称修改
-func (this Editers) SetAccount(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	newAccount := args[0].(string)
-	if newAccount == "" {
-		err = errors.New("Please set the account name")
-		return
-	}
-	if user.Account == newAccount {
-		err = errors.New("No changes")
-		return
-	}
-	u := new(UserModel)
-	DB.Table("users").Where("account = ?", newAccount).First(u)
-	if u.Id > 0 {
-		err = errors.New("Account name already exists, please use another one")
-		return
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("account", newAccount)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	dt = map[string]interface{}{
-		"account": newAccount,
-	}
-	// user.Account = newAccount
-	return
-}
-
-//邮箱修改
-func (this Editers) SetEmail(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	newAccount := args[0].(string)
-	dt = make(map[string]interface{})
-	if newAccount == "" {
-		err = errors.New("Please set the Email")
-		return
-	}
-	if user.Mail == newAccount {
-		err = errors.New("No changes")
-		return
-	}
-	c := args[1].(*gin.Context)
-	code := c.PostForm("code")
-	if code == "" {
-		err = errors.New("Please input your Captcha")
-		return
-	}
-	err = coder.Verify(newAccount, code)
-	if err != nil {
-		return
-	}
-
-	u := new(UserModel)
-	DB.Table("users").Where("mail = ?", newAccount).First(u)
-	if u.Id > 0 {
-		err = errors.New("Email already exists, please use another one")
-		return
-	}
-
-	ssid := user.Singleid + 1
-	ud := map[string]interface{}{
-		"mail":     newAccount,
-		"singleid": ssid,
-		"mailvery": 1,
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Updates(ud)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	user.Mail = newAccount
-	user.Singleid = ssid
-	token := user.Token()
-	if token == "" {
-		err = errors.New("Voucher generation failed, please try again later")
-	} else {
-		dt["token"] = token
-	}
-	return
-}
-
-//手机号修改,未接入手机证码
-func (this Editers) SetPhone(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	newAccount := args[0].(string)
-	if newAccount == "" {
-		err = errors.New("Please set the Phone")
-		return
-	}
-	if user.Mail == newAccount {
-		err = errors.New("No changes")
-		return
-	}
-	u := new(UserModel)
-	DB.Table("users").Where("phone = ?", newAccount).First(u)
-	if u.Id > 0 {
-		err = errors.New("Phone already exists, please use another one")
-		return
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("phone", newAccount)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	dt = map[string]interface{}{
-		"phone": newAccount,
-	}
-	// user.Phone = newAccount
-	return
-}
-
-//修改密码
-func (this Editers) SetPassword(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	npwd, _ := passwordhash.PasswordHash(changeto)
-	dtn := &map[string]interface{}{
-		"pwd":      npwd,
-		"singleid": user.Singleid + 1,
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Updates(dtn)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	dt = map[string]interface{}{"token": user.Token()}
-	return
-}
-
-//修改昵称
-func (this Editers) SetNickname(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	if len(changeto) > 200 {
-		err = errors.New("Please set reasonably")
-		return
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("nickname", changeto)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	// user.Nickname = changeto
-	dt = map[string]interface{}{
-		"nickname": changeto,
-	}
-	return
-}
-
-//修改头像
-func (this Editers) SetAvatar(user *UserModel, args ...interface{}) (error, map[string]interface{}) {
-	changeto := args[0].(string)
-	avatarPath := AVATARPATH
-	var filename string
-	var err error
-	oldFilename := user.Avatar
-	if changeto == "" {
-		c := args[1].(*gin.Context)
-		f, err := c.FormFile("file")
-		if err != nil {
-			return errors.New("Please set the content to be modified"), nil
-		}
-		filename, err = images.SaveFileFromUpload(avatarPath, user.Invite, f, nil, nil)
-		if err != nil {
-			log.Println(err, " - when SetAvatar model upload from form file")
-			return errors.New("System error, please try again later"), nil
-		}
-	} else {
-		filename, err = images.SaveFileBase64(avatarPath, user.Invite, changeto, nil, nil)
-		if err != nil {
-			log.Println(err, " - when SetAvatar model upload from form file")
-			return errors.New("System error, please try again later"), nil
-		}
-	}
-
-	if filename != "" {
-		rs := DB.Table("users").Where("id = ?", user.Id).Update("avatar", filename)
-		if rs.Error != nil {
-			return errors.New("Modification failure"), nil
-		}
-		if strings.Contains(oldFilename, filename) != true {
-			os.Remove(oldFilename)
-		}
-		// user.Avatar = filename
-		return nil, map[string]interface{}{"avatar": config.Config.Domain + filename}
-	}
-	return errors.New("System error, please try again later"), nil
-}
-
-//修改背景图片
-func (this Editers) SetBackground(user *UserModel, args ...interface{}) (error, map[string]interface{}) {
-	changeto := args[0].(string)
-	avatarPath := BACKGROUNDPATH
-	var filename string
-	var err error
-	oldFilename := user.Background
-	if changeto == "" {
-		c := args[1].(*gin.Context)
-		f, err := c.FormFile("file")
-		if err != nil {
-			return errors.New("Please set the content to be modified"), nil
-		}
-		filename, err = images.SaveFileFromUpload(avatarPath, user.Invite, f, nil, nil)
-		if err != nil {
-			log.Println(err, " - when SetBackground model upload from form file")
-			return errors.New("System error, please try again later"), nil
-		}
-	} else {
-		filename, err = images.SaveFileBase64(avatarPath, user.Invite, changeto, nil, nil)
-		if err != nil {
-			log.Println(err, " - when SetAvatar model upload from form file")
-			return errors.New("System error, please try again later"), nil
-		}
-	}
-
-	if filename != "" {
-		rs := DB.Table("users").Where("id = ?", user.Id).Update("background", filename)
-		if rs.Error != nil {
-			return errors.New("Modification failure"), nil
-		}
-		if strings.Contains(oldFilename, filename) != true {
-			os.Remove(oldFilename)
-		}
-		// user.Background = filename
-		return nil, map[string]interface{}{"background": filename}
-	}
-	return errors.New("System error, please try again later"), nil
-}
-
-//修改性别
-func (this Editers) SetSex(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	if changeto != "0" && changeto != "1" && changeto != "2" {
-		changeto = "0"
-	}
-	cgt, _ := strconv.Atoi(changeto)
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("sex", cgt)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	dt = map[string]interface{}{
-		"sex": cgt,
-	}
-	// user.Sex = cgt
-	return
-}
-
-//修改身高
-func (this Editers) SetHeight(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	cgt, _ := strconv.Atoi(changeto)
-	if cgt < 1 || cgt >= 300 {
-		err = errors.New("Please set the height reasonably")
-		return
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("height", cgt)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	dt = map[string]interface{}{
-		"height": cgt,
-	}
-	// user.Height = cgt
-	return
-}
-
-//修改体重
-func (this Editers) SetWeight(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	cgt, _ := strconv.ParseFloat(changeto, 64)
-	if cgt < 1.0 || cgt >= 500000.0 {
-		err = errors.New("Please set your weight wisely")
-		return
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("weight", cgt)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	dt = map[string]interface{}{
-		"weight": cgt,
-	}
-	// user.Weight = cgt
-	return
-}
-
-//修改年龄
-func (this Editers) SetAge(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	cgt, _ := strconv.Atoi(changeto)
-	if cgt < 1 || cgt > 200 {
-		err = errors.New("Wrong age")
-		return
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("age", cgt)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	dt = map[string]interface{}{
-		"age": cgt,
-	}
-	// user.Age = cgt
-	return
-}
-
-//修改生日
-func (this Editers) SetBirth(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	cgt := carbon.Parse(changeto).Timestamp()
-	if cgt == 0 {
-		err = errors.New("Wrong date format")
-		return
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("birth", cgt)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	dt = map[string]interface{}{
-		"birth": changeto,
-	}
-	// user.Birth = cgt
-	return
-}
-
-//修改工作
-func (this Editers) SetJob(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("job", changeto)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	// user.Job = changeto
-	dt = map[string]interface{}{
-		"job": changeto,
-	}
-	return
-}
-
-//修改收入
-func (this Editers) SetIncome(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	cgt, _ := strconv.Atoi(changeto)
-	if cgt < 1 {
-		err = errors.New("Please set reasonably")
-		return
-	}
-	ccgt := int64(cgt)
-	ins, ok := IncomesMap[ccgt]
-	if !ok {
-		err = errors.New("Please set reasonably")
-		return
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("income", ccgt)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	dt = map[string]interface{}{
-		"income": ins,
-	}
-	// user.Income = ccgt
-	return
-}
-
-//修改情感状态
-func (this Editers) SetEmotion(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-
-	c := args[1].(*gin.Context)
-	langob, _ := c.Get("_lang")
-	lang := langob.(string)
-
-	id32, _ := strconv.Atoi(changeto)
-	id := int64(id32)
-	name := EmotionMap.Get(lang, id)
-	if name == "" {
-		err = errors.New("Please set reasonably")
-		return
-	}
-
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("emotion", id)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	dt = map[string]interface{}{
-		"emotion": name,
-	}
-	// user.Emotion = id
-	return
-}
-
-//修改星座
-func (this Editers) SetConstellation(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-
-	c := args[1].(*gin.Context)
-	langob, _ := c.Get("_lang")
-	lang := langob.(string)
-
-	id32, _ := strconv.Atoi(changeto)
-	id := int64(id32)
-	name := ConstellationMap.Get(lang, id)
-	if name == "" {
-		err = errors.New("Please set reasonably")
-		return
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("constellation", id)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	// user.Constellation = id
-	dt = map[string]interface{}{
-		"constellation": name,
-	}
-	return
-}
-
-//修改性格
-func (this Editers) SetTemperament(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-
-	c := args[1].(*gin.Context)
-	langob, _ := c.Get("_lang")
-	lang := langob.(string)
-
-	var vals []string
-	var ids []string
-	arrs := strings.Split(changeto, ",")
-	for _, v := range arrs {
-		cgt, _ := strconv.Atoi(v)
-		geted := TemperamentMap.Get(lang, int64(cgt))
-		if geted != "" {
-			vals = append(vals, geted)
-			ids = append(ids, v)
-		}
-	}
-
-	if len(ids) > 0 {
-		changeto = strings.Join(ids, ",")
-		rs := DB.Table("users").Where("id = ?", user.Id).Update("temperament", changeto)
-		if rs.Error != nil {
-			err = errors.New("Modification failure")
-			return
-		}
-		// user.Temperament = changeto
-	} else {
-		err = errors.New("Please set reasonably")
-		return
-	}
-
-	dt = map[string]interface{}{
-		"constellation": vals,
-	}
-	return
-}
-
-//修改学历
-func (this Editers) SetEdu(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	id32, _ := strconv.Atoi(changeto)
-	id := int64(id32)
-	if id < 1 {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	if user.Edu == id {
-		err = errors.New("No changes")
-		return
-	}
-
-	c := args[1].(*gin.Context)
-	langob, _ := c.Get("_lang")
-	lang := langob.(string)
-
-	eduname := EducationMap.Get(lang, id)
-	if eduname == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("edu", id)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	// user.Edu = id
-	dt = map[string]interface{}{"edu": eduname}
-	return
-}
-
-//修改国家
-func (this Editers) SetCountry(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	id, _ := strconv.Atoi(changeto)
-	if id < 1 {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("country", id)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	// user.Country = int64(id)
-	c := args[1].(*gin.Context)
-	langob, _ := c.Get("_lang")
-	lang := langob.(string)
-	dt = map[string]interface{}{
-		"country": CountryMap.Get(lang, int64(id)),
-	}
-	return
-}
-
-//修改城市
-func (this Editers) SetCity(user *UserModel, args ...interface{}) (err error, dt map[string]interface{}) {
-	changeto := args[0].(string)
-	if changeto == "" {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	if user.Country < 1 {
-		err = errors.New("Please select your country first")
-		return
-	}
-	cityid32, _ := strconv.Atoi(changeto)
-	cityid := int64(cityid32)
-	if user.City == cityid {
-		err = errors.New("No changes")
-		return
-	}
-
-	c := args[1].(*gin.Context)
-	langob, _ := c.Get("_lang")
-	citylist, errs := GetCityByCountryId(langob.(string), user.Country)
-	if err != nil {
-		err = errs
-		return
-	}
-	if len(citylist) < 1 {
-		err = errors.New("Please select your country first")
-		return
-	}
-	var findcity *CityModel
-	for _, v := range citylist {
-		if v.Id == cityid {
-			findcity = v
-			break
-		}
-	}
-	if findcity == nil {
-		err = errors.New("The city of your choice was not found")
-		return
-	}
-
-	if cityid < 1 {
-		err = errors.New("Please set the content to be modified")
-		return
-	}
-	rs := DB.Table("users").Where("id = ?", user.Id).Update("city", cityid)
-	if rs.Error != nil {
-		err = errors.New("Modification failure")
-		return
-	}
-	// user.City = int64(cityid)
-	dt = map[string]interface{}{"city": findcity.Name}
-	return
 }
 
 //修改密码
@@ -1120,4 +494,22 @@ func (this *UserModel) AddVisits() {
 //注销账号,账号信息存储至其他表格,并删除user表内容
 func (this *UserModel) MoveAndDelete() {
 
+}
+
+//获取邀请人信息
+func InviUser(code string) map[string]interface{} {
+	uid := int64(invicode.Decode(code))
+	if uid < 1 {
+		return nil
+	}
+	user := GetUser(uid, "", "", "")
+	if user.Id < 1 {
+		return nil
+	}
+	dt := make(map[string]interface{})
+	dt["nickname"] = user.Nickname
+	dt["avatar"] = user.Avatar
+	dt["id"] = user.Id
+	dt["invite"] = user.Invite
+	return dt
 }

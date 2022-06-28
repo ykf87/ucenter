@@ -2,6 +2,9 @@ package models
 
 import (
 	"strings"
+	"ucenter/app/config"
+
+	"github.com/gin-gonic/gin"
 )
 
 type LanguageModel struct {
@@ -37,4 +40,27 @@ func GetAllLanguagesResKv() (list map[string]string) {
 		list[v.Iso] = v.Name
 	}
 	return
+}
+
+//获取客户端语言
+func GetClientLang(c *gin.Context) string {
+	var lang string
+	if cc, err := c.GetQuery("lang"); err == true {
+		lang = cc
+	} else if c.GetHeader("lang") != "" {
+		lang = c.GetHeader("lang")
+	} else if cc, err := c.Cookie("lang"); err == nil {
+		lang = cc
+	} else if c.GetHeader("Accept-Language") != "" {
+		langs := strings.Split(c.GetHeader("Accept-Language"), ",")
+		lang = langs[0]
+	} else {
+		lang = config.Config.Lang
+	}
+	lang = strings.ToLower(lang)
+	if _, ok := LangLists[lang]; !ok {
+		lang = strings.ToLower(config.Config.Lang)
+	}
+
+	return lang
 }

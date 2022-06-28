@@ -324,6 +324,7 @@ func EditBatch(c *gin.Context) {
 		}
 		cgdata["age"] = age
 		rsdata["age"] = age
+		user.Age = ageid
 	}
 
 	//生日修改
@@ -337,15 +338,22 @@ func EditBatch(c *gin.Context) {
 			fmt = config.Config.Datefmt
 		}
 
-		userBirth := carbon.CreateFromTimestamp(user.Birth).SetTimezone(timezone).Carbon2Time().Format(fmt)
+		userBirth := carbon.SetTimezone(timezone).CreateFromTimestamp(user.Birth).Carbon2Time().Format(fmt)
 		if strings.Contains(birth, userBirth) == false {
-			birthUni := carbon.Parse(birth).Timestamp()
+			birthUni := carbon.SetTimezone(timezone).Parse(birth).Timestamp()
 			if birthUni < 10000 {
 				controllers.Error(c, map[string]string{"col": "birth"}, &controllers.Msg{Str: "Wrong date format"})
 				return
 			}
+			// if user.Age < 1 {
+			user.Age = int((time.Now().Unix() - birthUni) / 31536000)
+			if user.Age > 0 {
+				cgdata["age"] = user.Age
+				rsdata["age"] = user.Age
+			}
+			// }
 			cgdata["birth"] = birthUni
-			rsdata["birth"] = birth
+			rsdata["birth"] = carbon.SetTimezone(timezone).CreateFromTimestamp(birthUni).Carbon2Time().Format(fmt)
 		}
 	}
 
