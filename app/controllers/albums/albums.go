@@ -150,32 +150,44 @@ func UploadAlbBase64(c *gin.Context) {
 	path := fmt.Sprintf("%s/%s", models.ALBUMSAVEPATH, user.Invite)
 	var isPrivate int
 
-	var dts []string
-	pub64 := c.PostFormArray("public")
-	pri64 := c.PostFormArray("private")
-
-	if len(pub64) > 0 {
-		dts = pub64
-	} else if len(pri64) > 0 {
-		dts = pri64
-		isPrivate = 1
+	var ssts []string
+	pub64 := c.PostForm("public")
+	pri64 := c.PostForm("private")
+	if pub64 != "" {
+		ssts = strings.Split(pub64, "~|~")
+	} else if pri64 != "" {
+		ssts = strings.Split(pri64, "~|~")
 	} else {
 		controllers.Error(c, nil, &controllers.Msg{Str: "Missing editorial content"})
 		return
 	}
 
-	var ssts []string
-	for _, v := range dts {
-		nppds := strings.Split(v, ",data:")
-		for k, nv := range nppds {
-			if k > 0 {
-				ssts = append(ssts, "data:"+nv)
-			} else {
-				ssts = append(ssts, nv)
-			}
-		}
+	// var dts []string
+	// pub64 := c.PostFormArray("public")
+	// pri64 := c.PostFormArray("private")
 
-	}
+	// if len(pub64) > 0 {
+	// 	dts = pub64
+	// } else if len(pri64) > 0 {
+	// 	dts = pri64
+	// 	isPrivate = 1
+	// } else {
+	// 	controllers.Error(c, nil, &controllers.Msg{Str: "Missing editorial content"})
+	// 	return
+	// }
+
+	// var ssts []string
+	// for _, v := range dts {
+	// 	nppds := strings.Split(v, ",data:")
+	// 	for k, nv := range nppds {
+	// 		if k > 0 {
+	// 			ssts = append(ssts, "data:"+nv)
+	// 		} else {
+	// 			ssts = append(ssts, nv)
+	// 		}
+	// 	}
+
+	// }
 
 	filenames := images.UploadFileByBase64Process(path, ssts)
 	ls, err := models.AddAlbumList(user.Id, filenames, isPrivate)

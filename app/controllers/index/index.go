@@ -258,7 +258,6 @@ func Invitation(c *gin.Context) {
 	var inviUser map[string]interface{}
 	if err == nil {
 		inviUser = models.InviUser(invi)
-
 		c.JSON(200, gin.H{
 			"invi": inviUser,
 		})

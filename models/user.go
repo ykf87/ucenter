@@ -125,16 +125,17 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip s
 		}
 	}
 	if invite != "" {
-		inviteUser := new(UserModel)
-		DB.Table("users").Where("invite = ?", invite).First(inviteUser)
-		if inviteUser.Id > 0 {
-			insertData["pid"] = inviteUser.Id
-			var addChain string
-			if inviteUser.Chain != "" {
-				addChain = inviteUser.Chain + ","
-			}
-			insertData["chain"] = addChain + fmt.Sprintf("%d", inviteUser.Id)
-		}
+		insertData["pid"], insertData["chain"] = GetUserInviInfo(invite)
+		// DB.Table("users").Where("invite = ?", invite).First(inviteUser)
+		// if inviteUser.Id > 0 {
+
+		// 	insertData["pid"] = inviteUser.Id
+		// 	var addChain string
+		// 	if inviteUser.Chain != "" {
+		// 		addChain = inviteUser.Chain + ","
+		// 	}
+		// 	insertData["chain"] = addChain + fmt.Sprintf("%d", inviteUser.Id)
+		// }
 	}
 
 	//根据ip获取国家和城市
@@ -178,6 +179,20 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip s
 	}
 
 	return
+}
+
+//获取邀请用户信息
+func GetUserInviInfo(invicodestr string) (pid int64, chian string) {
+	invi := invicode.Decode(invicodestr)
+	inviId := int64(invi)
+	user := GetUser(inviId, "", "", "")
+	if user != nil && user.Id > 0 {
+		uschain := strings.Split(user.Chain, ",")
+		uschain = append(uschain, fmt.Sprintf("%d", user.Id))
+		return user.Id, strings.Join(uschain, ",")
+	} else {
+		return 0, ""
+	}
 }
 
 //查找单个用户
@@ -513,3 +528,12 @@ func InviUser(code string) map[string]interface{} {
 	dt["invite"] = user.Invite
 	return dt
 }
+
+// //设置邀请人
+// func (this *UserModel) SetInviUser(user *UserModel) {
+// 	if this.Invite == "" {
+
+// 	} else {
+// 		return errors.New("No modification of invitee is allowed")
+// 	}
+// }
