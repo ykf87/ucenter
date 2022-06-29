@@ -130,6 +130,7 @@ func Headers(c *gin.Context) {
 
 	c.Header("server", config.Config.APPName)
 	c.Header("auther", config.Config.Auther)
+	c.Header("Access-Control-Allow-Origin", "*")
 }
 
 func Middle() gin.HandlerFunc {

@@ -138,10 +138,6 @@ func UploadAlb(c *gin.Context) {
 
 //base64上传相册图片
 func UploadAlbBase64(c *gin.Context) {
-	// fmt.Println(c.Request.PostForm)
-	// c.Request.ParseMultipartForm(128)
-	// fmt.Println(c.Request.Form)
-
 	rs, _ := c.Get("_user")
 	user, _ := rs.(*models.UserModel)
 
@@ -156,8 +152,8 @@ func UploadAlbBase64(c *gin.Context) {
 
 	var dts []string
 	pub64 := c.PostFormArray("public")
-
 	pri64 := c.PostFormArray("private")
+
 	if len(pub64) > 0 {
 		dts = pub64
 	} else if len(pri64) > 0 {
@@ -168,7 +164,20 @@ func UploadAlbBase64(c *gin.Context) {
 		return
 	}
 
-	filenames := images.UploadFileByBase64Process(path, dts)
+	var ssts []string
+	for _, v := range dts {
+		nppds := strings.Split(v, ",data:")
+		for k, nv := range nppds {
+			if k > 0 {
+				ssts = append(ssts, "data:"+nv)
+			} else {
+				ssts = append(ssts, nv)
+			}
+		}
+
+	}
+
+	filenames := images.UploadFileByBase64Process(path, ssts)
 	ls, err := models.AddAlbumList(user.Id, filenames, isPrivate)
 	if err != nil {
 		controllers.Error(c, nil, &controllers.Msg{Str: "Image upload failed"})
