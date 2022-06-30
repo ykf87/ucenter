@@ -8,7 +8,7 @@ import (
 	"strings"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
-	"ucenter/app/safety/aess"
+	"ucenter/app/funcs"
 	"ucenter/models"
 
 	"github.com/gin-gonic/gin"
@@ -247,25 +247,26 @@ func Search(c *gin.Context) {
 
 //邀请用户
 func Invitation(c *gin.Context) {
-	invi := c.Query("invicode")
+	invi := c.Query("f")
 	if invi != "" {
-		ccmt := aess.EcbEncrypt(invi, nil)
-		c.SetCookie("invo", ccmt, 31536000, "/", "/", true, true)
+		c.SetCookie("invo", invi, 31536000, "/", "/", true, true)
 		c.Redirect(301, "/invitation")
 		return
 	}
-	invi, err := c.Cookie("invo")
 	var inviUser map[string]interface{}
+	inviToken, err := c.Cookie("invo")
 	if err == nil {
-		inviUser = models.InviUser(invi)
-		c.JSON(200, gin.H{
-			"invi": inviUser,
-		})
-	} else {
-		c.JSON(200, gin.H{
-			"invi": "未找到",
-		})
+		invi, err := funcs.DeInviUrl(inviToken, 0)
+		if err == nil {
+			inviUser = models.InviUser(invi)
+		} else {
+
+		}
 	}
+
+	c.JSON(200, gin.H{
+		"invi": inviUser,
+	})
 
 }
 

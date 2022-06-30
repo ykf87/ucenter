@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/aes"
 	"encoding/base64"
+	"log"
 )
 
 var AESKEY []byte
@@ -17,7 +18,11 @@ func EcbDecrypt(str string, key []byte) string {
 		key = AESKEY
 	}
 	block, _ := aes.NewCipher(key)
-	data, _ := base64.StdEncoding.DecodeString(str)
+	data, err := base64.URLEncoding.DecodeString(str)
+	if err != nil {
+		log.Println(err, str)
+		return ""
+	}
 	decrypted := make([]byte, len(data))
 	size := block.BlockSize()
 
@@ -46,7 +51,7 @@ func EcbEncrypt(str string, key []byte) string {
 		block.Encrypt(decrypted[bs:be], data[bs:be])
 	}
 
-	return base64.StdEncoding.EncodeToString(decrypted)
+	return base64.URLEncoding.EncodeToString(decrypted)
 }
 func PKCS5Padding(ciphertext []byte, blockSize int) []byte {
 	padding := blockSize - len(ciphertext)%blockSize

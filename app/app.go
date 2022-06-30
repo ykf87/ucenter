@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"strings"
 
@@ -33,6 +34,15 @@ func init() {
 	gin.SetMode(gin.ReleaseMode)
 	App = new(AppClient)
 	App.Ch = make(chan bool)
+
+	// 记录日志到文件
+	f, _ := os.Create("log.log")
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+
+	// 记录错误日志到文件，同时输出到控制台
+	fErr, _ := os.Create("err.log")
+	gin.DefaultErrorWriter = io.MultiWriter(fErr, os.Stdout)
+
 	App.Engine = gin.Default()
 	// App.Engine.Use(logerMiddleware())
 }

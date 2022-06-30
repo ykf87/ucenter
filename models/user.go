@@ -67,6 +67,7 @@ type UserModel struct {
 	City          int64   `json:"city"`
 	Lang          string  `json:"lang"`
 	Timezone      string  `json:"timezone"`
+	Platform      int     `json:"platform"`
 	Singleid      int64
 	Edinfo        Editers
 }
@@ -77,7 +78,7 @@ type Editers int64
 //创建新用户
 //新用户创建必须使用 account 或 email 其中之一注册
 //使用 account 必须设置密码, 使用 email 必须使用验证码
-func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip string) (user *UserModel, err error) {
+func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip, timezone string) (user *UserModel, err error) {
 	hadUser := new(UserModel)
 	insertData := make(map[string]interface{})
 	insertData["nickname"] = nickname
@@ -163,6 +164,7 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip s
 	}
 
 	insertData["status"] = 1
+	insertData["timezone"] = timezone
 	insertData["ip"] = InetAtoN(ip)
 	insertData["addtime"] = time.Now().Unix()
 	rs := DB.Table("users").Create(insertData)
@@ -257,7 +259,16 @@ func GetUserFromRequest(c *gin.Context) *UserModel {
 	if token == "" {
 		return nil
 	}
-	return UnToken(token)
+	user := UnToken(token)
+
+	if user.Platform < 0 { //如果通过网页注册的没用platform,则在获取用户信息时自动更新platform
+		platform := c.GetHeader("platform")
+		if platform != "" {
+
+		}
+	}
+
+	return user
 }
 
 //生成用户token
@@ -292,9 +303,6 @@ func UnToken(token string) *UserModel {
 	if idstr == "" {
 		return nil
 	}
-	// if err != nil {
-	// 	return nil
-	// }
 	ts := gjson.Get(idstr, "time").Int()
 	id := gjson.Get(idstr, "id").Int()
 	sid := gjson.Get(idstr, "sid").Int()

@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Index(c *gin.Context) {
+func Info(c *gin.Context) {
 	langob, _ := c.Get("_lang")
 	lang := langob.(string)
 	timezones, _ := c.Get("_timezone")

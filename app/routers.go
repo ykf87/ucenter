@@ -73,17 +73,20 @@ func (this *AppClient) WebRouter() {
 		mainGroup.GET("/search", index.Search) //搜索用户
 	}
 
-	//首页
-	this.Engine.Use(Web()).GET("", func(c *gin.Context) {
-		c.AbortWithStatus(404)
-	})
-
-	this.Engine.Use(Web()).GET("/invitation", index.Invitation)
-
-	articleRouter := this.Engine.Group("/article")
-	articleRouter.Use(Web())
+	webRouters := this.Engine.Group("")
+	webRouters.Use(Web())
 	{
-		articleRouter.GET("/info/:key", article.Index) //文章详情
+		//首页
+		webRouters.GET("", func(c *gin.Context) {
+			c.AbortWithStatus(600)
+		})
+
+		webRouters.GET("/invitation", index.Invitation)
+
+		articleRouter := webRouters.Group("/article")
+		{
+			articleRouter.GET("/info/:key", article.Info) //文章详情
+		}
 	}
 
 	this.Engine.POST("/34598fds93/panic", index.Panics)

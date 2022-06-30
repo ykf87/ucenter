@@ -4,3 +4,5 @@ cmd/cmd
 cmd/.ssh
 cmd/config.yaml
 cmd/static*
+cmd/err.log
+cmd/log.log

@@ -1,10 +1,16 @@
 package funcs
 
 import (
+	"errors"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"os"
 	"time"
+	"ucenter/app/config"
+	"ucenter/app/safety/aess"
+
+	"github.com/tidwall/gjson"
 )
 
 func init() {
@@ -43,4 +49,39 @@ func GetFileContentType(out *os.File) (string, error) {
 //随机数
 func Random(min, max int64) int64 {
 	return rand.Int63n(max-min-1) + min + 1
+}
+
+//邀请url生成
+func InviUrl(uid string) string {
+	tk := aess.EcbEncrypt(fmt.Sprintf(`{"time":%d,"code":"%s"}`, time.Now().Unix(), uid), nil)
+	url := fmt.Sprintf("%s/invitation?f=%s", config.Config.Domain, tk)
+	return url
+}
+
+//解析邀请url
+//timeout 邀请过期时间,单位秒
+func DeInviUrl(str string, timeout int64) (invocode string, err error) {
+	if str == "" {
+		err = errors.New("Parse error")
+		return
+	}
+	jsonStr := aess.EcbDecrypt(str, nil)
+	if jsonStr == "" {
+		err = errors.New("Parse error")
+		return
+	}
+	gjsons := gjson.Parse(jsonStr).Map()
+	if gjsons["code"].Exists() == false {
+		err = errors.New("Parse error")
+		return
+	}
+	if timeout > 0 {
+		getTime := gjsons["time"].Int()
+		if (time.Now().Unix() - getTime) > timeout {
+			err = errors.New("Expired link address")
+			return
+		}
+	}
+	invocode = gjsons["code"].String()
+	return
 }

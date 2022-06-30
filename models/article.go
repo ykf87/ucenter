@@ -38,6 +38,7 @@ func GetArticleRow(id int64, key, lang string) *ArticleModel {
 	if art == nil || art.Id < 1 {
 		return nil
 	}
+	go DB.Table(tableName).Where("id = ?", art.Id).Update("views", (art.Views + 1)) //增加浏览量
 	return art
 }
 

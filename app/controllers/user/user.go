@@ -10,6 +10,7 @@ import (
 	"time"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
+	"ucenter/app/funcs"
 	"ucenter/app/i18n"
 	"ucenter/app/mails/sender/bye"
 	"ucenter/app/mails/sender/coder"
@@ -51,6 +52,10 @@ func Sign(c *gin.Context) {
 	code := c.PostForm("code")
 	platform := c.GetHeader("platform")
 	langos, exit := c.Get("_lang")
+
+	timezoneo, _ := c.Get("_timezone")
+	timezone := timezoneo.(string)
+
 	var lang string
 	if !exit {
 		lang = config.Config.Lang
@@ -64,7 +69,7 @@ func Sign(c *gin.Context) {
 	}
 
 	ip := c.ClientIP()
-	user, err := models.MakeUser("", email, "", pwd, code, invite, nickname, platform, ip)
+	user, err := models.MakeUser("", email, "", pwd, code, invite, nickname, platform, ip, timezone)
 	if err != nil {
 		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
 		return
@@ -186,6 +191,7 @@ func Index(c *gin.Context) {
 		v.Fmt(timezone, lang)
 	}
 	info["albums"] = albums
+	info["inviurl"] = funcs.InviUrl(user.Invite)
 	controllers.SuccessStr(c, info, "Success")
 	// controllers.Success(c, info, &controllers.Msg{Str: "Success"})
 }
