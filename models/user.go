@@ -531,6 +531,7 @@ func InviUser(code string) map[string]interface{} {
 	}
 	dt := make(map[string]interface{})
 	dt["nickname"] = user.Nickname
+	dt["main"] = user.Mail
 	dt["avatar"] = user.Avatar
 	dt["id"] = user.Id
 	dt["invite"] = user.Invite
