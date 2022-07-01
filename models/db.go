@@ -6,9 +6,11 @@ import (
 	"log"
 	"math/big"
 	"net"
+	"os"
 	"strings"
 	"time"
 	"ucenter/app/config"
+	"ucenter/app/logs"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
@@ -28,10 +30,27 @@ var DB *gorm.DB
 var DefaultSqliteFile = "db.db"
 
 func Init(dbtype, dsn, dbfile string) (err error) {
+	logName := "./logs/db.log"
+	src, errs := os.OpenFile(logName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0755)
+	if errs != nil {
+		logs.Logger.Error(errs)
+		err = errs
+		return
+	}
+	newLogger := logger.New(
+		log.New(src, "\r\n", log.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold: time.Second * time.Duration(2), // 慢 SQL 阈值
+			LogLevel:      logger.Error,                   // Log level
+			Colorful:      false,                          // 禁用彩色打印
+		},
+	)
+
 	switch dbtype {
 	case "mysql":
 		DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-			Logger: logger.Default.LogMode(logger.Error),
+			// Logger: logger.Default.LogMode(logger.Error),
+			Logger: newLogger,
 		})
 	case "sqlite":
 		if dbfile == "" {
@@ -61,7 +80,7 @@ func PrevLoadDB() (err error) {
 			DBToCache(ch)
 			r := <-ch
 			if r != nil {
-				log.Println("系统需要重启 - auto DBToCache fail: ", r)
+				logs.Logger.Error("系统需要重启 - auto DBToCache fail: ", r)
 				break
 			}
 		}

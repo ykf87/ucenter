@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net"
 	"strconv"
 	"strings"
@@ -14,6 +13,7 @@ import (
 	"ucenter/app/config"
 	"ucenter/app/funcs"
 	"ucenter/app/im"
+	"ucenter/app/logs"
 	"ucenter/app/mails/sender/coder"
 	"ucenter/app/safety/aess"
 	"ucenter/app/safety/invicode"
@@ -173,7 +173,7 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip, 
 			}
 		}
 	} else {
-		log.Println(errs)
+		logs.Logger.Error(errs)
 	}
 
 	insertUser.Status = 1
@@ -196,15 +196,16 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip, 
 
 //查找单个用户
 func GetUser(id int64, account, email, phone string) *UserModel {
+	tbName := "users"
 	user := new(UserModel)
 	if id > 0 {
-		DB.Table("users").Where("id = ?", id).First(user)
+		DB.Table(tbName).Where("id = ?", id).First(user)
 	} else if account != "" {
-		DB.Table("users").Where("account = ?", account).First(user)
+		// DB.Table(tbName).Where("account = ?", account).First(user)
 	} else if email != "" {
-		DB.Table("users").Where("mail = ?", email).First(user) // and mailvery = 1
+		DB.Table(tbName).Where("mail = ?", email).First(user) // and mailvery = 1
 	} else if phone != "" {
-		DB.Table("users").Where("phone = ?", phone).First(user) // and phonevery = 1
+		// DB.Table(tbName).Where("phone = ?", phone).First(user) // and phonevery = 1
 	}
 
 	return user
@@ -242,7 +243,7 @@ func GetUserList(page, limit int, q, rd string, noids []int64) []*UserModel {
 }
 
 //查询用户邀请列表
-func (this *UserModel) GetUserInvisList(page, limit int, q, ord string) []*UserModel {
+func (this *UserModel) GetUserInvisList(page, limit int, q, ord string) ([]*UserModel, int64) {
 	if page < 1 {
 		page = 1
 	}
@@ -266,8 +267,12 @@ func (this *UserModel) GetUserInvisList(page, limit int, q, ord string) []*UserM
 	}
 
 	var list []*UserModel
+	var total int64
 	dbs.Find(&list)
-	return list
+	if page == 1 && len(list) > 0 {
+		DB.Table("users as a").Joins("left join user_invitees as b on a.id = b.uid").Where("b.id = ?", this.Id).Count(&total)
+	}
+	return list, total
 }
 
 //通过请求获取用户信息
@@ -282,10 +287,11 @@ func GetUserFromRequest(c *gin.Context) *UserModel {
 	}
 	user := UnToken(token)
 
-	if user.Platform < 0 { //如果通过网页注册的没用platform,则在获取用户信息时自动更新platform
+	if user != nil && user.Id > 0 && user.Platform < 0 { //如果通过网页注册的没用platform,则在获取用户信息时自动更新platform
 		platform := c.GetHeader("platform")
-		if platform != "" {
-
+		platid, _ := strconv.Atoi(platform)
+		if platid > 0 && platid < 10 {
+			DB.Table("users").Where("id = ?", user.Id).Update("platform", platid)
 		}
 	}
 
@@ -295,7 +301,7 @@ func GetUserFromRequest(c *gin.Context) *UserModel {
 //生成用户token
 func (this *UserModel) Token() string {
 	if this.Id == 0 {
-		log.Println("UserModel Token - 用户实例id为0")
+		logs.Logger.Error("UserModel Token - 用户实例id为0")
 		return ""
 	}
 	sid := this.Singleid + 1
@@ -317,7 +323,7 @@ func UnToken(token string) *UserModel {
 	// idstr, err := rsautil.RsaDecrypt(token)
 	tokens, err := base64.StdEncoding.DecodeString(token)
 	if err != nil {
-		log.Println("untoken base64 decode err: ", err)
+		logs.Logger.Error("untoken base64 decode err: ", err)
 		return nil
 	}
 	idstr := aess.EcbDecrypt(string(tokens), nil)
@@ -464,12 +470,12 @@ func (this *UserModel) ChangePwd(pwd string) error {
 func (this *UserModel) ImSignature() string {
 	imo, err := im.Get(config.Config.Useim)
 	if err != nil {
-		log.Println(err, " - 初始化Im出错,请检查IM")
+		logs.Logger.Error(err, " - 初始化Im出错,请检查IM")
 		return ""
 	}
 	str, err := imo.GenUserSig(fmt.Sprintf("%d", this.Id), 86400)
 	if err != nil {
-		log.Println(err, " - 获取签名错误,请检查IM")
+		logs.Logger.Error(err, " - 获取签名错误,请检查IM")
 		return ""
 	}
 	return str
@@ -550,6 +556,7 @@ func (this *UserModel) Abstract() map[string]interface{} {
 		dt["id"] = this.Id
 		dt["invite"] = this.Invite
 		dt["addtime"] = this.Addtime
+		// dt["inviurl"] = funcs.InviUrl(this.Invite)
 	}
 
 	return dt

@@ -1,6 +1,7 @@
 package app
 
 import (
+	"time"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
 	"ucenter/app/controllers/albums"
@@ -8,6 +9,7 @@ import (
 	"ucenter/app/controllers/index"
 	"ucenter/app/controllers/user"
 	"ucenter/app/controllers/userlikes"
+	"ucenter/app/mails/sender/coder"
 	"ucenter/models"
 
 	"github.com/gin-gonic/gin"
@@ -25,10 +27,10 @@ func (this *AppClient) WebRouter() {
 		//和用户相关的不需要验证权限的接口
 		userNoAuth := mainGroup.Group("/")
 		{
-			userNoAuth.POST("login", user.Login)         //登录
-			userNoAuth.POST("sign", user.Sign)           //注册
-			userNoAuth.POST("forgot", user.Forgot)       //忘记密码
-			userNoAuth.POST("emailcode", user.Emailcode) //邮件发送,考虑做ip限流
+			userNoAuth.Use(LoginErr()).POST("login", user.Login)          //登录
+			userNoAuth.POST("sign", user.Sign)                            //注册
+			userNoAuth.POST("forgot", user.Forgot)                        //忘记密码
+			userNoAuth.Use(Iplimiter()).POST("emailcode", user.Emailcode) //邮件发送,考虑做ip限流
 		}
 
 		//需要登录的接口
@@ -46,10 +48,10 @@ func (this *AppClient) WebRouter() {
 				albumsAuters.POST("/exg", albums.AlbumsExg)          //相册公共私密互转
 			}
 
-			mustLoginRouter.GET("", user.Index)            //用户信息
-			mustLoginRouter.GET("/info/:id", user.Index)   //用户信息
-			mustLoginRouter.GET("/invitee", user.Invitees) //上级信息
-			mustLoginRouter.GET("/invitees", user.Invitee) //下级账号列表
+			mustLoginRouter.GET("", user.Index)             //用户信息
+			mustLoginRouter.GET("/info/:id", user.Index)    //用户信息
+			mustLoginRouter.GET("/invitee", user.Invitee)   //上级信息
+			mustLoginRouter.GET("/invitees", user.Invitees) //下级账号列表
 			// authorized.POST("/editer", user.Editer)             //修改信息-弃用
 			mustLoginRouter.POST("/editerbatch", user.EditBatch)     //个人信息批量修改
 			mustLoginRouter.POST("/cancellation", user.Cancellation) //注销账号
@@ -162,5 +164,40 @@ func Auth() gin.HandlerFunc {
 			}
 			c.Next()
 		}
+	}
+}
+
+//登录错误限制,防止爆破
+func LoginErr() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		email := c.PostForm("email")
+		if email != "" {
+			key := "login:" + email
+			cc, ok := coder.Maps.Get(key)
+			if ok == true {
+				if cc.Errtimes > 2 {
+					now := time.Now().Unix()
+					if (cc.Sendtime + 300) >= now {
+						cc.Errtimes += 1
+						// estr := fmt.Sprintf("%d", 300-(now-cc.Sendtime))
+						// c.AbortWithError(401, errors.New(estr))
+						c.AbortWithStatusJSON(401, gin.H{
+							"code": 401,
+							"data": 300 - (now - cc.Sendtime),
+							"msg":  nil,
+						})
+						return
+					}
+				}
+			}
+		}
+		c.Next()
+	}
+}
+
+//ip限流
+func Iplimiter() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Next()
 	}
 }

@@ -1,19 +1,20 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
-	"strings"
-
+	"net/http"
 	"os"
-	"path"
+	"os/signal"
+	"strings"
+	"syscall"
 	"time"
+	"ucenter/app/logs"
 
 	"github.com/gin-gonic/gin"
-	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
-	"github.com/rifflock/lfshook"
-	"github.com/sirupsen/logrus"
+	"github.com/lestrrat-go/file-rotatelogs"
 )
 
 type AppClient struct {
@@ -22,12 +23,6 @@ type AppClient struct {
 }
 
 var App *AppClient
-var (
-	//日志地址
-	logFilePath = "./"
-	//日志文件名
-	logFileName = "system.log"
-)
 
 func init() {
 	gin.DisableConsoleColor()
@@ -36,15 +31,24 @@ func init() {
 	App.Ch = make(chan bool)
 
 	// 记录日志到文件
-	f, _ := os.Create("log.log")
-	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+	// f, _ := os.Create("log.log")
+	// gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+	path := logs.LogFilePath + "gin"
+	writer, _ := rotatelogs.New(
+		path+"-%Y%m%d.log",
+		rotatelogs.WithLinkName(path),
+		rotatelogs.WithMaxAge(7*24*time.Hour),
 
-	// 记录错误日志到文件，同时输出到控制台
-	fErr, _ := os.Create("err.log")
-	gin.DefaultErrorWriter = io.MultiWriter(fErr, os.Stdout)
+		//这里设置1分钟产生一个日志文件
+		rotatelogs.WithRotationTime(24*time.Hour),
+	)
+	gin.DefaultWriter = io.MultiWriter(writer)
+
+	// // 记录错误日志到文件，同时输出到控制台
+	// fErr, _ := os.Create("err.log")
+	// gin.DefaultErrorWriter = io.MultiWriter(fErr, os.Stdout)
 
 	App.Engine = gin.Default()
-	// App.Engine.Use(logerMiddleware())
 }
 
 func (this *AppClient) Static(path, name string) *AppClient {
@@ -74,77 +78,27 @@ func (this *AppClient) Run(port int) {
 	this.WebRouter()
 	portstr := fmt.Sprintf(":%d", port)
 	fmt.Println("地址: http://localhost" + portstr)
-	this.Engine.Run(portstr)
-}
 
-func logerMiddleware() gin.HandlerFunc {
-	// 日志文件
-	fileName := path.Join(logFilePath, logFileName)
-	// 写入文件
-	src, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
-	if err != nil {
-		fmt.Println("err", err)
-	}
-	// 实例化
-	logger := logrus.New()
-	//设置日志级别
-	logger.SetLevel(logrus.InfoLevel)
-	//设置输出
-	logger.Out = src
-	// 设置 rotatelogs
-	logWriter, err := rotatelogs.New(
-		// 分割后的文件名称
-		fileName+".%Y%m%d.log",
-
-		// 生成软链，指向最新日志文件
-		rotatelogs.WithLinkName(fileName),
-
-		// 设置最大保存时间(7天)
-		rotatelogs.WithMaxAge(7*24*time.Hour),
-
-		// 设置日志切割时间间隔(1天)
-		rotatelogs.WithRotationTime(24*time.Hour),
-	)
-
-	writeMap := lfshook.WriterMap{
-		logrus.InfoLevel:  logWriter,
-		logrus.FatalLevel: logWriter,
-		logrus.DebugLevel: logWriter,
-		logrus.WarnLevel:  logWriter,
-		logrus.ErrorLevel: logWriter,
-		logrus.PanicLevel: logWriter,
+	srv := &http.Server{
+		Addr:    portstr,
+		Handler: this.Engine,
 	}
 
-	logger.AddHook(lfshook.NewHook(writeMap, &logrus.JSONFormatter{
-		TimestampFormat: "2006-01-02 15:04:05",
-	}))
-
-	return func(c *gin.Context) {
-		//开始时间
-		startTime := time.Now()
-		//处理请求
-		c.Next()
-		//结束时间
-		endTime := time.Now()
-		// 执行时间
-		latencyTime := endTime.Sub(startTime)
-		//请求方式
-		reqMethod := c.Request.Method
-		//请求路由
-		reqUrl := c.Request.RequestURI
-		//状态码
-		statusCode := c.Writer.Status()
-		//请求ip
-		clientIP := c.ClientIP()
-
-		// 日志格式
-		logger.WithFields(logrus.Fields{
-			"status_code":  statusCode,
-			"latency_time": latencyTime,
-			"client_ip":    clientIP,
-			"req_method":   reqMethod,
-			"req_uri":      reqUrl,
-		}).Info()
-
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logs.Logger.Error("listen: %s\n", err)
+		}
+	}()
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutting down server...")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		logs.Logger.Error("Server forced to shutdown: ", err)
 	}
+
+	log.Println("Server exiting")
+	// this.Engine.Run(portstr)
 }

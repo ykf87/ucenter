@@ -1,9 +1,9 @@
 package launch
 
 import (
-	"log"
 	"ucenter/app"
 	"ucenter/app/config"
+	"ucenter/app/logs"
 	"ucenter/app/mails/smtp"
 	"ucenter/app/safety/aess"
 	"ucenter/app/safety/rsautil"
@@ -13,13 +13,13 @@ import (
 func Start(filename string) {
 	err := config.Init(filename)
 	if err != nil {
-		log.Println(err)
+		logs.Logger.Error(err)
 		return
 	}
 	config.Cpath = filename
 	err = models.Init(config.Config.DB[0].Type, config.Config.DB[0].Dsn, config.Config.DB[0].Path)
 	if err != nil {
-		log.Println(err)
+		logs.Logger.Error(err)
 		return
 	}
 	for k, v := range config.Config.Smtp {
@@ -34,5 +34,5 @@ func Start(filename string) {
 		app.App.Static(config.Config.Static, config.Config.Staticname).Template("templates/*").Run(config.Config.Port)
 	}()
 	<-config.Och
-	log.Println("Panic from post!")
+	logs.Logger.Info("Panic from post!")
 }

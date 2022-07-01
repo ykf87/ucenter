@@ -2,7 +2,6 @@ package user
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -11,6 +10,7 @@ import (
 	"ucenter/app/controllers"
 	"ucenter/app/funcs"
 	"ucenter/app/i18n"
+	"ucenter/app/logs"
 	"ucenter/app/mails/sender/bye"
 	"ucenter/app/mails/sender/coder"
 	"ucenter/app/mails/sender/sign"
@@ -70,7 +70,7 @@ func Sign(c *gin.Context) {
 	ip := c.ClientIP()
 	user, err := models.MakeUser("", email, "", pwd, code, invite, nickname, platform, ip, timezone)
 	if err != nil {
-		log.Println(err)
+		logs.Logger.Error(err)
 		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
 		return
 	}
@@ -98,8 +98,8 @@ func Sign(c *gin.Context) {
 
 //登录
 func Login(c *gin.Context) {
-	account := c.PostForm("account")
-	phone := c.PostForm("phone")
+	account := "" //c.PostForm("account")
+	phone := ""   //c.PostForm("phone")
 	email := c.PostForm("email")
 	pwd := c.PostForm("password")
 	code := c.PostForm("code")
@@ -159,6 +159,13 @@ func Login(c *gin.Context) {
 		}
 	} else {
 		msg = "Account not found"
+	}
+	kk := "login:" + email
+	cc, ok := coder.Maps.Get(kk)
+	if ok {
+		cc.Errtimes += 1
+	} else {
+		coder.Maps.Set(kk, &coder.MailCodeStruct{Errtimes: 1, Sendtime: time.Now().Unix(), Code: ""})
 	}
 	controllers.Error(c, nil, &controllers.Msg{Str: msg})
 }
@@ -589,7 +596,7 @@ func EditBatch(c *gin.Context) {
 	if avatar != "" {
 		filename, err := images.SaveFileBase64(models.AVATARPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), avatar, nil, nil)
 		if err != nil {
-			log.Println(err, " - when SetAvatar model upload from form file in batch!")
+			logs.Logger.Error(err, " - when SetAvatar model upload from form file in batch!")
 			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
 			return
 		}
@@ -598,7 +605,7 @@ func EditBatch(c *gin.Context) {
 	} else if avatarFile, err := c.FormFile("avatar"); err == nil {
 		filename, err := images.SaveFileFromUpload(models.AVATARPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), avatarFile, nil, nil)
 		if err != nil {
-			log.Println(err, " - when SetAvatar model upload from form file in batch!")
+			logs.Logger.Error(err, " - when SetAvatar model upload from form file in batch!")
 			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
 			return
 		}
@@ -611,7 +618,7 @@ func EditBatch(c *gin.Context) {
 	if background != "" && strings.Contains(background, "base64") == true {
 		filename, err := images.SaveFileBase64(models.BACKGROUNDPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), background, nil, nil)
 		if err != nil {
-			log.Println(err, " - when SetBackground model upload from form file in batch!")
+			logs.Logger.Error(err, " - when SetBackground model upload from form file in batch!")
 			controllers.Error(c, map[string]string{"col": "background"}, &controllers.Msg{Str: "Image upload failed"})
 			return
 		}
@@ -620,7 +627,7 @@ func EditBatch(c *gin.Context) {
 	} else if backgroundFile, err := c.FormFile("background"); err == nil {
 		filename, err := images.SaveFileFromUpload(models.BACKGROUNDPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), backgroundFile, nil, nil)
 		if err != nil {
-			log.Println(err, " - when SetBackground model upload from form file in batch!")
+			logs.Logger.Error(err, " - when SetBackground model upload from form file in batch!")
 			controllers.Error(c, map[string]string{"col": "background"}, &controllers.Msg{Str: "Image upload failed"})
 			return
 		}
@@ -703,7 +710,7 @@ func Signa(c *gin.Context) {
 }
 
 //获取用户的邀请人信息,也就是上级
-func Invitees(c *gin.Context) {
+func Invitee(c *gin.Context) {
 	rs, _ := c.Get("_user")
 	user, _ := rs.(*models.UserModel)
 
@@ -718,7 +725,7 @@ func Invitees(c *gin.Context) {
 }
 
 //获取被邀请人列表,也就是下级
-func Invitee(c *gin.Context) {
+func Invitees(c *gin.Context) {
 	rs, _ := c.Get("_user")
 	user, _ := rs.(*models.UserModel)
 
@@ -733,14 +740,14 @@ func Invitee(c *gin.Context) {
 	q := c.Query("q")
 	ord := c.Query("ord")
 
-	dt := user.GetUserInvisList(page, limit, q, ord)
+	dt, count := user.GetUserInvisList(page, limit, q, ord)
 	var ddtt []map[string]interface{}
 	for _, v := range dt {
 		rs := v.Abstract()
 		rs["addtimefmt"] = v.FmtAddTime(lang, timezone)
 		ddtt = append(ddtt, rs)
 	}
-	controllers.SuccessStr(c, ddtt, "Success")
+	controllers.SuccessStr(c, map[string]interface{}{"list": ddtt, "count": count}, "Success")
 }
 
 //账号永久注销,注销账号必须验证邮箱,否则不安全
