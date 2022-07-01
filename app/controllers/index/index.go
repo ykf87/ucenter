@@ -258,7 +258,7 @@ func Invitation(c *gin.Context) {
 	if err == nil {
 		invi, err := funcs.DeInviUrl(inviToken, 0)
 		if err == nil {
-			inviUser = models.InviUser(invi)
+			inviUser = models.GetUserInviInfo(invi).Abstract()
 		} else {
 
 		}

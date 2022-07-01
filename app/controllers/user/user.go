@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -71,6 +70,7 @@ func Sign(c *gin.Context) {
 	ip := c.ClientIP()
 	user, err := models.MakeUser("", email, "", pwd, code, invite, nickname, platform, ip, timezone)
 	if err != nil {
+		log.Println(err)
 		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
 		return
 	}
@@ -197,42 +197,42 @@ func Index(c *gin.Context) {
 }
 
 //编辑信息
-func Editer(c *gin.Context) {
-	rs, _ := c.Get("_user")
-	user, _ := rs.(*models.UserModel)
-	key := c.PostForm("k")
-	val := c.PostForm("v")
-	if key == "" {
-		controllers.Error(c, nil, &controllers.Msg{Str: "Missing editorial content"})
-		return
-	}
+// func Editer(c *gin.Context) {
+// 	rs, _ := c.Get("_user")
+// 	user, _ := rs.(*models.UserModel)
+// 	key := c.PostForm("k")
+// 	val := c.PostForm("v")
+// 	if key == "" {
+// 		controllers.Error(c, nil, &controllers.Msg{Str: "Missing editorial content"})
+// 		return
+// 	}
 
-	inputs := make([]reflect.Value, 3)
-	inputs[0] = reflect.ValueOf(user)
-	inputs[1] = reflect.ValueOf(val)
-	inputs[2] = reflect.ValueOf(c)
-	tf := reflect.TypeOf(user.Edinfo)
-	vl := reflect.ValueOf(user.Edinfo)
-	key = strings.ToUpper(string(key[0])) + key[1:]
-	mth, ok := tf.MethodByName("Set" + key)
-	if ok == true {
-		rs := vl.Method(mth.Index).Call(inputs)
-		err := rs[0].Interface()
-		if err != nil {
-			controllers.Error(c, nil, &controllers.Msg{Str: err.(error).Error()})
-		} else {
-			var dt map[string]interface{}
-			if len(rs) > 1 {
-				if rs[1].CanInterface() == true {
-					dt = rs[1].Interface().(map[string]interface{})
-				}
-			}
-			controllers.Success(c, dt, &controllers.Msg{Str: "Success"})
-		}
-	} else {
-		controllers.Error(c, nil, &controllers.Msg{Str: "No modification allowed"})
-	}
-}
+// 	inputs := make([]reflect.Value, 3)
+// 	inputs[0] = reflect.ValueOf(user)
+// 	inputs[1] = reflect.ValueOf(val)
+// 	inputs[2] = reflect.ValueOf(c)
+// 	tf := reflect.TypeOf(user.Edinfo)
+// 	vl := reflect.ValueOf(user.Edinfo)
+// 	key = strings.ToUpper(string(key[0])) + key[1:]
+// 	mth, ok := tf.MethodByName("Set" + key)
+// 	if ok == true {
+// 		rs := vl.Method(mth.Index).Call(inputs)
+// 		err := rs[0].Interface()
+// 		if err != nil {
+// 			controllers.Error(c, nil, &controllers.Msg{Str: err.(error).Error()})
+// 		} else {
+// 			var dt map[string]interface{}
+// 			if len(rs) > 1 {
+// 				if rs[1].CanInterface() == true {
+// 					dt = rs[1].Interface().(map[string]interface{})
+// 				}
+// 			}
+// 			controllers.Success(c, dt, &controllers.Msg{Str: "Success"})
+// 		}
+// 	} else {
+// 		controllers.Error(c, nil, &controllers.Msg{Str: "No modification allowed"})
+// 	}
+// }
 
 //批量编辑信息
 func EditBatch(c *gin.Context) {
@@ -704,12 +704,43 @@ func Signa(c *gin.Context) {
 
 //获取用户的邀请人信息,也就是上级
 func Invitees(c *gin.Context) {
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
 
+	if user.Pid > 0 {
+		parent := models.GetUser(user.Pid, "", "", "")
+		if parent != nil && parent.Id > 0 {
+			controllers.SuccessStr(c, parent.Abstract(), "Success")
+			return
+		}
+	}
+	controllers.ErrorNoData(c, "No results found")
 }
 
 //获取被邀请人列表,也就是下级
 func Invitee(c *gin.Context) {
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
 
+	lango, _ := c.Get("_lang")
+	lang := lango.(string)
+
+	timezoneo, _ := c.Get("_timezone")
+	timezone := timezoneo.(string)
+
+	page, _ := strconv.Atoi(c.Query("page"))
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	q := c.Query("q")
+	ord := c.Query("ord")
+
+	dt := user.GetUserInvisList(page, limit, q, ord)
+	var ddtt []map[string]interface{}
+	for _, v := range dt {
+		rs := v.Abstract()
+		rs["addtimefmt"] = v.FmtAddTime(lang, timezone)
+		ddtt = append(ddtt, rs)
+	}
+	controllers.SuccessStr(c, ddtt, "Success")
 }
 
 //账号永久注销,注销账号必须验证邮箱,否则不安全

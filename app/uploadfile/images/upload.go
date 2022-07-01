@@ -212,6 +212,9 @@ func OssUploadByFileName(filename, ossSaveFileNameWithPath string) (string, erro
 
 //获取文件全路径
 func FullPath(filename string) string {
+	if filename == "" {
+		return ""
+	}
 	object, err := oss.GetOss(config.Config.Useoss)
 	if err != nil {
 		return strings.TrimRight(config.Config.Domain, "/") + "/" + filename

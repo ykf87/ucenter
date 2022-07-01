@@ -69,35 +69,34 @@ type UserModel struct {
 	Timezone      string  `json:"timezone"`
 	Platform      int     `json:"platform"`
 	Singleid      int64
-	Edinfo        Editers
 }
 
 //账号修改器
-type Editers int64
 
 //创建新用户
 //新用户创建必须使用 account 或 email 其中之一注册
 //使用 account 必须设置密码, 使用 email 必须使用验证码
 func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip, timezone string) (user *UserModel, err error) {
 	hadUser := new(UserModel)
-	insertData := make(map[string]interface{})
-	insertData["nickname"] = nickname
+	// insertData := make(map[string]interface{})
+	insertUser := new(UserModel)
+	insertUser.Nickname = nickname
 	if account != "" {
 		DB.Table("users").Where("account = ?", account).First(hadUser)
-		insertData["account"] = account
+		insertUser.Account = account
 		if pwd == "" {
 			err = errors.New("Please set a password")
 			return
 		}
 	} else if email != "" {
 		DB.Table("users").Where("mail = ?", email).First(hadUser)
-		insertData["mail"] = email
+		insertUser.Mail = email
 		if code != "" {
 			err = coder.Verify(email, code)
 			if err != nil {
 				return
 			}
-			insertData["mailvery"] = 1
+			insertUser.Mailvery = 1
 		} else if pwd == "" {
 			err = errors.New("Please set a password")
 			return
@@ -105,7 +104,7 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip, 
 
 		if nickname == "" {
 			tmp := strings.Split(email, "@")
-			insertData["nickname"] = tmp[0]
+			insertUser.Nickname = tmp[0]
 		}
 	} else {
 		err = errors.New("Registration failed")
@@ -120,13 +119,22 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip, 
 		return
 	}
 	if pwd != "" {
-		insertData["pwd"], err = passwordhash.PasswordHash(pwd)
+		insertUser.Pwd, err = passwordhash.PasswordHash(pwd)
 		if err != nil {
 			return
 		}
 	}
 	if invite != "" {
-		insertData["pid"], insertData["chain"] = GetUserInviInfo(invite)
+		parent := GetUserInviInfo(invite)
+		if parent != nil && parent.Id > 0 {
+			var chianArr []string
+			if parent.Chain != "" {
+				chianArr = strings.Split(parent.Chain, ",")
+			}
+			chianArr = append(chianArr, fmt.Sprintf("%d", parent.Id))
+			insertUser.Pid, insertUser.Chain = parent.Id, strings.Join(chianArr, ",")
+		}
+
 		// DB.Table("users").Where("invite = ?", invite).First(inviteUser)
 		// if inviteUser.Id > 0 {
 
@@ -148,32 +156,35 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip, 
 		if errs == nil && record.Country.IsoCode != "" {
 			countryObj, errs := GetCountryByIso(record.Country.IsoCode)
 			if errs == nil {
-				insertData["country"] = countryObj.Id
+				insertUser.Country = countryObj.Id
+				if countryObj.Timezone != "" {
+					insertUser.Timezone = timezone
+				}
 				if cv, ok := record.City.Names["en"]; ok {
 					province, errs := GetProvinceByNameAndCountry(countryObj.Id, cv, "en")
 					if errs == nil {
-						insertData["province"] = province.Id
+						insertUser.Province = province.Id
 					}
 					city, err := GetCityByNameAndCountryId(cv, countryObj.Id, "en")
 					if err == nil {
-						insertData["city"] = city.Id
+						insertUser.City = city.Id
 					}
 				}
 			}
 		}
+	} else {
+		log.Println(errs)
 	}
 
-	insertData["status"] = 1
-	insertData["timezone"] = timezone
-	insertData["ip"] = InetAtoN(ip)
-	insertData["addtime"] = time.Now().Unix()
-	rs := DB.Table("users").Create(insertData)
+	insertUser.Status = 1
+	insertUser.Ip = InetAtoN(ip)
+	insertUser.Addtime = time.Now().Unix()
+	rs := DB.Table("users").Create(insertUser)
 	if rs.Error != nil {
 		err = rs.Error
 	}
-	user = new(UserModel)
-	user.Edinfo = Editers(user.Id)
-	if DB.Table("users").Where(insertData).First(user).Error == nil && user.Id > 0 {
+	if insertUser.Id > 0 {
+		user = insertUser
 		if user.Pid > 0 {
 			go AddUserInvitee(user.Pid, user.Id)
 		}
@@ -181,20 +192,6 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip, 
 	}
 
 	return
-}
-
-//获取邀请用户信息
-func GetUserInviInfo(invicodestr string) (pid int64, chian string) {
-	invi := invicode.Decode(invicodestr)
-	inviId := int64(invi)
-	user := GetUser(inviId, "", "", "")
-	if user != nil && user.Id > 0 {
-		uschain := strings.Split(user.Chain, ",")
-		uschain = append(uschain, fmt.Sprintf("%d", user.Id))
-		return user.Id, strings.Join(uschain, ",")
-	} else {
-		return 0, ""
-	}
 }
 
 //查找单个用户
@@ -208,11 +205,6 @@ func GetUser(id int64, account, email, phone string) *UserModel {
 		DB.Table("users").Where("mail = ?", email).First(user) // and mailvery = 1
 	} else if phone != "" {
 		DB.Table("users").Where("phone = ?", phone).First(user) // and phonevery = 1
-	}
-	if user.Id < 1 {
-		user = nil
-	} else {
-		user.Edinfo = Editers(user.Id)
 	}
 
 	return user
@@ -247,6 +239,35 @@ func GetUserList(page, limit int, q, rd string, noids []int64) []*UserModel {
 		return useslist
 	}
 	return nil
+}
+
+//查询用户邀请列表
+func (this *UserModel) GetUserInvisList(page, limit int, q, ord string) []*UserModel {
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 {
+		limit = config.Config.Limit
+	} else if limit > 100 {
+		limit = config.Config.Limit
+	}
+	dbs := DB.Select("a.*").Table("users as a").Joins("left join user_invitees as b on a.id = b.uid").Where("b.id = ?", this.Id)
+	if q != "" {
+		dbs = dbs.Where("a.nickname like ?", "%"+q+"%")
+	}
+
+	dbs = dbs.Limit(limit).Offset((page - 1) * limit)
+
+	switch ord {
+	case "addasc":
+		dbs = dbs.Order("a.addtime ASC")
+	default:
+		dbs = dbs.Order("a.addtime DESC")
+	}
+
+	var list []*UserModel
+	dbs.Find(&list)
+	return list
 }
 
 //通过请求获取用户信息
@@ -332,14 +353,7 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 		}
 		if k == "birth" {
 			if v.Int() > 0 {
-				var fmt string
-				fmts, ok := config.Config.Timefmts[lang]
-				if ok {
-					fmt = fmts.Datefmt
-				} else {
-					fmt = config.Config.Datefmt
-				}
-				data[k] = carbon.SetTimezone(timezone).CreateFromTimestamp(v.Int()).Carbon2Time().Format(fmt)
+				data[k] = this.FmtAddTime(lang, timezone)
 			} else {
 				data[k] = ""
 			}
@@ -519,30 +533,36 @@ func (this *UserModel) MoveAndDelete() {
 
 }
 
+//获取邀请用户信息
+func GetUserInviInfo(invicodestr string) *UserModel {
+	invi := invicode.Decode(invicodestr)
+	inviId := int64(invi)
+	return GetUser(inviId, "", "", "")
+}
+
 //获取邀请人信息
-func InviUser(code string) map[string]interface{} {
-	uid := int64(invicode.Decode(code))
-	if uid < 1 {
-		return nil
-	}
-	user := GetUser(uid, "", "", "")
-	if user.Id < 1 {
-		return nil
-	}
+func (this *UserModel) Abstract() map[string]interface{} {
 	dt := make(map[string]interface{})
-	dt["nickname"] = user.Nickname
-	dt["main"] = user.Mail
-	dt["avatar"] = user.Avatar
-	dt["id"] = user.Id
-	dt["invite"] = user.Invite
+	if this.Id > 0 {
+		dt["nickname"] = this.Nickname
+		dt["main"] = this.Mail
+		dt["avatar"] = images.FullPath(this.Avatar)
+		dt["id"] = this.Id
+		dt["invite"] = this.Invite
+		dt["addtime"] = this.Addtime
+	}
+
 	return dt
 }
 
-// //设置邀请人
-// func (this *UserModel) SetInviUser(user *UserModel) {
-// 	if this.Invite == "" {
-
-// 	} else {
-// 		return errors.New("No modification of invitee is allowed")
-// 	}
-// }
+//格式化时间
+func (this *UserModel) FmtAddTime(lang, timezone string) string {
+	var fmt string
+	fmts, ok := config.Config.Timefmts[lang]
+	if ok {
+		fmt = fmts.Datefmt
+	} else {
+		fmt = config.Config.Datefmt
+	}
+	return carbon.SetTimezone(timezone).CreateFromTimestamp(this.Addtime).Carbon2Time().Format(fmt)
+}

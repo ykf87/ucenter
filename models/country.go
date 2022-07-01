@@ -70,6 +70,7 @@ func setCountryMapByLang(lang string) (map[int64]string, error) {
 }
 
 func GetCountryByIso(iso string) (ct *CountryModel, err error) {
+	iso = strings.ToLower(iso)
 	rs, ok := Countries[iso]
 	if !ok {
 		err = errors.New("Country not found")
