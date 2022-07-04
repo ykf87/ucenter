@@ -216,7 +216,7 @@ func FullPath(filename string) string {
 		return ""
 	}
 	object, err := oss.GetOss(config.Config.Useoss)
-	if err != nil {
+	if err != nil || strings.Contains(filename, object.BluckName()) == false {
 		return strings.TrimRight(config.Config.Domain, "/") + "/" + filename
 	}
 	return object.Url(filename)

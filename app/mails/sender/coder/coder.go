@@ -9,6 +9,7 @@ import (
 	"time"
 	"ucenter/app/config"
 	"ucenter/app/i18n"
+	"ucenter/app/logs"
 	"ucenter/app/mails/smtp"
 
 	"github.com/matcornic/hermes/v2"
@@ -153,6 +154,7 @@ func Send(mail, lang string) error {
 	if err != nil {
 		Maps.Delete(mail)
 		log.Println("Send Email Code Err(coder): ", err)
+		logs.Logger.Error("Send Email Code Err(coder): " + err.Error())
 		return errors.New("Captcha sending failure")
 	}
 
@@ -160,6 +162,7 @@ func Send(mail, lang string) error {
 	r := s.SetGeter(mail).SetMessage(emailBody).SetSubject(string(sub)).Send()
 	if r != nil {
 		Maps.Delete(mail)
+		logs.Logger.Error("Send Email Code Err: " + r.Error())
 		log.Println("Send Email Code Err: ", r)
 		return errors.New("Captcha sending failure")
 	}

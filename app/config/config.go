@@ -19,6 +19,7 @@ type OssConf struct {
 	Accesskeyid string
 	Secret      string
 	Bucket      string
+	Url         string
 	Ssl         bool
 }
 

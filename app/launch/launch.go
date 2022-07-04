@@ -1,6 +1,7 @@
 package launch
 
 import (
+	"fmt"
 	"ucenter/app"
 	"ucenter/app/config"
 	"ucenter/app/logs"
@@ -10,7 +11,7 @@ import (
 	"ucenter/models"
 )
 
-func Start(filename string) {
+func Start(filename string, port int) {
 	err := config.Init(filename)
 	if err != nil {
 		logs.Logger.Error(err)
@@ -30,8 +31,20 @@ func Start(filename string) {
 	}
 	rsautil.Generate()
 
+	var runport int
+	if port > 0 {
+		runport = port
+	} else {
+		runport = config.Config.Port
+	}
+
+	if runport < 1000 {
+		logs.Logger.Error(fmt.Sprintf("端口号不能小于1000，当前端口号为：%d", runport))
+		return
+	}
+
 	go func() {
-		app.App.Static(config.Config.Static, config.Config.Staticname).Template("templates/*").Run(config.Config.Port)
+		app.App.Static(config.Config.Static, config.Config.Staticname).Template("templates/*").Run(runport)
 	}()
 	<-config.Och
 	logs.Logger.Info("Panic from post!")

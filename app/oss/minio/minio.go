@@ -7,6 +7,7 @@ import (
 	"strings"
 	"ucenter/app/config"
 	"ucenter/app/funcs"
+	"ucenter/app/logs"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -35,11 +36,21 @@ func GetClient() (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = minioClient.MakeBucket(context.Background(), conf.Bucket, minio.MakeBucketOptions{Region: "us-east-1", ObjectLocking: false})
+	if err != nil {
+		logs.Logger.Error(err)
+		return nil, err
+	}
 	cc := new(Client)
 	cc.Conf = conf
 	cc.Minio = minioClient
 	MailObj = cc
 	return cc, nil
+}
+
+//获取桶名
+func (this *Client) BluckName() string {
+	return this.Conf.Bucket
 }
 
 //objectName 云端保存的路径和文件名
@@ -59,6 +70,7 @@ func (this *Client) Upload(filePath, objectName string) (string, error) {
 	// info, err := this.Minio.PutObject(ctx, this.Conf.Bucket, objectName, f, fileInfo.Size(), minio.PutObjectOptions{ContentType: contentType})
 	info, err := this.Minio.FPutObject(ctx, this.Conf.Bucket, objectName, filePath, minio.PutObjectOptions{ContentType: contentType})
 	if err != nil {
+		logs.Logger.Error("上传云端失败: ", err.Error(), this.Conf.Bucket)
 		return "", err
 	}
 
@@ -75,9 +87,13 @@ func (this *Client) Remove(src string) error {
 }
 
 func (this *Client) Url(filename string) string {
-	sheme := "http://"
-	if this.Conf.Ssl == true {
-		sheme = "https://"
+	url := this.Conf.Url
+	if url == "" {
+		sheme := "http://"
+		if this.Conf.Ssl == true {
+			sheme = "https://"
+		}
+		url = sheme + this.Conf.Endpoint
 	}
-	return sheme + this.Conf.Endpoint + "/" + filename
+	return strings.TrimRight(url, "/") + "/" + filename
 }

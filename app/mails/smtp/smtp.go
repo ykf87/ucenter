@@ -121,6 +121,7 @@ func (this *Stmp) Send() error {
 	}
 
 	d := gomail.NewDialer(this.Host, this.Port, this.Email, this.Pass)
+	// d.TLSConfig = &tls.Config{}
 	err := d.DialAndSend(m)
 	return err
 }

@@ -9,6 +9,7 @@ type Oss interface {
 	Upload(string, string) (string, error)
 	Url(string) string
 	Remove(string) error
+	BluckName() string
 }
 
 func GetOss(s string) (Oss, error) {

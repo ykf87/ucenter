@@ -11,6 +11,7 @@ import (
 )
 
 var configFile = flag.String("c", "config.yaml", "配置文件路径")
+var port = flag.Int("port", 0, "端口")
 
 func main() {
 	flag.Parse()
@@ -18,5 +19,5 @@ func main() {
 		log.Println("请指定配置文件")
 		return
 	}
-	launch.Start(*configFile)
+	launch.Start(*configFile, *port)
 }
