@@ -1,7 +1,6 @@
 package app
 
 import (
-	"time"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
 	"ucenter/app/controllers/albums"
@@ -9,7 +8,7 @@ import (
 	"ucenter/app/controllers/index"
 	"ucenter/app/controllers/user"
 	"ucenter/app/controllers/userlikes"
-	"ucenter/app/mails/sender/coder"
+	"ucenter/app/rdsmps"
 	"ucenter/models"
 
 	"github.com/gin-gonic/gin"
@@ -172,22 +171,20 @@ func LoginErr() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		email := c.PostForm("email")
 		if email != "" {
-			key := "login:" + email
-			cc, ok := coder.Maps.Get(key)
-			if ok == true {
-				if cc.Errtimes > 2 {
-					now := time.Now().Unix()
-					if (cc.Sendtime + 300) >= now {
-						cc.Errtimes += 1
-						// estr := fmt.Sprintf("%d", 300-(now-cc.Sendtime))
-						// c.AbortWithError(401, errors.New(estr))
-						c.AbortWithStatusJSON(401, gin.H{
-							"code": 401,
-							"data": 300 - (now - cc.Sendtime),
-							"msg":  nil,
-						})
-						return
+			cli := &rdsmps.Mmpp{Prev: "login/", Timeout: 300}
+			_, errtimes, ttl, _, err := cli.Get(email)
+			if err == nil {
+				if errtimes > 2 {
+					if errtimes == 3 {
+						ttl = cli.Timeout
+						go cli.Set(email, "", 4, true)
 					}
+					c.AbortWithStatusJSON(401, gin.H{
+						"code": 401,
+						"data": ttl,
+						"msg":  nil,
+					})
+					return
 				}
 			}
 		}

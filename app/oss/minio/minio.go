@@ -36,11 +36,11 @@ func GetClient() (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = minioClient.MakeBucket(context.Background(), conf.Bucket, minio.MakeBucketOptions{Region: "us-east-1", ObjectLocking: false})
-	if err != nil {
-		logs.Logger.Error(err)
-		return nil, err
-	}
+	// err = minioClient.MakeBucket(context.Background(), conf.Bucket, minio.MakeBucketOptions{Region: "us-east-1", ObjectLocking: false})
+	// if err != nil {
+	// 	logs.Logger.Error(err)
+	// 	return nil, err
+	// }
 	cc := new(Client)
 	cc.Conf = conf
 	cc.Minio = minioClient

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"ucenter/app"
 	"ucenter/app/config"
+	"ucenter/app/dbs/redis"
 	"ucenter/app/logs"
 	"ucenter/app/mails/smtp"
 	"ucenter/app/safety/aess"
@@ -17,6 +18,13 @@ func Start(filename string, port int) {
 		logs.Logger.Error(err)
 		return
 	}
+
+	rds := redis.Init(config.Config.Redis.Addr, config.Config.Redis.Password, config.Config.Redis.Dbname)
+	if rds != nil {
+		logs.Logger.Error(rds)
+		return
+	}
+
 	config.Cpath = filename
 	err = models.Init(config.Config.DB[0].Type, config.Config.DB[0].Dsn, config.Config.DB[0].Path)
 	if err != nil {

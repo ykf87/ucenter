@@ -28,6 +28,12 @@ type ImConf struct {
 	Key string
 }
 
+type RedisConf struct {
+	Addr     string
+	Password string
+	Dbname   int
+}
+
 type ConfigStruct struct {
 	APPName          string `required:"true"`
 	Domain           string `required:"true"`
@@ -55,8 +61,9 @@ type ConfigStruct struct {
 		Path string
 	} `required:"true"`
 
-	Smtp map[string]*SmtpConf `required:"true"`
-	Oss  map[string]*OssConf  `required:"true"`
+	Redis *RedisConf           `required:"true"`
+	Smtp  map[string]*SmtpConf `required:"true"`
+	Oss   map[string]*OssConf  `required:"true"`
 
 	Timefmts map[string]struct {
 		Datetimefmt string

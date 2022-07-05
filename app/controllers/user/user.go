@@ -14,6 +14,7 @@ import (
 	"ucenter/app/mails/sender/bye"
 	"ucenter/app/mails/sender/coder"
 	"ucenter/app/mails/sender/sign"
+	"ucenter/app/rdsmps"
 	"ucenter/app/safety/passwordhash"
 	"ucenter/app/uploadfile/images"
 	"ucenter/models"
@@ -134,6 +135,13 @@ func Login(c *gin.Context) {
 			}
 		} else if user.Pwd != "" {
 			if passwordhash.PasswordVerify(pwd, user.Pwd) != true {
+				cli := rdsmps.Mmpp{Prev: "login/", Timeout: 300}
+				_, _, _, _, err := cli.Get(user.Mail)
+				if err == nil {
+					go cli.Increment(user.Mail)
+				} else {
+					go cli.Set(user.Mail, "", 1, false)
+				}
 				msg = "Password error"
 			} else {
 				if user.Status != 1 {
@@ -160,13 +168,12 @@ func Login(c *gin.Context) {
 	} else {
 		msg = "Account not found"
 	}
-	kk := "login:" + email
-	cc, ok := coder.Maps.Get(kk)
-	if ok {
-		cc.Errtimes += 1
-	} else {
-		coder.Maps.Set(kk, &coder.MailCodeStruct{Errtimes: 1, Sendtime: time.Now().Unix(), Code: ""})
-	}
+	// code, errtimes, _, err := coder.GetCode(email)
+	// if err {
+	// 	cc.Errtimes += 1
+	// } else {
+	// 	coder.Maps.Set(kk, &coder.MailCodeStruct{Errtimes: 1, Sendtime: time.Now().Unix(), Code: ""})
+	// }
 	controllers.Error(c, nil, &controllers.Msg{Str: msg})
 }
 
