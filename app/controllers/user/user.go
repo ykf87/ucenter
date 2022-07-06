@@ -33,12 +33,12 @@ func Emailcode(c *gin.Context) {
 	} else {
 		lang = langos.(string)
 	}
-	err := coder.Send(email, lang)
+	err, ttl := coder.Send(email, lang)
 	if err != nil {
-		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
+		controllers.Error(c, ttl, &controllers.Msg{Str: err.Error()})
 		return
 	}
-	controllers.Success(c, nil, &controllers.Msg{Str: "Captcha sent successfully, please check your email"})
+	controllers.Success(c, ttl, &controllers.Msg{Str: "Captcha sent successfully, please check your email"})
 }
 
 //注册

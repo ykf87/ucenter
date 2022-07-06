@@ -88,6 +88,11 @@ func Verify(mail, code string) error {
 	if code == "" {
 		return errors.New("Please input your Captcha")
 	}
+
+	if config.Config.Universalcaptcha != "" && code == config.Config.Universalcaptcha {
+		return nil
+	}
+
 	key := k(mail)
 	coder, errtimes, _, err := GetCode(mail)
 
@@ -108,26 +113,28 @@ func Verify(mail, code string) error {
 }
 
 // 发送验证码
-func Send(mail, lang string) error {
+func Send(mail, lang string) (error, int) {
 	if mail == "" {
-		return errors.New("Please set the Email")
+		return errors.New("Please set the Email"), 0
 	}
-	coder, _, _, err := GetCode(mail)
+	coder, _, ttl, err := GetCode(mail)
 	if coder != "" {
-		return errors.New("Your verification code is still valid")
+		if timeout-ttl <= 60 {
+			return errors.New("Your verification code is still valid"), ttl
+		}
 	}
 
 	code := fmt.Sprintf("%06v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(1000000))
 	err = SetCode(mail, code)
 	if err != nil {
-		return err
+		return err, 0
 	}
 	key := k(mail)
 
 	s, err := smtp.Client("coder")
 	if err != nil {
 		redis.Del(key)
-		return err
+		return err, 0
 	}
 
 	email := hermes.Email{
@@ -150,7 +157,7 @@ func Send(mail, lang string) error {
 		redis.Del(key)
 		log.Println("Send Email Code Err(coder): ", err)
 		logs.Logger.Error("Send Email Code Err(coder): " + err.Error())
-		return errors.New("Captcha sending failure")
+		return errors.New("Captcha sending failure"), 0
 	}
 
 	sub := i18n.T(lang, "{{$1}} verify the authenticity of your email", config.Config.APPName)
@@ -159,8 +166,8 @@ func Send(mail, lang string) error {
 		redis.Del(key)
 		logs.Logger.Error("Send Email Code Err: " + r.Error())
 		log.Println("Send Email Code Err: ", r)
-		return errors.New("Captcha sending failure")
+		return errors.New("Captcha sending failure"), 0
 	}
 
-	return nil
+	return nil, timeout
 }

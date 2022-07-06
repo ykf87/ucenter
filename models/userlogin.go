@@ -36,11 +36,7 @@ func GetPositiveUserList(page, limit int, notin []int64) ([]*UserModel, int64) {
 		dbs = dbs.Where("a.id not in ?", notin)
 	}
 
-	// if page == 1 && len(list) > 0 {
-	// 	DB.Table("user_logins").Count(&total)
-	// }
-
-	dbs = dbs.Limit(limit).Offset((page - 1) * limit).Order("b.addtime DESC")
+	dbs = dbs.Limit(limit).Offset((page - 1) * limit).Order("b.addtime DESC, a.addtime DESC").Group("b.uid")
 	dbs.Find(&list)
 	return list, total
 }
