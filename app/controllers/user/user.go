@@ -71,7 +71,7 @@ func Sign(c *gin.Context) {
 	ip := c.ClientIP()
 	user, err := models.MakeUser("", email, "", pwd, code, invite, nickname, platform, ip, timezone)
 	if err != nil {
-		logs.Logger.Error(err)
+		// logs.Logger.Error(err)
 		controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
 		return
 	}
