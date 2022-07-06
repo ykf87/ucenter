@@ -266,6 +266,15 @@ func Search(c *gin.Context) {
 	}
 }
 
+//客户端多语言信息
+func Applangs(c *gin.Context) {
+	lango, _ := c.Get("_lang")
+	lang := lango.(string)
+
+	rrs := models.GetAppLangs(lang)
+	controllers.SuccessStr(c, rrs, "Success")
+}
+
 //邀请用户
 func Invitation(c *gin.Context) {
 	invi := c.Query("f")

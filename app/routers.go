@@ -73,6 +73,7 @@ func (this *AppClient) WebRouter() {
 
 		mainGroup.GET("/search", index.Search)     //搜索用户
 		mainGroup.GET("/positive", index.Positive) //获取活跃用户列表
+		mainGroup.GET("/applangs", index.Applangs) //客户端多语言信息
 	}
 
 	webRouters := this.Engine.Group("")
