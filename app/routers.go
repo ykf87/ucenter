@@ -71,7 +71,8 @@ func (this *AppClient) WebRouter() {
 		mainGroup.GET("/lists/:table", index.Lists)                //显示一些属性表的列表内容
 		mainGroup.GET("/totals", index.Totals)                     //所有个人资料改动需要的数据
 
-		mainGroup.GET("/search", index.Search) //搜索用户
+		mainGroup.GET("/search", index.Search)     //搜索用户
+		mainGroup.GET("/positive", index.Positive) //获取活跃用户列表
 	}
 
 	webRouters := this.Engine.Group("")

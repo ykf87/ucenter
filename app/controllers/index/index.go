@@ -175,6 +175,27 @@ func Totals(c *gin.Context) {
 	controllers.Success(c, ddt, &controllers.Msg{Str: "Success"})
 }
 
+//活跃用户列表
+func Positive(c *gin.Context) {
+	user := models.GetUserFromRequest(c)
+	page, _ := strconv.Atoi(c.Query("page"))
+	limit, _ := strconv.Atoi(c.Query("limit"))
+
+	var notin []int64
+	if user != nil && user.Id > 0 {
+		notin = append(notin, user.Id)
+	}
+
+	list, total := models.GetPositiveUserList(page, limit, notin)
+	var dts []map[string]interface{}
+	if list != nil && len(list) > 0 {
+		for _, v := range list {
+			dts = append(dts, v.Abstract())
+		}
+	}
+	controllers.SuccessStr(c, map[string]interface{}{"list": dts, "count": total}, "Success")
+}
+
 //搜索用户
 func Search(c *gin.Context) {
 	user := models.GetUserFromRequest(c)

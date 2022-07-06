@@ -308,14 +308,12 @@ func (this *UserModel) Token() string {
 	DB.Table("users").Where("id = ?", this.Id).Update("singleid", sid)
 	this.Singleid = sid
 	str := fmt.Sprintf(`{"time":%d,"id":%d,"sid":%d}`, time.Now().Unix(), this.Id, this.Singleid)
-	// token, err := rsautil.RsaEncrypt(str)
-	// if err != nil {
-	// 	log.Println("UserModel Token - ", err)
-	// 	return ""
-	// }
+
 	token := aess.EcbEncrypt(str, nil)
+
+	go AddUserLoginRow(this)
+
 	return base64.StdEncoding.EncodeToString([]byte(token))
-	// return token
 }
 
 //通过 token 生成 user model
