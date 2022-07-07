@@ -11,7 +11,7 @@ type ApplangModel struct {
 }
 
 func GetAppLangs(lang string) map[string]interface{} {
-	table := lang + "applangs"
+	table := lang + "_applangs"
 
 	rrs := make(map[string]interface{})
 	paths := make(map[string]map[string]string)
@@ -22,12 +22,14 @@ func GetAppLangs(lang string) map[string]interface{} {
 				continue
 			}
 			ks := strings.Split(v.Key, " ")
-			ks[0] = strings.ToUpper(ks[0])
+			ks[0] = strings.ToUpper(ks[0][:1]) + ks[0][1:]
 			k := strings.Join(ks, " ")
 			if v.Path != "" {
 				path := strings.ToLower(v.Path)
 				if _, ok := paths[path]; !ok {
 					paths[path] = make(map[string]string)
+					paths[path][k] = v.Val
+				} else {
 					paths[path][k] = v.Val
 				}
 			} else {

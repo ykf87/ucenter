@@ -124,15 +124,9 @@ func Login(c *gin.Context) {
 	var msg string
 	if user != nil {
 		if veried == true {
-			token := user.Token()
-			if token != "" {
-				controllers.Success(c, map[string]interface{}{
-					"token": token,
-				}, nil)
-				return
-			} else {
-				msg = "Voucher generation failed, please try again later"
-			}
+			go user.CheckUserUseEnvironment(c)
+			controllers.SuccessStr(c, user.UserAfterLogin(), "Success")
+			return
 		} else if user.Pwd != "" {
 			if passwordhash.PasswordVerify(pwd, user.Pwd) != true {
 				cli := rdsmps.Mmpp{Prev: "login/", Timeout: 300}
@@ -147,18 +141,9 @@ func Login(c *gin.Context) {
 				if user.Status != 1 {
 					msg = "Your account is abnormal"
 				} else {
-					token := user.Token()
-					if token != "" {
-						go user.CheckUserUseEnvironment(c)
-						controllers.Success(c, map[string]interface{}{
-							"token":     token,
-							"id":        user.Id,
-							"signature": user.ImSignature(),
-						}, nil)
-						return
-					} else {
-						msg = "Voucher generation failed, please try again later"
-					}
+					go user.CheckUserUseEnvironment(c)
+					controllers.SuccessStr(c, user.UserAfterLogin(), "Success")
+					return
 				}
 			}
 		} else if pwd != "" {

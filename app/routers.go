@@ -26,7 +26,10 @@ func (this *AppClient) WebRouter() {
 		//和用户相关的不需要验证权限的接口
 		userNoAuth := mainGroup.Group("/")
 		{
-			userNoAuth.Use(LoginErr()).POST("login", user.Login)          //登录
+			llrr := userNoAuth.Group("")
+			{
+				llrr.Use(LoginErr()).POST("login", user.Login) //登录
+			}
 			userNoAuth.POST("sign", user.Sign)                            //注册
 			userNoAuth.POST("forgot", user.Forgot)                        //忘记密码
 			userNoAuth.Use(Iplimiter()).POST("emailcode", user.Emailcode) //邮件发送,考虑做ip限流
@@ -184,11 +187,13 @@ func LoginErr() gin.HandlerFunc {
 						ttl = cli.Timeout
 						go cli.Set(email, "", 4, true)
 					}
-					c.AbortWithStatusJSON(401, gin.H{
-						"code": 401,
-						"data": ttl,
-						"msg":  nil,
-					})
+					controllers.Resp(c, ttl, &controllers.Msg{Str: "Too many errors, please try again later"}, 500)
+					// c.AbortWithStatusJSON(200, gin.H{
+					// 	"code": 500,
+					// 	"data": ttl,
+					// 	"msg":  nil,
+					// })
+					c.Abort()
 					return
 				}
 			}

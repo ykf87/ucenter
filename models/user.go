@@ -586,3 +586,13 @@ func (this *UserModel) CheckUserUseEnvironment(c *gin.Context) {
 	DB.Table("users").Where("id = ?", this.Id).Update("md5", md5str)
 	return
 }
+
+//登录成功后的返回
+func (this *UserModel) UserAfterLogin() map[string]interface{} {
+	ddt := make(map[string]interface{})
+
+	ddt["token"] = this.Token()
+	ddt["id"] = this.Id
+	ddt["signature"] = this.ImSignature()
+	return ddt
+}
