@@ -88,7 +88,7 @@ func Sign(c *gin.Context) {
 		controllers.Error(c, nil, &controllers.Msg{Str: "Voucher generation failed, please try again later"})
 		return
 	}
-
+	go user.CheckUserUseEnvironment(c)
 	controllers.Success(c, map[string]interface{}{
 		"token":     token,
 		"id":        user.Id,
@@ -149,6 +149,7 @@ func Login(c *gin.Context) {
 				} else {
 					token := user.Token()
 					if token != "" {
+						go user.CheckUserUseEnvironment(c)
 						controllers.Success(c, map[string]interface{}{
 							"token":     token,
 							"id":        user.Id,

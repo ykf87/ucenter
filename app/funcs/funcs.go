@@ -1,14 +1,19 @@
 package funcs
 
 import (
+	"crypto/md5"
 	"errors"
 	"fmt"
+	"math/big"
 	"math/rand"
+	"net"
 	"net/http"
 	"os"
 	"time"
 	"ucenter/app/config"
 	"ucenter/app/safety/aess"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/tidwall/gjson"
 )
@@ -84,4 +89,28 @@ func DeInviUrl(str string, timeout int64) (invocode string, err error) {
 	}
 	invocode = gjsons["code"].String()
 	return
+}
+
+//数据库ip转ipv4
+func InetNtoA(ip int64) string {
+	return fmt.Sprintf("%d.%d.%d.%d",
+		byte(ip>>24), byte(ip>>16), byte(ip>>8), byte(ip))
+}
+
+//IPV4转数据库ip
+func InetAtoN(ip string) int64 {
+	ret := big.NewInt(0)
+	ret.SetBytes(net.ParseIP(ip).To4())
+	return ret.Int64()
+}
+
+//根据头部信息生成md5信息,作为每次不同登录状态的记录依据
+func UserDeviceMd5(c *gin.Context) string {
+	deviceid := c.GetHeader("deviceid")
+	if deviceid == "" {
+		return ""
+	}
+
+	ip := c.ClientIP()
+	return string(fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s%d", deviceid, ip)))))
 }

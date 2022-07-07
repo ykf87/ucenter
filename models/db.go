@@ -2,10 +2,7 @@ package models
 
 import (
 	"errors"
-	"fmt"
 	"log"
-	"math/big"
-	"net"
 	"os"
 	"strings"
 	"time"
@@ -136,17 +133,6 @@ func DBToCache(ch chan error) (err error) {
 		ch <- nil
 	}
 	return
-}
-
-func InetNtoA(ip int64) string {
-	return fmt.Sprintf("%d.%d.%d.%d",
-		byte(ip>>24), byte(ip>>16), byte(ip>>8), byte(ip))
-}
-
-func InetAtoN(ip string) int64 {
-	ret := big.NewInt(0)
-	ret.SetBytes(net.ParseIP(ip).To4())
-	return ret.Int64()
 }
 
 func (this *GlobalMapStruct) Get(lang string, id int64) (name string) {

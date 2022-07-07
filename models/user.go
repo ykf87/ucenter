@@ -68,6 +68,7 @@ type UserModel struct {
 	Lang          string  `json:"lang"`
 	Timezone      string  `json:"timezone"`
 	Platform      int     `json:"platform"`
+	Md5           string  `json:"md5"`
 	Singleid      int64
 }
 
@@ -177,7 +178,7 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip, 
 	}
 
 	insertUser.Status = 1
-	insertUser.Ip = InetAtoN(ip)
+	insertUser.Ip = funcs.InetAtoN(ip)
 	insertUser.Addtime = time.Now().Unix()
 	rs := DB.Table("users").Create(insertUser)
 	if rs.Error != nil {
@@ -570,4 +571,18 @@ func (this *UserModel) FmtAddTime(lang, timezone string) string {
 		fmt = config.Config.Datefmt
 	}
 	return carbon.SetTimezone(timezone).CreateFromTimestamp(this.Addtime).Carbon2Time().Format(fmt)
+}
+
+//检查当前登录环境是否较上次有变动
+func (this *UserModel) CheckUserUseEnvironment(c *gin.Context) {
+	md5str := funcs.UserDeviceMd5(c)
+	if md5str == "" {
+		return
+	}
+	if md5str == this.Md5 {
+		return
+	}
+	AddUserEnvironmentChange(c, this)
+	DB.Table("users").Where("id = ?", this.Id).Update("md5", md5str)
+	return
 }

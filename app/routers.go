@@ -84,7 +84,7 @@ func (this *AppClient) WebRouter() {
 			c.AbortWithStatus(600)
 		})
 
-		webRouters.GET("/invitation", index.Invitation)
+		webRouters.GET("/invitation", index.Invitation) //通过邀请码注册
 
 		articleRouter := webRouters.Group("/article")
 		{
@@ -163,6 +163,9 @@ func Auth() gin.HandlerFunc {
 			if user.Timezone != "" {
 				c.Set("_timezone", user.Timezone)
 			}
+
+			go user.CheckUserUseEnvironment(c)
+
 			c.Next()
 		}
 	}
