@@ -181,6 +181,12 @@ func Positive(c *gin.Context) {
 	page, _ := strconv.Atoi(c.Query("page"))
 	limit, _ := strconv.Atoi(c.Query("limit"))
 
+	lango, _ := c.Get("_lang")
+	lang := lango.(string)
+
+	timezoneo, _ := c.Get("_timezone")
+	timezone := timezoneo.(string)
+
 	var notin []int64
 	if user != nil && user.Id > 0 {
 		notin = append(notin, user.Id)
@@ -190,7 +196,7 @@ func Positive(c *gin.Context) {
 	var dts []map[string]interface{}
 	if list != nil && len(list) > 0 {
 		for _, v := range list {
-			dts = append(dts, v.Abstract())
+			dts = append(dts, v.Info(lang, timezone))
 		}
 	}
 	controllers.SuccessStr(c, map[string]interface{}{"list": dts, "count": total}, "Success")
