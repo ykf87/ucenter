@@ -188,11 +188,13 @@ func Positive(c *gin.Context) {
 	timezone := timezoneo.(string)
 
 	var notin []int64
+	var userSex int
 	if user != nil && user.Id > 0 {
 		notin = append(notin, user.Id)
+		userSex = user.Sex
 	}
 
-	list, total := models.GetPositiveUserList(page, limit, notin)
+	list, total := models.GetPositiveUserList(page, limit, notin, userSex)
 	var dts []map[string]interface{}
 	if list != nil && len(list) > 0 {
 		for _, v := range list {
@@ -214,10 +216,12 @@ func Search(c *gin.Context) {
 	timezones, _ := c.Get("_timezone")
 
 	var ulids []int64
+	var userSex int
 	if user != nil {
 		ulids = append(ulids, user.Id)
+		userSex = user.Sex
 	}
-	r := models.GetUserList(page, limit, q, rd, ulids)
+	r := models.GetUserList(page, limit, q, rd, ulids, userSex)
 	if r == nil || len(r) < 1 {
 		controllers.Resp(c, nil, nil, 404)
 	} else {

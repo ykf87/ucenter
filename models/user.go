@@ -213,7 +213,7 @@ func GetUser(id int64, account, email, phone string) *UserModel {
 }
 
 //查找用户列表
-func GetUserList(page, limit int, q, rd string, noids []int64) []*UserModel {
+func GetUserList(page, limit int, q, rd string, noids []int64, searcherSex int) []*UserModel {
 	if page < 1 {
 		page = 1
 	}
@@ -231,6 +231,9 @@ func GetUserList(page, limit int, q, rd string, noids []int64) []*UserModel {
 	}
 	if q != "" {
 		dbob = dbob.Where("nickname like ?", "%"+q+"%")
+	}
+	if searcherSex > 0 && config.Config.Heterosexual == 1 {
+		dbob = dbob.Where("sex != ?", searcherSex)
 	}
 	if rd != "" {
 		dbob = dbob.Order("RAND()")

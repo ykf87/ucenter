@@ -19,7 +19,7 @@ func AddUserLoginRow(user *UserModel) {
 }
 
 //获取活跃用户列表
-func GetPositiveUserList(page, limit int, notin []int64) ([]*UserModel, int64) {
+func GetPositiveUserList(page, limit int, notin []int64, searcherSex int) ([]*UserModel, int64) {
 	if page < 1 {
 		page = 1
 	}
@@ -34,6 +34,9 @@ func GetPositiveUserList(page, limit int, notin []int64) ([]*UserModel, int64) {
 	dbs := DB.Select("a.*").Table("users as a").Joins("left join user_logins as b on a.id = b.uid")
 	if len(notin) > 0 {
 		dbs = dbs.Where("a.id not in ?", notin)
+	}
+	if searcherSex > 0 && config.Config.Heterosexual == 1 {
+		dbs = dbs.Where("a.sex != ?", searcherSex)
 	}
 
 	dbs = dbs.Limit(limit).Offset((page - 1) * limit).Order("b.addtime DESC, a.addtime DESC").Group("b.uid")
