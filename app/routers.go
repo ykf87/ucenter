@@ -1,6 +1,7 @@
 package app
 
 import (
+	"net/http"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
 	"ucenter/app/controllers/albums"
@@ -139,7 +140,18 @@ func Headers(c *gin.Context) {
 
 	c.Header("server", config.Config.APPName)
 	c.Header("auther", config.Config.Auther)
-	c.Header("Access-Control-Allow-Origin", "*")
+
+	// method := c.Request.Method
+	// c.Header("Access-Control-Allow-Origin", "*")
+	// c.Header("Access-Control-Allow-Headers", "*")
+	// c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+	// c.Header("Access-Control-Expose-Headers", "*")
+	// c.Header("Access-Control-Allow-Credentials", "true")
+
+	// //放行所有OPTIONS方法
+	// if method == "OPTIONS" {
+	// 	c.AbortWithStatus(http.StatusNoContent)
+	// }
 }
 
 func Middle() gin.HandlerFunc {
