@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"ucenter/app/config"
 	"ucenter/app/controllers"
 	"ucenter/app/controllers/albums"
