@@ -127,7 +127,6 @@ func Signature(c *gin.Context) bool {
 }
 
 func Headers(c *gin.Context) {
-	fmt.Println("ssssss")
 	lang := models.GetClientLang(c)
 	c.Set("_lang", lang)
 	c.Header("language", lang)
