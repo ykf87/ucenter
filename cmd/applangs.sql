@@ -11,7 +11,7 @@
  Target Server Version : 50737
  File Encoding         : 65001
 
- Date: 11/07/2022 22:38:23
+ Date: 12/07/2022 22:21:27
 */
 
 SET NAMES utf8mb4;
@@ -51,6 +51,8 @@ CREATE TABLE `zh-cn_applangs`  (
 -- Records of zh-cn_applangs
 -- ----------------------------
 INSERT INTO `zh-cn_applangs` VALUES ('Already have an account?', '', '已有账号?');
+INSERT INTO `zh-cn_applangs` VALUES ('and acknowledge that you have read our', '', '同时确认您已经阅读我们的');
+INSERT INTO `zh-cn_applangs` VALUES ('By continuing, you agree to our', '', '继续即表示您同意我们的');
 INSERT INTO `zh-cn_applangs` VALUES ('Don\'t have an account yet?', '', '还没有账号?');
 INSERT INTO `zh-cn_applangs` VALUES ('E-mail Captcha', '', '邮箱验证码');
 INSERT INTO `zh-cn_applangs` VALUES ('Email address', '', '邮箱地址');
