@@ -222,7 +222,7 @@ func GetUserList(page, limit int, q, rd string, noids []int64, searcherSex int) 
 	} else if limit > 100 {
 		limit = config.Config.Limit
 	}
-	dbob := DB.Table("users")
+	dbob := DB.Table("users").Where("sex != 0")
 	if noids != nil && len(noids) > 0 {
 		dbob = dbob.Where("id not in ?", noids)
 	}

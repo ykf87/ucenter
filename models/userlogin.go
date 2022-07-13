@@ -31,7 +31,7 @@ func GetPositiveUserList(page, limit int, notin []int64, searcherSex int) ([]*Us
 	var list []*UserModel
 	var total int64
 
-	dbs := DB.Select("a.*").Table("users as a").Joins("left join user_logins as b on a.id = b.uid")
+	dbs := DB.Select("a.*").Table("users as a").Joins("left join user_logins as b on a.id = b.uid").Where("sex != 0")
 	if len(notin) > 0 {
 		dbs = dbs.Where("a.id not in ?", notin)
 	}
