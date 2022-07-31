@@ -54,7 +54,7 @@ type ConfigStruct struct {
 	Timefmt          string `default:"15:04:05"`
 	Useim            string `required:"true"` //使用的im
 	Useoss           string `required:"true"`
-	Heterosexual     int    `default: 0` //对于用户搜索结果,是否仅显示异性
+	Heterosexual     int    `default: 1` //对于用户搜索结果,是否仅显示异性
 
 	DB []struct {
 		Type string
@@ -73,6 +73,8 @@ type ConfigStruct struct {
 	}
 
 	Im map[string]*ImConf `required:"true"`
+
+	Imagethum map[string]map[string]int
 }
 
 var Config = new(ConfigStruct)

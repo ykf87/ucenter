@@ -122,7 +122,7 @@ func Login(c *gin.Context) {
 
 	user := models.GetUser(0, account, email, phone)
 	var msg string
-	if user != nil {
+	if user != nil && user.Id > 0 {
 		if veried == true {
 			go user.CheckUserUseEnvironment(c)
 			controllers.SuccessStr(c, user.UserAfterLogin(), "Success")
@@ -589,12 +589,13 @@ func EditBatch(c *gin.Context) {
 	if avatar != "" {
 		filename, err := images.SaveFileBase64(models.AVATARPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), avatar, nil, nil)
 		if err != nil {
-			logs.Logger.Error(err, " - when SetAvatar model upload from form file in batch!")
+			logs.Logger.Error(err, " - when SetAvatar model upload from form file in batch!!")
 			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
 			return
 		}
 		cgdata["avatar"] = filename
-		rsdata["avatar"] = images.FullPath(filename)
+		rsdata["avatar"] = images.FullPath(filename, "")
+		rsdata["avatar_thumb"] = images.FullPath(filename, "small")
 	} else if avatarFile, err := c.FormFile("avatar"); err == nil {
 		filename, err := images.SaveFileFromUpload(models.AVATARPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), avatarFile, nil, nil)
 		if err != nil {
@@ -603,7 +604,8 @@ func EditBatch(c *gin.Context) {
 			return
 		}
 		cgdata["avatar"] = filename
-		rsdata["avatar"] = images.FullPath(filename)
+		rsdata["avatar"] = images.FullPath(filename, "")
+		rsdata["avatar_thumb"] = images.FullPath(filename, "small")
 	}
 
 	//背景图
@@ -616,7 +618,8 @@ func EditBatch(c *gin.Context) {
 			return
 		}
 		cgdata["background"] = filename
-		rsdata["background"] = images.FullPath(filename)
+		rsdata["background"] = images.FullPath(filename, "")
+		rsdata["background_thumb"] = images.FullPath(filename, "medium")
 	} else if backgroundFile, err := c.FormFile("background"); err == nil {
 		filename, err := images.SaveFileFromUpload(models.BACKGROUNDPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), backgroundFile, nil, nil)
 		if err != nil {
@@ -625,7 +628,8 @@ func EditBatch(c *gin.Context) {
 			return
 		}
 		cgdata["background"] = filename
-		rsdata["background"] = images.FullPath(filename)
+		rsdata["background"] = images.FullPath(filename, "")
+		rsdata["background_thumb"] = images.FullPath(filename, "medium")
 	}
 
 	if cgdata != nil && len(cgdata) > 0 {
@@ -759,6 +763,9 @@ func Cancellation(c *gin.Context) {
 		return
 	}
 
+	user.Cancellation()
+
 	//修改删除关系网,发送告别邮件
 	bye.Send()
+	controllers.SuccessStr(c, nil, "Success")
 }

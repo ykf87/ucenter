@@ -16,6 +16,7 @@ type AlbumModel struct {
 	Id         int64  `json:"id"`
 	Uid        int64  `json:"uid"`
 	Src        string `json:"src"`
+	SrcThumb   string `json:"src_thumb" gorm:"-"`
 	Private    int    `json:"private"`
 	Likes      int64  `json:"likes"`
 	Addtime    int64  `json:"addtime"`
@@ -83,6 +84,7 @@ func (this *AlbumModel) Fmt(timezone, lang string) {
 	} else {
 		fmt = config.Config.Datetimefmt
 	}
-	this.Src = images.FullPath(this.Src)
+	this.SrcThumb = images.FullPath(this.Src, "medium")
+	this.Src = images.FullPath(this.Src, "")
 	this.Addtimefmt = carbon.CreateFromTimestamp(this.Addtime).SetTimezone(timezone).Carbon2Time().Format(fmt)
 }
