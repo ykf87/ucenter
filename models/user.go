@@ -241,7 +241,6 @@ func GetUserList(page, limit int, q, rd string, noids []int64, searcherSex int) 
 	var useslist []*UserModel
 	rs := dbob.Find(&useslist)
 	if rs.Error == nil {
-		fmt.Println("user model GetUserList error: ", rs.Error)
 		return useslist
 	}
 	return nil
