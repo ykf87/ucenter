@@ -1,42 +1,4 @@
-// linux execute file
-// env GOOS=linux GOARCH=amd64 go build
-// export CGO_ENABLED=0 && export GOOS=linux && export GOARCH=amd64 && go build
-// ./frpc.exe -c frpc.ini
-package main
-
-import (
-	"flag"
-	"fmt"
-	"log"
-	"os"
-	"ucenter/app/launch"
-	"ucenter/app/safety/aess"
-)
-
-var configFile = flag.String("c", "config.yaml", "配置文件路径")
-var port = flag.Int("port", 0, "端口")
-
-func main() {
-	fmt.Println(string(aess.AESKEY))
-	flag.Parse()
-	if *configFile == "" {
-		log.Println("请指定配置文件")
-		return
-	}
-
-	configExp := "./.example.yaml"
-	if _, err := os.Stat(configExp); err != nil {
-		if mkexp(configExp) != nil {
-			log.Println("示例文件生成失败!", err)
-			return
-		}
-	}
-
-	launch.Start(*configFile, *port)
-}
-
-func mkexp(filepath string) error {
-	config := `appname: "Your app name"
+appname: "Your app name"
 domain: "ex：http://127.0.0.1:18998"
 auther: "ykf"
 aeskey: "16位长度的密钥"
@@ -98,14 +60,3 @@ imagethum://缩略图尺寸
   medium:
     width: 650
     height: 720
-`
-	f, err := os.OpenFile(filepath, os.O_CREATE|os.O_RDWR, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	_, err = f.WriteString(config)
-	if err != nil {
-		return err
-	}
-	return nil
-}

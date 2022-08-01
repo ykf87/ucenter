@@ -426,14 +426,16 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 		} else if k == "avatar" {
 			s := v.String()
 			if s != "" {
-				data[k] = images.FullPath(s)
+				data[k] = images.FullPath(s, "")
+				data["avatar_thumb"] = images.FullPath(s, "small")
 			} else {
 				data[k] = ""
 			}
 		} else if k == "background" {
 			s := v.String()
 			if s != "" {
-				data[k] = images.FullPath(s)
+				data[k] = images.FullPath(s, "")
+				data["background_thumb"] = images.FullPath(s, "medium")
 			} else {
 				data[k] = ""
 			}
@@ -554,7 +556,8 @@ func (this *UserModel) Abstract() map[string]interface{} {
 	if this.Id > 0 {
 		dt["nickname"] = this.Nickname
 		dt["main"] = this.Mail
-		dt["avatar"] = images.FullPath(this.Avatar)
+		dt["avatar"] = images.FullPath(this.Avatar, "")
+		dt["avatar_thumb"] = images.FullPath(this.Avatar, "small")
 		dt["id"] = this.Id
 		dt["invite"] = this.Invite
 		dt["addtime"] = this.Addtime

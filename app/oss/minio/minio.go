@@ -28,7 +28,6 @@ func GetClient() (*Client, error) {
 	if !ok {
 		return nil, errors.New("配置信息不正确,找不到oss的配置: " + config.Config.Useoss)
 	}
-
 	minioClient, err := minio.New(conf.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(conf.Accesskeyid, conf.Secret, ""),
 		Secure: conf.Ssl,

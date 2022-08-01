@@ -111,18 +111,17 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	if code != "" {
-		err := coder.Verify(email, code)
-		if err != nil {
-			controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
-			return
-		}
-		veried = true
-	}
-
 	user := models.GetUser(0, account, email, phone)
 	var msg string
-	if user != nil {
+	if user != nil && user.Id > 0 {
+		if code != "" {
+			err := coder.Verify(email, code)
+			if err != nil {
+				controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
+				return
+			}
+			veried = true
+		}
 		if veried == true {
 			go user.CheckUserUseEnvironment(c)
 			controllers.SuccessStr(c, user.UserAfterLogin(), "Success")
@@ -594,7 +593,8 @@ func EditBatch(c *gin.Context) {
 			return
 		}
 		cgdata["avatar"] = filename
-		rsdata["avatar"] = images.FullPath(filename)
+		rsdata["avatar"] = images.FullPath(filename, "")
+		rsdata["avatar_thumb"] = images.FullPath(filename, "small")
 	} else if avatarFile, err := c.FormFile("avatar"); err == nil {
 		filename, err := images.SaveFileFromUpload(models.AVATARPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), avatarFile, nil, nil)
 		if err != nil {
@@ -603,7 +603,8 @@ func EditBatch(c *gin.Context) {
 			return
 		}
 		cgdata["avatar"] = filename
-		rsdata["avatar"] = images.FullPath(filename)
+		rsdata["avatar"] = images.FullPath(filename, "")
+		rsdata["avatar_thumb"] = images.FullPath(filename, "small")
 	}
 
 	//背景图
@@ -616,7 +617,8 @@ func EditBatch(c *gin.Context) {
 			return
 		}
 		cgdata["background"] = filename
-		rsdata["background"] = images.FullPath(filename)
+		rsdata["background"] = images.FullPath(filename, "")
+		rsdata["background_thumb"] = images.FullPath(filename, "medium")
 	} else if backgroundFile, err := c.FormFile("background"); err == nil {
 		filename, err := images.SaveFileFromUpload(models.BACKGROUNDPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), backgroundFile, nil, nil)
 		if err != nil {
@@ -625,7 +627,8 @@ func EditBatch(c *gin.Context) {
 			return
 		}
 		cgdata["background"] = filename
-		rsdata["background"] = images.FullPath(filename)
+		rsdata["background"] = images.FullPath(filename, "")
+		rsdata["background_thumb"] = images.FullPath(filename, "medium")
 	}
 
 	if cgdata != nil && len(cgdata) > 0 {

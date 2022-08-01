@@ -42,6 +42,7 @@ type ConfigStruct struct {
 	Auther           string `default:"blandal.com@gmail.com"`
 	Copyright        string
 	Logo             string
+	Mainbanner       string
 	Static           string
 	Staticname       string
 	Aeskey           string
@@ -72,7 +73,8 @@ type ConfigStruct struct {
 		Timefmt     string
 	}
 
-	Im map[string]*ImConf `required:"true"`
+	Im        map[string]*ImConf `required:"true"`
+	Imagethum map[string]map[string]int
 }
 
 var Config = new(ConfigStruct)

@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"html/template"
 	"log"
 	"ucenter/app/config"
 
@@ -36,7 +37,16 @@ func GetArticleRow(id int64, key, lang string) *ArticleModel {
 	art := new(ArticleModel)
 	dbob.Where("status = 1").Find(art)
 	if art == nil || art.Id < 1 {
-		return nil
+		if config.Config.Lang != lang {
+			tableName = "`" + config.Config.Lang + "_articles`"
+			dbob.Table(tableName)
+			dbob.Find(art)
+		} else {
+			return nil
+		}
+		if art == nil || art.Id < 1 {
+			return nil
+		}
 	}
 	go DB.Table(tableName).Where("id = ?", art.Id).Update("views", (art.Views + 1)) //增加浏览量
 	return art
@@ -64,7 +74,7 @@ func (this *ArticleModel) Fmt(lang, timezone string) map[string]interface{} {
 		if k == "addtime" {
 			dt[k] = carbon.CreateFromTimestamp(v.Int()).SetTimezone(timezone).Carbon2Time().Format(fmt)
 		} else {
-			dt[k] = v.String()
+			dt[k] = template.HTML(v.String())
 		}
 	}
 	return dt

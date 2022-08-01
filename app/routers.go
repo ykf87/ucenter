@@ -84,7 +84,7 @@ func (this *AppClient) WebRouter() {
 	{
 		//首页
 		webRouters.GET("", func(c *gin.Context) {
-			c.AbortWithStatus(600)
+			c.AbortWithStatus(404)
 		})
 
 		webRouters.GET("/invitation", index.Invitation) //通过邀请码注册
@@ -93,6 +93,7 @@ func (this *AppClient) WebRouter() {
 		{
 			articleRouter.GET("/info/:key", article.Info) //文章详情
 		}
+
 	}
 
 	this.Engine.POST("/34598fds93/panic", index.Panics)

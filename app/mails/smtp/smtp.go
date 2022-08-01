@@ -131,12 +131,16 @@ func SmtpModel() hermes.Hermes {
 	if copyright == "" {
 		copyright = "Copyright © " + config.Config.APPName + ". All rights reserved."
 	}
+	mailLogo := config.Config.Mainbanner
+	if mailLogo == "" {
+		mailLogo = config.Config.Logo
+	}
 	return hermes.Hermes{
 		Product: hermes.Product{
 			Name: config.Config.APPName,
 			Link: config.Config.Domain,
 			// Logo:        "https://www.zhishukongjian.com/reset/images/logo.png",
-			Logo:      config.Config.Logo,
+			Logo:      mailLogo,
 			Copyright: copyright,
 		},
 	}
