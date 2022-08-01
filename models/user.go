@@ -83,14 +83,14 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip, 
 	insertUser := new(UserModel)
 	insertUser.Nickname = nickname
 	if account != "" {
-		DB.Table("users").Where("account = ?", account).First(hadUser)
+		DB.Table("users").Where("account = ?", account).Where("status >= 0").First(hadUser)
 		insertUser.Account = account
 		if pwd == "" {
 			err = errors.New("Please set a password")
 			return
 		}
 	} else if email != "" {
-		DB.Table("users").Where("mail = ?", email).First(hadUser)
+		DB.Table("users").Where("mail = ?", email).Where("status >= 0").First(hadUser)
 		insertUser.Mail = email
 		if code != "" {
 			err = coder.Verify(email, code)
@@ -112,7 +112,7 @@ func MakeUser(account, email, phone, pwd, code, invite, nickname, platform, ip, 
 		return
 	}
 	// else if phone != "" {
-	// 	DB.Table("users").Where("phone = ?", phone).First(hadUser)
+	// 	DB.Table("users").Where("phone = ?", phone).Where("status >= 0").First(hadUser)
 	// 	insertData["phone"] = phone
 	// }
 	if hadUser.Id > 0 {
@@ -200,15 +200,18 @@ func GetUser(id int64, account, email, phone string) *UserModel {
 	tbName := "users"
 	user := new(UserModel)
 	if id > 0 {
-		DB.Table(tbName).Where("id = ?", id).First(user)
+		DB.Table(tbName).Where("id = ?", id).Where("status >= 0").First(user)
 	} else if account != "" {
-		// DB.Table(tbName).Where("account = ?", account).First(user)
+		// DB.Table(tbName).Where("account = ?", account).Where("status >= 0").First(user)
 	} else if email != "" {
-		DB.Table(tbName).Where("mail = ?", email).First(user) // and mailvery = 1
+		DB.Table(tbName).Where("mail = ?", email).Where("status >= 0").First(user) // and mailvery = 1
 	} else if phone != "" {
 		// DB.Table(tbName).Where("phone = ?", phone).First(user) // and phonevery = 1
 	}
 
+	if user.Id < 1 {
+		return nil
+	}
 	return user
 }
 
@@ -222,7 +225,7 @@ func GetUserList(page, limit int, q, rd string, noids []int64, searcherSex int) 
 	} else if limit > 100 {
 		limit = config.Config.Limit
 	}
-	dbob := DB.Table("users").Where("sex != 0")
+	dbob := DB.Table("users").Where("sex != 0").Where("status >= 0")
 	if noids != nil && len(noids) > 0 {
 		dbob = dbob.Where("id not in ?", noids)
 	}
@@ -256,7 +259,7 @@ func (this *UserModel) GetUserInvisList(page, limit int, q, ord string) ([]*User
 	} else if limit > 100 {
 		limit = config.Config.Limit
 	}
-	dbs := DB.Select("a.*").Table("users as a").Joins("left join user_invitees as b on a.id = b.uid").Where("b.id = ?", this.Id)
+	dbs := DB.Select("a.*").Table("users as a").Joins("left join user_invitees as b on a.id = b.uid").Where("b.id = ?", this.Id).Where("a.status >= 0")
 	if q != "" {
 		dbs = dbs.Where("a.nickname like ?", "%"+q+"%")
 	}
@@ -601,4 +604,10 @@ func (this *UserModel) UserAfterLogin() map[string]interface{} {
 	ddt["id"] = this.Id
 	ddt["signature"] = this.ImSignature()
 	return ddt
+}
+
+func (this *UserModel) Cancellation() {
+	fmt.Println("sdfsddsffd", this.Id)
+	rs := DB.Table("users").Where("id = ?", this.Id).Updates(map[string]interface{}{"status": -1, "singleid": -1})
+	fmt.Println(rs.Error)
 }

@@ -217,7 +217,7 @@ func Search(c *gin.Context) {
 
 	var ulids []int64
 	var userSex int
-	if user != nil {
+	if user != nil && user.Id > 0 {
 		ulids = append(ulids, user.Id)
 		userSex = user.Sex
 	}

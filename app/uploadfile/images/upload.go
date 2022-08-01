@@ -211,7 +211,7 @@ func OssUploadByFileName(filename, ossSaveFileNameWithPath string) (string, erro
 }
 
 //获取文件全路径
-func FullPath(filename string, thum string) string {
+func FullPath(filename, thumb string) string {
 	if filename == "" {
 		return ""
 	}
@@ -219,25 +219,22 @@ func FullPath(filename string, thum string) string {
 	if err != nil || strings.Contains(filename, object.BluckName()) == false {
 		return strings.TrimRight(config.Config.Domain, "/") + "/" + filename
 	}
-
-	if thum != "" {
-		thumMap, ok := config.Config.Imagethum[thum]
-		if ok == true {
+	if thumb != "" {
+		if t, ok := config.Config.Imagethum[thumb]; ok {
 			var w, h int
-			if t, ok := thumMap["width"]; ok {
-				w = t
+			if tw, ok := t["width"]; ok {
+				w = tw
 			}
-			if t, ok := thumMap["height"]; ok {
-				h = t
+			if th, ok := t["height"]; ok {
+				h = th
 			}
 			if w > 0 && h > 0 {
-				slc := strings.Split(filename, ".")
-				slc[0] += fmt.Sprintf("_%dx%d", w, h)
-				filename = strings.Join(slc, ".")
+				tmp := strings.Split(filename, ".")
+				tmp[0] += fmt.Sprintf("_%dx%d", w, h)
+				filename = strings.Join(tmp, ".")
 			}
 		}
 	}
-
 	return object.Url(filename)
 }
 

@@ -111,17 +111,18 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	if code != "" {
+		err := coder.Verify(email, code)
+		if err != nil {
+			controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
+			return
+		}
+		veried = true
+	}
+
 	user := models.GetUser(0, account, email, phone)
 	var msg string
 	if user != nil && user.Id > 0 {
-		if code != "" {
-			err := coder.Verify(email, code)
-			if err != nil {
-				controllers.Error(c, nil, &controllers.Msg{Str: err.Error()})
-				return
-			}
-			veried = true
-		}
 		if veried == true {
 			go user.CheckUserUseEnvironment(c)
 			controllers.SuccessStr(c, user.UserAfterLogin(), "Success")
@@ -588,7 +589,7 @@ func EditBatch(c *gin.Context) {
 	if avatar != "" {
 		filename, err := images.SaveFileBase64(models.AVATARPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), avatar, nil, nil)
 		if err != nil {
-			logs.Logger.Error(err, " - when SetAvatar model upload from form file in batch!")
+			logs.Logger.Error(err, " - when SetAvatar model upload from form file in batch!!")
 			controllers.Error(c, map[string]string{"col": "avatar"}, &controllers.Msg{Str: "Image upload failed"})
 			return
 		}
@@ -762,6 +763,9 @@ func Cancellation(c *gin.Context) {
 		return
 	}
 
+	user.Cancellation()
+
 	//修改删除关系网,发送告别邮件
 	bye.Send()
+	controllers.SuccessStr(c, nil, "Success")
 }

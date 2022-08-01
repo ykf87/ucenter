@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 127.0.0.1
+ Source Server         : localhost
  Source Server Type    : MySQL
- Source Server Version : 50734
- Source Host           : 127.0.0.1:3306
+ Source Server Version : 50738
+ Source Host           : localhost:3306
  Source Schema         : ucenter
 
  Target Server Type    : MySQL
- Target Server Version : 50734
+ Target Server Version : 50738
  File Encoding         : 65001
 
- Date: 08/07/2022 17:00:35
+ Date: 30/07/2022 11:26:30
 */
 
 SET NAMES utf8mb4;
@@ -33,7 +33,7 @@ CREATE TABLE `countries`  (
   `currency` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '默认货币',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `iso`(`iso`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 237 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '国家总表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 237 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of countries
@@ -287,7 +287,7 @@ CREATE TABLE `currencies`  (
   `rate` double(20, 10) NULL DEFAULT NULL COMMENT '对于default币种的汇率',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `code`(`code`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 159 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '货币总表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 159 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of currencies
@@ -463,6 +463,10 @@ CREATE TABLE `en_applangs`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'app端多语言表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Records of en_applangs
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for en_articles
 -- ----------------------------
 DROP TABLE IF EXISTS `en_articles`;
@@ -482,13 +486,13 @@ CREATE TABLE `en_articles`  (
   UNIQUE INDEX `key`(`key`) USING BTREE,
   INDEX `title`(`title`(191)) USING BTREE,
   INDEX `status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of en_articles
 -- ----------------------------
-INSERT INTO `en_articles` VALUES (1, 'privacy-policy', 'Frisky Meets Privacy Policy', NULL, NULL, 'Welcome to the Frisky Meets Privacy Policy (“Policy”)! This explains how we collect, store, protect and share your information, and with whom we share it. We suggest you read this in conjunction with our Terms and Conditions of Use.\r\n\r\nWhilst you’re enjoying the Frisky Meets mobile application (including the desktop version) (“App”), our websites and microsites (such as Frisky Meets.com) or using our digital products and services (such as our competitions or surveys) (together, referred to in this Privacy Policy as our “Sites”), we collect some information about you. In addition, you may choose to use the App or Sites to share information with other Frisky Meets members including your friends and contacts (“Users”). We may also need to share your information sometimes.\r\n\r\nFrisky Meets’s App and Sites are global, and your information will be sent to and used in the United States and the UK regardless of the country you reside in. This Policy explains how we protect your personal data when we transfer it overseas, so please read very carefully!\r\n\r\n\r\n\r\n1. COLLECTION OF INFORMATION\r\nRegistration information\r\nWhen you download the App and create an account (“Account”), we may collect certain information (“Registration Information”) about you, such as:\r\n\r\nName;\r\nUsername;\r\nEmail address\r\nMobile number\r\nGender identity;\r\nDate of birth;\r\nSexual preference;\r\nPhotographs;\r\nLocation, and\r\nLogin information for social media accounts that you connect to your Frisky Meets Account (this could include, for example, your Facebook and Instagram accounts). For more information about this, see “Linking other accounts to Frisky Meets” in section 7 below.\r\nYou will also be required to create a password in connection with the registration of your Account. Once you register, you will be able to review and change this information at any time just by logging in to Frisky Meets (other than your location, which, if you have given Frisky Meets access to your location in your device settings, is automatically updated based on the location of your device) or contacting Frisky Meets’s Customer Support Team. It is your responsibility to ensure that your account details are kept up to date. If your phone number changes, please ensure that you update this in your account.\r\n\r\nThe information we collect helps to enhance the App and verify our Users (robots are not welcome!). Registration Information such as your sexual preference, name and username may be visible to other Users who view your profile page.\r\n\r\nFor users who are California residents, the data we may collect falls within the following categories of “personal information,” as defined by the California Consumer Privacy Act (CCPA):\r\n\r\nA. Identifiers, such as name and location;\r\nB. Personal information, as defined in the California customer records law, such as contact (including email and telephone number) and financial information;\r\nC. Characteristics of protected classifications under California or federal law (if you choose to provide them), such as age, gender identity, marital status, sexual orientation, race, ancestry, national origin, religion, and medical conditions;\r\nD. Commercial information, such as transaction information and purchase history;\r\nE. Biometric information, such as faceprint;\r\nF. Internet or network activity information, such as browsing history and interactions with our Sites and App;\r\nG. Geolocation data, such as mobile device location;\r\nH. Audio, electronic, visual and similar information, such as photos and videos;\r\nI. Professional or employment-related information, such as work history and prior employer;\r\nJ. Non-public education information; and\r\nK. Inferences drawn from any of the personal\r\n\r\n\r\nurpose for which data is used Data Source Legal basis\r\nTo provide you with the Frisky Meets social networking service Name, email address, date of birth, location (CCPA Categories A and B) You provide your name, email address and date of birth to us. We obtain location data from the device that you use to access the service Contractual necessity\r\nTo facilitate networking opportunities on the Frisky Meets site Optional information that you choose to provide in your profile, including through profile verification, which may include information about your sexual preferences, non-binary gender, religion, ethnic background, photos, interests, etc. (CCPA Categories B, C, H, I, J) You provide this information to us Contractual necessity and our legitimate interests – it is in our legitimate interests to facilitate networking opportunities in the Frisky Meets app. For special category/sensitive personal data, we rely on your explicit consent.\r\nTo verify your identity and prevent fraud and to ensure the safety and security of Users Phone number and if requested or permitted, photo provided as part of profile verification (CCPA Category B and H) You provide this information to us Legitimate interests – it is in our legitimate interests to ensure that accounts are not set up fraudulently and to safeguard Users of the site\r\nTo take payment for premium services (not applicable for Users making payments via the Apple App Store) Payment card details (CCPA Categories B and D) You provide this information to us Contractual necessity\r\n\r\n\r\nTo allow our Advertising Partners to serve targeted advertisements on our App and Sites (this includes rewarded video ads) Advertising identifier associated with your device (Device ID), age, gender, and IP address (and your estimated locations based on your IP address) (CCPA Categories A, C and G) We obtain age and gender from you, and Device ID and IP address from the device that you use to access the service Consent – as indicated by you in your Privacy Settings/Cookie Settings preferences and via your browser or device privacy preferences (where required by your device manufacturer (for example Apple devices using iOS 14.5)\r\nTo serve advertisements to Users of our Sites/App on third party networks and measure the effectiveness of such ads Data about your visit to our Sites or App and action taken on those (for example if you downloaded our App or created an account with Badoo) IP address (and your estimated location based on your IP address) age, gender, Device ID (CCPA Categories A, C, G, F and K) We obtain age and gender from you and we obtain other information from the device or browser that you use to access the service Consent – as indicated by you in your Privacy Settings/Cookie Settings preferences and via your browser or device privacy preferences (where required by your device manufacturer (for example Apple devices using iOS 14.5)\r\n\r\n\r\nTo serve promo cards and advertisements on the App Location, gender, age, and information that you have optionally provided us with via your profile (CCPA Categories A, C and G) We obtain age, gender and profile information from you, and location data from the device that you use to access the service Legitimate interests – it is in our legitimate interests to target advertisements so that Users see relevant advertisements and to allow us to generate income from advertising revenue\r\nTo send you marketing information about our events, offers and services Name, email address, postal address, Instagram handle and mobile phone number (CCPA Categories A and B) You provide this information to us Consent or legitimate interests and in accordance with the laws applying to our marketing activities. We have a legitimate interest in promoting our business and products\r\nTo contact you in order to run surveys for research purposes and to obtain feedback, and to find out if you want to take part in marketing campaigns Email address and mobile phone number (CCPA Category B) You provide this information to us Legitimate interests – it is in our legitimate interests to carry out research so that we can further develop the app and improve the service\r\nTo enable Users to create and enhance their Frisky Meets profile and log into the app via third party accounts Data from Facebook and other third party accounts (see section 7 of this policy for more details) (CCPA Categories A, B, C, and H) We obtain this information from Facebook or the providers of any other accounts you use to log in or connect with your Frisky Meets account Legitimate interests – it is in our legitimate interests to facilitate access to our services\r\nTo carry out research and analysis to help us improve the App Log and usage data, including IP address, browser type, referring domain, pages accessed, mobile carrier and search terms, images and videos (CCPA Categories F and H) You provide photos and videos to use. We obtain the log and usage information from the device that you use to access the service Legitimate interests – it is in our interests to analyse the way in which Users are accessing and using our services so that we can further develop the App, implement security measures and improve the service\r\nTo respond to correspondence and queries that you submit to us, including social media queries Email address, IP address, social media name, phone number (CCPA Categories B and F) You provide your email address, social media name and phone number to us when you contact us and we obtain your IP address from the device that you use to contact us Legitimate interests – it is in our legitimate interests to respond to your queries to ensure that we pr\r\n\r\n\r\n\r\n\r\n\r\n\r\nMarketing Services Providers - To help us serve marketing and advertising on third party websites and applications and measure the effectiveness of our advertising campaigns. More information on this is available below. Advertising identifier associated with your device (Device ID), estimated location (based on your IP address), age, gender and data about your visit to our Sites or App and action taken on those (for example if you downloaded our App or created an account with our App), hashed email address (for ‘custom audiences’ only) (CCPA Categories B, C, G, F and K)\r\nPayment processing and telecommunications companies - To facilitate payments for our premium services Cardholder name, cardholder address, card number, payment amount, transaction date/time (CCPA Categories A, B, and D)\r\nBusiness Transfers - In the event that a Frisky Meets Group entity or any of its affiliates undergoes a business transition or change of ownership, such as a merger, acquisition by another company, re-organisation, or sale of all or a portion of its assets, or in the event of insolvency or administration, we may be required to disclose your personal data to a purchaser of all or part of the business or to an insolvency practitioner This could include all personal data that Frisky Meets holds about you, including all CCPA Categories listed above\r\nAnti-Spam and Anti-Fraud - Your data may be shared with other Frisky Meets Group companies, for example, to block accounts and suspected fraudulent payment transactions as part of our anti-spam and anti-fraud procedures. This could include email address, phone number, IP address and IP session information, social network ID, username, user agent string, and transaction and payment data (CCPA Categories B, F and D)\r\nAggregated Information - We may share aggregated information with third parties that includes your personal data (but which doesn’t identify you directly) together with other information including log data for industry analysis and demographic profiling.\r\n\r\n\r\n\r\nMORE INFORMATION ABOUT DISCLOSURES\r\nSharing your personal data with Service Providers\r\nWe engage certain trusted third parties to perform functions and provide services to us (“Service Providers”). The suppliers with which Frisky Meets shares User personal data vary depending on a variety of factors, such as which of our Apps and Sites a User engages with. For example, to provide our services to Frisky Meets App Users, we typically use the following suppliers:\r\n\r\nBilling services - to allow customers to purchase paid features of our App (for example, Google Play)\r\nAuthentication services - to allow customers to authenticate their account (for example, Twilio)\r\nSocial media providers - to allow customers to create/connect their Frisky Meets account with their account(s) on such platforms (for example Facebook or Instagram)\r\nProduct improvement and market research - we use third party platforms (such as Typeform) and agencies (such as Kantar) to carry out customer surveys and market research to improve our products and services\r\nGrowth marketing services - to allow us to market and advertise Frisky Meets to potential customers (for example AppsFlyer and Facebook)\r\n\r\n\r\nIT services - some of the third-party software providers used in the operation of our business may process customers’ personal data \r\nWe carry out due diligence on all Service Providers we engage to ensure they have adequate data protection and information security measures in place and only provide them with the personal data necessary to the service they are providing. Our suppliers are also subject to extensive obligations under our contractual arrangements, including strict data retention limits.\r\n\r\nSharing your personal data with Marketing Service Providers and Advertising Partners\r\nWe may partner with advertising publishers to place third party adverts on our App and Sites (‘Advertising Partners’). We also partner with providers of marketing services (such as Facebook for example) (‘Marketing Services Providers’) to help us market and advertise our App and services on third party websites and applications and measure the effectiveness of our advertising campaigns. For example:\r\n\r\nto exclude you from advertising campaigns aimed at finding new users, if you already have a Frisky Meets account;\r\nto show Frisky Meets adverts to users who have visited the Frisky Meets App/Sites but haven’t yet created a Frisky Meets account;\r\nto create an audience for our advertisements of other potential users who have similar characteristics to you based on the information the Marketing Service Providers hold about you (also known as a Lookalike Audience); or\r\nto include you in a ‘custom audience’ that will receive Frisky Meets advertising content (a custom audience is essentially a list of people who we think are most likely to be interested in a particular advertisement).\r\nWe share a limited amount of your personal data with companies that help us with marketing and advertising, such as:\r\nthe advertising identifier associated with your device (this is a random number assigned by your mobile device manufacturer (for example Apple or Google) to your device to help advertisers (including the manufacturer), know when an ad has been viewed or clicked on in the App or sites, and when an ad causes a “conversion” (for example downloading the app advertised to you))\r\nyour estimated location (based on your IP address)\r\n\r\n\r\nage and gender\r\ndata about your visit to our Sites or App and action taken on those (for example if you download our App or created an Account with our App)\r\na hashed* version of your email address (to create ‘custom audiences’).\r\n*Hashing is a way of encrypting information by turning it into a combination of random numbers and letters - this code cannot be traced back to the email address. When hashed email addresses are sent to a Marketing Service Provider, they’re then matched against the Provider’s own existing list of their own users’ hashed information and our ads are served to those of our users who have successfully been matched with the Provider’s. Matched and unmatched hashes are then deleted by the Provider.\r\n\r\nFor more information about how we use cookies and other tracking technologies, including how you can set and manage your preferences with regards to such technologies, please see our Cookie Policy.\r\n\r\nSome platforms require user consent before Frisky Meets is permitted to use data gained through the platform for advertising purposes and where it is the case, Frisky Meets will only use this data where the necessary consent has been obtained. Through your device’s security settings, you also have the option to prevent or limit device identifiers being shared with third party advertisers and what use is made of the device identifiers. If you would like more information about this practice and to know your choices about not having this information used by these companies, please visit this page.\r\n\r\nIn some cases, these third parties will also use the data that they collect for their own purposes, for example they may aggregate your data with other data they hold and use this to inform advertising related services provided to other clients.\r\n\r\nSharing with Facebook\r\nWhere we share data with Facebook as our Marketing Service Provider (including via the Facebook “Like” function), we are Joint Data Controllers with Facebook Ireland for this processing. This arrangement means that Frisky Meets\r\nhas to provide you this notice, but you should contact Facebook if you wish to exercise your data protection rights. Further information, including how Facebook enables you to exercise your data protection rights, and subsequently processes your information as an independent data controller can be found in Facebook Ireland’s Data Policy. If you want more information relating to the nature of the arrangement we have in place with Facebook, please email DPO@corp.Frisky Meets.com.\r\n\r\nThis data referred to above can include actions that you take on our website such as your interactions with our website or other information collected from cookies or similar technologies including the Facebook pixel. This allows us to measure the effectiveness of our advertising, improve our marketing practices, and helps us deliver more relevant advertising to you and people like you (including on social media such as Facebook).\r\n\r\n\r\n\r\n\r\n9. YOUR RIGHTS.\r\nPrivacy laws applicable in your country may give you the following rights:\r\n\r\nRight to be informed: what personal data an organisation is processing and why (this notice).\r\nRight of access: you can request a copy of your data.\r\nRight of rectification: if the data held is inaccurate, you have the right to have it corrected.\r\nRight to erasure: you have the right to have your data deleted in certain circumstances.\r\nRight to restrict processing: in limited circumstances, you have the right to request that processing is stopped but the data retained.\r\nRight to data portability: you can request a copy of your data in a machine-readable form that can be transferred to another provider.\r\nRight to object: in certain circumstances (including where data is processed on the basis of legitimate interests or for the purposes of marketing) you may object to that processing.\r\nRights related to automated decision-making including profiling: there are several rights in this area where processing carried out on a solely automated basis results in a decision which has legal or significant effects for the individual. In these circumstances your rights include the right to ensure that there is human intervention in the decision-making process.\r\nThe particular rights which are applicable to you (which might inclu\r\n\r\n10. DATA LOCATIONS.\r\nWe want you to be able to access Frisky Meets wherever you happen to be in the world. To enable us to provide that service, we operate a global network of servers including in the US, UK, EU, and (for Users located in Russia) Russia. The hardware is located in third-party data centres but is owned by the Frisky Meets Group. Data collected by Advertising Partners and other Service Providers may also be held outside the UK and the European Economic Area. We ensure that the data is adequately protected by ensuring that valid, legal mechanisms are in place such as: EU approved model clauses (which can be found here), and implementing robust contractual standards. If you want more information relating to the nature of the safeguards we have in place, please email DPO@corp.Frisky Meets.com.\r\n\r\n11. DATA RETENTION AND DELETION.\r\nWe keep your personal information only as long as we need it for the legal basis relied upon (as set out in Section 2 above) and as permitted by applicable law. Please see “Profile Verification Information (Including Biometric Information)” in Section 1, above, to learn about our retention policy with respect to biometric information.\r\n\r\nWhen you delete your Account or it is deactivated by us, we make sure it is no longer viewable on the App. For up to 28 days it is still possible to restore your Account if it was accidentally deleted or wrongfully deactivated. After 28 days, we begin the process of deleting your personal information from our systems, unless:\r\n\r\nwe must keep it to comply with applicable law (for instance, if you make purchases within the App, some personal data may need to be kept for tax and accounting purposes);\r\nwe must keep it to evidence our compliance with applicable law (for example, if an account is blocked, we keep some account information and a record of the behaviour that led to the block - this information is retained for evidential purposes in case of queries or legal claims concerning the block);\r\nthere is an outstanding issue, claim or dispute requiring us to keep the relevant information until it is resolved; or\r\nthe information must be kept for our legitimate business interests, such as fraud prevention and enhancing Users’ safety and security (for example, information may need to be kept to prevent a user who was banned for unsafe behaviour or security incidents from opening a new account).\r\nWarning: Even after you remove information from your profile or delete your Account, copies of that information may still be viewable and/or accessed to the extent such information has been previously shared with others, or copied or stored by others. We cannot control this, nor do we accept any liability for this. If you have given third party applications or websites access to your personal information, they may retain such information to the extent permitted under their terms of service or privacy policies.\r\n\r\nThanks for reading, we hope we didn’t drone on for too long!\r\n\r\n\r\n12. CHANGES TO THIS POLICY.\r\nAs Frisky Meets evolves, we may revise this Privacy Policy from time to time. The most current version of the policy will govern our use of your information and will always be at https://Frisky Meets.com/privacy/. If we make a change to this policy that, in our sole discretion, is material, we will notify you, for example, via an email to the email associated with your Account or by posting a notice within Frisky Meets.\r\n\r\nEffective date. This Privacy Policy was last updated on 31 March 2022.\r\n', 1656334276, NULL, 1, 0, 0);
-INSERT INTO `en_articles` VALUES (2, 'about-us', 'About Us', NULL, NULL, 'Techme Creatives is a software company that was founded in the Philippines. Since technology industry has been rapidly evolving and growing, techme provides Internet Application development and data information services.\r\n\r\nTechme Philippines makes effort to adhere to all the applicable statutory and regulatory requirements and satisfy it\'s customer based on good knowledge and business capability to meet their needs and continuously improve the management system with increasing devotion and capability.\r\n\r\n\" Scale your development team with top software experts \" \r\n“Evolved your technology world with Techme”', 1656334276, NULL, 1, 0, 1);
+INSERT INTO `en_articles` VALUES (1, 'privacy-policy', 'Frisky Meets Privacy Policy', NULL, NULL, 'Welcome to the Frisky Meets Privacy Policy (“Policy”)! This explains how we collect, store, protect and share your information, and with whom we share it. We suggest you read this in conjunction with our Terms and Conditions of Use.\r\n\r\nWhilst you’re enjoying the Frisky Meets mobile application (including the desktop version) (“App”), our websites and microsites (such as Frisky Meets.com) or using our digital products and services (such as our competitions or surveys) (together, referred to in this Privacy Policy as our “Sites”), we collect some information about you. In addition, you may choose to use the App or Sites to share information with other Frisky Meets members including your friends and contacts (“Users”). We may also need to share your information sometimes.\r\n\r\nFrisky Meets’s App and Sites are global, and your information will be sent to and used in the United States and the UK regardless of the country you reside in. This Policy explains how we protect your personal data when we transfer it overseas, so please read very carefully!\r\n\r\n\r\n\r\n1. COLLECTION OF INFORMATION\r\nRegistration information\r\nWhen you download the App and create an account (“Account”), we may collect certain information (“Registration Information”) about you, such as:\r\n\r\nName;\r\nUsername;\r\nEmail address\r\nMobile number\r\nGender identity;\r\nDate of birth;\r\nSexual preference;\r\nPhotographs;\r\nLocation, and\r\nLogin information for social media accounts that you connect to your Frisky Meets Account (this could include, for example, your Facebook and Instagram accounts). For more information about this, see “Linking other accounts to Frisky Meets” in section 7 below.\r\nYou will also be required to create a password in connection with the registration of your Account. Once you register, you will be able to review and change this information at any time just by logging in to Frisky Meets (other than your location, which, if you have given Frisky Meets access to your location in your device settings, is automatically updated based on the location of your device) or contacting Frisky Meets’s Customer Support Team. It is your responsibility to ensure that your account details are kept up to date. If your phone number changes, please ensure that you update this in your account.\r\n\r\nThe information we collect helps to enhance the App and verify our Users (robots are not welcome!). Registration Information such as your sexual preference, name and username may be visible to other Users who view your profile page.\r\n\r\nFor users who are California residents, the data we may collect falls within the following categories of “personal information,” as defined by the California Consumer Privacy Act (CCPA):\r\n\r\nA. Identifiers, such as name and location;\r\nB. Personal information, as defined in the California customer records law, such as contact (including email and telephone number) and financial information;\r\nC. Characteristics of protected classifications under California or federal law (if you choose to provide them), such as age, gender identity, marital status, sexual orientation, race, ancestry, national origin, religion, and medical conditions;\r\nD. Commercial information, such as transaction information and purchase history;\r\nE. Biometric information, such as faceprint;\r\nF. Internet or network activity information, such as browsing history and interactions with our Sites and App;\r\nG. Geolocation data, such as mobile device location;\r\nH. Audio, electronic, visual and similar information, such as photos and videos;\r\nI. Professional or employment-related information, such as work history and prior employer;\r\nJ. Non-public education information; and\r\nK. Inferences drawn from any of the personal\r\n\r\n\r\nurpose for which data is used Data Source Legal basis\r\nTo provide you with the Frisky Meets social networking service Name, email address, date of birth, location (CCPA Categories A and B) You provide your name, email address and date of birth to us. We obtain location data from the device that you use to access the service Contractual necessity\r\nTo facilitate networking opportunities on the Frisky Meets site Optional information that you choose to provide in your profile, including through profile verification, which may include information about your sexual preferences, non-binary gender, religion, ethnic background, photos, interests, etc. (CCPA Categories B, C, H, I, J) You provide this information to us Contractual necessity and our legitimate interests – it is in our legitimate interests to facilitate networking opportunities in the Frisky Meets app. For special category/sensitive personal data, we rely on your explicit consent.\r\nTo verify your identity and prevent fraud and to ensure the safety and security of Users Phone number and if requested or permitted, photo provided as part of profile verification (CCPA Category B and H) You provide this information to us Legitimate interests – it is in our legitimate interests to ensure that accounts are not set up fraudulently and to safeguard Users of the site\r\nTo take payment for premium services (not applicable for Users making payments via the Apple App Store) Payment card details (CCPA Categories B and D) You provide this information to us Contractual necessity\r\n\r\n\r\nTo allow our Advertising Partners to serve targeted advertisements on our App and Sites (this includes rewarded video ads) Advertising identifier associated with your device (Device ID), age, gender, and IP address (and your estimated locations based on your IP address) (CCPA Categories A, C and G) We obtain age and gender from you, and Device ID and IP address from the device that you use to access the service Consent – as indicated by you in your Privacy Settings/Cookie Settings preferences and via your browser or device privacy preferences (where required by your device manufacturer (for example Apple devices using iOS 14.5)\r\nTo serve advertisements to Users of our Sites/App on third party networks and measure the effectiveness of such ads Data about your visit to our Sites or App and action taken on those (for example if you downloaded our App or created an account with Badoo) IP address (and your estimated location based on your IP address) age, gender, Device ID (CCPA Categories A, C, G, F and K) We obtain age and gender from you and we obtain other information from the device or browser that you use to access the service Consent – as indicated by you in your Privacy Settings/Cookie Settings preferences and via your browser or device privacy preferences (where required by your device manufacturer (for example Apple devices using iOS 14.5)\r\n\r\n\r\nTo serve promo cards and advertisements on the App Location, gender, age, and information that you have optionally provided us with via your profile (CCPA Categories A, C and G) We obtain age, gender and profile information from you, and location data from the device that you use to access the service Legitimate interests – it is in our legitimate interests to target advertisements so that Users see relevant advertisements and to allow us to generate income from advertising revenue\r\nTo send you marketing information about our events, offers and services Name, email address, postal address, Instagram handle and mobile phone number (CCPA Categories A and B) You provide this information to us Consent or legitimate interests and in accordance with the laws applying to our marketing activities. We have a legitimate interest in promoting our business and products\r\nTo contact you in order to run surveys for research purposes and to obtain feedback, and to find out if you want to take part in marketing campaigns Email address and mobile phone number (CCPA Category B) You provide this information to us Legitimate interests – it is in our legitimate interests to carry out research so that we can further develop the app and improve the service\r\nTo enable Users to create and enhance their Frisky Meets profile and log into the app via third party accounts Data from Facebook and other third party accounts (see section 7 of this policy for more details) (CCPA Categories A, B, C, and H) We obtain this information from Facebook or the providers of any other accounts you use to log in or connect with your Frisky Meets account Legitimate interests – it is in our legitimate interests to facilitate access to our services\r\nTo carry out research and analysis to help us improve the App Log and usage data, including IP address, browser type, referring domain, pages accessed, mobile carrier and search terms, images and videos (CCPA Categories F and H) You provide photos and videos to use. We obtain the log and usage information from the device that you use to access the service Legitimate interests – it is in our interests to analyse the way in which Users are accessing and using our services so that we can further develop the App, implement security measures and improve the service\r\nTo respond to correspondence and queries that you submit to us, including social media queries Email address, IP address, social media name, phone number (CCPA Categories B and F) You provide your email address, social media name and phone number to us when you contact us and we obtain your IP address from the device that you use to contact us Legitimate interests – it is in our legitimate interests to respond to your queries to ensure that we pr\r\n\r\n\r\n\r\n\r\n\r\n\r\nMarketing Services Providers - To help us serve marketing and advertising on third party websites and applications and measure the effectiveness of our advertising campaigns. More information on this is available below. Advertising identifier associated with your device (Device ID), estimated location (based on your IP address), age, gender and data about your visit to our Sites or App and action taken on those (for example if you downloaded our App or created an account with our App), hashed email address (for ‘custom audiences’ only) (CCPA Categories B, C, G, F and K)\r\nPayment processing and telecommunications companies - To facilitate payments for our premium services Cardholder name, cardholder address, card number, payment amount, transaction date/time (CCPA Categories A, B, and D)\r\nBusiness Transfers - In the event that a Frisky Meets Group entity or any of its affiliates undergoes a business transition or change of ownership, such as a merger, acquisition by another company, re-organisation, or sale of all or a portion of its assets, or in the event of insolvency or administration, we may be required to disclose your personal data to a purchaser of all or part of the business or to an insolvency practitioner This could include all personal data that Frisky Meets holds about you, including all CCPA Categories listed above\r\nAnti-Spam and Anti-Fraud - Your data may be shared with other Frisky Meets Group companies, for example, to block accounts and suspected fraudulent payment transactions as part of our anti-spam and anti-fraud procedures. This could include email address, phone number, IP address and IP session information, social network ID, username, user agent string, and transaction and payment data (CCPA Categories B, F and D)\r\nAggregated Information - We may share aggregated information with third parties that includes your personal data (but which doesn’t identify you directly) together with other information including log data for industry analysis and demographic profiling.\r\n\r\n\r\n\r\nMORE INFORMATION ABOUT DISCLOSURES\r\nSharing your personal data with Service Providers\r\nWe engage certain trusted third parties to perform functions and provide services to us (“Service Providers”). The suppliers with which Frisky Meets shares User personal data vary depending on a variety of factors, such as which of our Apps and Sites a User engages with. For example, to provide our services to Frisky Meets App Users, we typically use the following suppliers:\r\n\r\nBilling services - to allow customers to purchase paid features of our App (for example, Google Play)\r\nAuthentication services - to allow customers to authenticate their account (for example, Twilio)\r\nSocial media providers - to allow customers to create/connect their Frisky Meets account with their account(s) on such platforms (for example Facebook or Instagram)\r\nProduct improvement and market research - we use third party platforms (such as Typeform) and agencies (such as Kantar) to carry out customer surveys and market research to improve our products and services\r\nGrowth marketing services - to allow us to market and advertise Frisky Meets to potential customers (for example AppsFlyer and Facebook)\r\n\r\n\r\nIT services - some of the third-party software providers used in the operation of our business may process customers’ personal data \r\nWe carry out due diligence on all Service Providers we engage to ensure they have adequate data protection and information security measures in place and only provide them with the personal data necessary to the service they are providing. Our suppliers are also subject to extensive obligations under our contractual arrangements, including strict data retention limits.\r\n\r\nSharing your personal data with Marketing Service Providers and Advertising Partners\r\nWe may partner with advertising publishers to place third party adverts on our App and Sites (‘Advertising Partners’). We also partner with providers of marketing services (such as Facebook for example) (‘Marketing Services Providers’) to help us market and advertise our App and services on third party websites and applications and measure the effectiveness of our advertising campaigns. For example:\r\n\r\nto exclude you from advertising campaigns aimed at finding new users, if you already have a Frisky Meets account;\r\nto show Frisky Meets adverts to users who have visited the Frisky Meets App/Sites but haven’t yet created a Frisky Meets account;\r\nto create an audience for our advertisements of other potential users who have similar characteristics to you based on the information the Marketing Service Providers hold about you (also known as a Lookalike Audience); or\r\nto include you in a ‘custom audience’ that will receive Frisky Meets advertising content (a custom audience is essentially a list of people who we think are most likely to be interested in a particular advertisement).\r\nWe share a limited amount of your personal data with companies that help us with marketing and advertising, such as:\r\nthe advertising identifier associated with your device (this is a random number assigned by your mobile device manufacturer (for example Apple or Google) to your device to help advertisers (including the manufacturer), know when an ad has been viewed or clicked on in the App or sites, and when an ad causes a “conversion” (for example downloading the app advertised to you))\r\nyour estimated location (based on your IP address)\r\n\r\n\r\nage and gender\r\ndata about your visit to our Sites or App and action taken on those (for example if you download our App or created an Account with our App)\r\na hashed* version of your email address (to create ‘custom audiences’).\r\n*Hashing is a way of encrypting information by turning it into a combination of random numbers and letters - this code cannot be traced back to the email address. When hashed email addresses are sent to a Marketing Service Provider, they’re then matched against the Provider’s own existing list of their own users’ hashed information and our ads are served to those of our users who have successfully been matched with the Provider’s. Matched and unmatched hashes are then deleted by the Provider.\r\n\r\nFor more information about how we use cookies and other tracking technologies, including how you can set and manage your preferences with regards to such technologies, please see our Cookie Policy.\r\n\r\nSome platforms require user consent before Frisky Meets is permitted to use data gained through the platform for advertising purposes and where it is the case, Frisky Meets will only use this data where the necessary consent has been obtained. Through your device’s security settings, you also have the option to prevent or limit device identifiers being shared with third party advertisers and what use is made of the device identifiers. If you would like more information about this practice and to know your choices about not having this information used by these companies, please visit this page.\r\n\r\nIn some cases, these third parties will also use the data that they collect for their own purposes, for example they may aggregate your data with other data they hold and use this to inform advertising related services provided to other clients.\r\n\r\nSharing with Facebook\r\nWhere we share data with Facebook as our Marketing Service Provider (including via the Facebook “Like” function), we are Joint Data Controllers with Facebook Ireland for this processing. This arrangement means that Frisky Meets\r\nhas to provide you this notice, but you should contact Facebook if you wish to exercise your data protection rights. Further information, including how Facebook enables you to exercise your data protection rights, and subsequently processes your information as an independent data controller can be found in Facebook Ireland’s Data Policy. If you want more information relating to the nature of the arrangement we have in place with Facebook, please email DPO@corp.Frisky Meets.com.\r\n\r\nThis data referred to above can include actions that you take on our website such as your interactions with our website or other information collected from cookies or similar technologies including the Facebook pixel. This allows us to measure the effectiveness of our advertising, improve our marketing practices, and helps us deliver more relevant advertising to you and people like you (including on social media such as Facebook).\r\n\r\n\r\n\r\n\r\n9. YOUR RIGHTS.\r\nPrivacy laws applicable in your country may give you the following rights:\r\n\r\nRight to be informed: what personal data an organisation is processing and why (this notice).\r\nRight of access: you can request a copy of your data.\r\nRight of rectification: if the data held is inaccurate, you have the right to have it corrected.\r\nRight to erasure: you have the right to have your data deleted in certain circumstances.\r\nRight to restrict processing: in limited circumstances, you have the right to request that processing is stopped but the data retained.\r\nRight to data portability: you can request a copy of your data in a machine-readable form that can be transferred to another provider.\r\nRight to object: in certain circumstances (including where data is processed on the basis of legitimate interests or for the purposes of marketing) you may object to that processing.\r\nRights related to automated decision-making including profiling: there are several rights in this area where processing carried out on a solely automated basis results in a decision which has legal or significant effects for the individual. In these circumstances your rights include the right to ensure that there is human intervention in the decision-making process.\r\nThe particular rights which are applicable to you (which might inclu\r\n\r\n10. DATA LOCATIONS.\r\nWe want you to be able to access Frisky Meets wherever you happen to be in the world. To enable us to provide that service, we operate a global network of servers including in the US, UK, EU, and (for Users located in Russia) Russia. The hardware is located in third-party data centres but is owned by the Frisky Meets Group. Data collected by Advertising Partners and other Service Providers may also be held outside the UK and the European Economic Area. We ensure that the data is adequately protected by ensuring that valid, legal mechanisms are in place such as: EU approved model clauses (which can be found here), and implementing robust contractual standards. If you want more information relating to the nature of the safeguards we have in place, please email DPO@corp.Frisky Meets.com.\r\n\r\n11. DATA RETENTION AND DELETION.\r\nWe keep your personal information only as long as we need it for the legal basis relied upon (as set out in Section 2 above) and as permitted by applicable law. Please see “Profile Verification Information (Including Biometric Information)” in Section 1, above, to learn about our retention policy with respect to biometric information.\r\n\r\nWhen you delete your Account or it is deactivated by us, we make sure it is no longer viewable on the App. For up to 28 days it is still possible to restore your Account if it was accidentally deleted or wrongfully deactivated. After 28 days, we begin the process of deleting your personal information from our systems, unless:\r\n\r\nwe must keep it to comply with applicable law (for instance, if you make purchases within the App, some personal data may need to be kept for tax and accounting purposes);\r\nwe must keep it to evidence our compliance with applicable law (for example, if an account is blocked, we keep some account information and a record of the behaviour that led to the block - this information is retained for evidential purposes in case of queries or legal claims concerning the block);\r\nthere is an outstanding issue, claim or dispute requiring us to keep the relevant information until it is resolved; or\r\nthe information must be kept for our legitimate business interests, such as fraud prevention and enhancing Users’ safety and security (for example, information may need to be kept to prevent a user who was banned for unsafe behaviour or security incidents from opening a new account).\r\nWarning: Even after you remove information from your profile or delete your Account, copies of that information may still be viewable and/or accessed to the extent such information has been previously shared with others, or copied or stored by others. We cannot control this, nor do we accept any liability for this. If you have given third party applications or websites access to your personal information, they may retain such information to the extent permitted under their terms of service or privacy policies.\r\n\r\nThanks for reading, we hope we didn’t drone on for too long!\r\n\r\n\r\n12. CHANGES TO THIS POLICY.\r\nAs Frisky Meets evolves, we may revise this Privacy Policy from time to time. The most current version of the policy will govern our use of your information and will always be at https://Frisky Meets.com/privacy/. If we make a change to this policy that, in our sole discretion, is material, we will notify you, for example, via an email to the email associated with your Account or by posting a notice within Frisky Meets.\r\n\r\nEffective date. This Privacy Policy was last updated on 31 March 2022.\r\n', 1656334276, NULL, 1, 0, 25);
+INSERT INTO `en_articles` VALUES (2, 'about-us', 'About Us', NULL, NULL, 'Techme Creatives is a software company that was founded in the Philippines. Since technology industry has been rapidly evolving and growing, techme provides Internet Application development and data information services.\r\n\r\nTechme Philippines makes effort to adhere to all the applicable statutory and regulatory requirements and satisfy it\'s customer based on good knowledge and business capability to meet their needs and continuously improve the management system with increasing devotion and capability.\r\n\r\n\" Scale your development team with top software experts \" \r\n“Evolved your technology world with Techme”', 1656334276, NULL, 1, 0, 17);
 
 -- ----------------------------
 -- Table structure for en_cities
@@ -502,7 +506,7 @@ CREATE TABLE `en_cities`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `country_id`(`country_id`) USING BTREE,
   INDEX `name`(`name`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3628 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '城市信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3628 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of en_cities
@@ -4166,7 +4170,7 @@ CREATE TABLE `en_countries`  (
   `id` smallint(1) UNSIGNED NOT NULL,
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '多语言国家表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of en_countries
@@ -4416,7 +4420,7 @@ CREATE TABLE `en_currencies`  (
   `id` smallint(1) NOT NULL,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '多语言货币表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of en_currencies
@@ -4718,7 +4722,7 @@ CREATE TABLE `incomes`  (
   `id` tinyint(1) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '收入表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of incomes
@@ -4742,7 +4746,7 @@ CREATE TABLE `languages`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `iso`(`iso`) USING BTREE,
   INDEX `status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统语言表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of languages
@@ -4771,7 +4775,55 @@ CREATE TABLE `user_albums`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `uid`(`uid`) USING BTREE,
   INDEX `private`(`private`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户相册表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 49 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户相册表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of user_albums
+-- ----------------------------
+INSERT INTO `user_albums` VALUES (1, 12, 'meet/static/user/album/NAN6BQF7/45934-7367-7540-8299-1657443716.png', 0, 0, 1657443716, '');
+INSERT INTO `user_albums` VALUES (2, 12, 'meet/static/user/album/NAN6BQF7/26847-6495-6585-1364-1657443716.png', 0, 0, 1657443716, '');
+INSERT INTO `user_albums` VALUES (3, 12, 'meet/static/user/album/NAN6BQF7/76775-5305-9536-5013-1657443716.png', 0, 0, 1657443716, '');
+INSERT INTO `user_albums` VALUES (4, 8, 'meet/static/user/album/WAWYLTN6/18283-7759-5442-1044-1657546550.png', 0, 0, 1657546550, '');
+INSERT INTO `user_albums` VALUES (5, 8, 'meet/static/user/album/WAWYLTN6/53708-4399-5016-4543-1657546550.png', 0, 0, 1657546550, '');
+INSERT INTO `user_albums` VALUES (6, 8, 'meet/static/user/album/WAWYLTN6/75557-9493-5784-7349-1657546550.png', 0, 0, 1657546550, '');
+INSERT INTO `user_albums` VALUES (7, 8, 'meet/static/user/album/WAWYLTN6/17989-4239-9689-8469-1657546751.png', 0, 0, 1657546751, '');
+INSERT INTO `user_albums` VALUES (8, 8, 'meet/static/user/album/WAWYLTN6/51284-2335-6840-8106-1657546751.png', 0, 0, 1657546751, '');
+INSERT INTO `user_albums` VALUES (9, 8, 'meet/static/user/album/WAWYLTN6/25605-8283-6469-8166-1657546751.png', 0, 0, 1657546751, '');
+INSERT INTO `user_albums` VALUES (10, 8, 'meet/static/user/album/WAWYLTN6/91219-9645-2748-7432-1657546751.png', 0, 0, 1657546751, '');
+INSERT INTO `user_albums` VALUES (11, 8, 'meet/static/user/album/WAWYLTN6/72396-1435-1806-6532-1657546751.png', 0, 0, 1657546751, '');
+INSERT INTO `user_albums` VALUES (12, 6, 'meet/static/user/album/XAX9WYLT/48423-5150-4054-3310-1657698586.png', 0, 0, 1657698586, '');
+INSERT INTO `user_albums` VALUES (13, 6, 'meet/static/user/album/XAX9WYLT/70464-6901-1764-1234-1657698586.png', 0, 0, 1657698586, '');
+INSERT INTO `user_albums` VALUES (14, 6, 'meet/static/user/album/XAX9WYLT/33794-9801-9663-2196-1657698586.png', 0, 0, 1657698586, '');
+INSERT INTO `user_albums` VALUES (15, 31, 'meet/static/user/album/E8AE8S2D/27311-6035-8970-5589-1658390344.png', 0, 0, 1658390344, '');
+INSERT INTO `user_albums` VALUES (16, 31, 'meet/static/user/album/E8AE8S2D/87804-4950-4093-6430-1658390344.png', 0, 0, 1658390344, '');
+INSERT INTO `user_albums` VALUES (17, 31, 'meet/static/user/album/E8AE8S2D/40337-9548-4427-2291-1658390344.png', 0, 0, 1658390344, '');
+INSERT INTO `user_albums` VALUES (19, 37, 'meet/static/user/album/X8AX9WYL/68617-5290-3438-2484-1658754219.png', 0, 0, 1658754219, '');
+INSERT INTO `user_albums` VALUES (20, 37, 'meet/static/user/album/X8AX9WYL/34290-9699-9827-3429-1658754219.png', 0, 0, 1658754219, '');
+INSERT INTO `user_albums` VALUES (24, 36, 'meet/static/user/album/Z8AZX9WY/56022-3157-4394-9203-1658756086.png', 0, 0, 1658756086, '');
+INSERT INTO `user_albums` VALUES (25, 36, 'meet/static/user/album/Z8AZX9WY/31920-6088-2336-2005-1658756086.png', 0, 0, 1658756086, '');
+INSERT INTO `user_albums` VALUES (26, 2, 'meet/static/user/album/SAS2DZX9/50684-4888-3774-8372-1658797261.png', 0, 0, 1658797261, '');
+INSERT INTO `user_albums` VALUES (27, 2, 'meet/static/user/album/SAS2DZX9/81678-9712-1153-4197-1658797261.png', 0, 0, 1658797261, '');
+INSERT INTO `user_albums` VALUES (28, 2, 'meet/static/user/album/SAS2DZX9/84561-2131-7954-7208-1658797261.png', 0, 0, 1658797261, '');
+INSERT INTO `user_albums` VALUES (29, 2, 'meet/static/user/album/SAS2DZX9/61077-1689-1746-7793-1658797261.png', 0, 0, 1658797261, '');
+INSERT INTO `user_albums` VALUES (30, 2, 'meet/static/user/album/SAS2DZX9/72211-9412-3214-2981-1658797261.png', 0, 0, 1658797261, '');
+INSERT INTO `user_albums` VALUES (31, 2, 'meet/static/user/album/SAS2DZX9/22691-9812-2400-6191-1658797261.png', 0, 0, 1658797261, '');
+INSERT INTO `user_albums` VALUES (32, 2, 'meet/static/user/album/SAS2DZX9/59169-8603-6524-2964-1658797261.png', 0, 0, 1658797261, '');
+INSERT INTO `user_albums` VALUES (33, 2, 'meet/static/user/album/SAS2DZX9/17747-1783-5247-4981-1658797261.png', 0, 0, 1658797261, '');
+INSERT INTO `user_albums` VALUES (34, 2, 'meet/static/user/album/SAS2DZX9/74081-1838-1170-3944-1658797261.png', 0, 0, 1658797261, '');
+INSERT INTO `user_albums` VALUES (35, 30, 'meet/static/user/album/VAVE8S2D/77182-3261-4322-4905-1658911774.png', 0, 0, 1658911774, '');
+INSERT INTO `user_albums` VALUES (36, 30, 'meet/static/user/album/VAVE8S2D/87419-9373-1860-1199-1658911782.png', 0, 0, 1658911782, '');
+INSERT INTO `user_albums` VALUES (37, 30, 'meet/static/user/album/VAVE8S2D/63323-2993-8445-7024-1658911790.png', 0, 0, 1658911790, '');
+INSERT INTO `user_albums` VALUES (38, 24, 'meet/static/user/album/MAMJUR4H/93499-2140-3028-9846-1658913729.png', 0, 0, 1658913729, '');
+INSERT INTO `user_albums` VALUES (39, 24, 'meet/static/user/album/MAMJUR4H/44045-2915-5275-1690-1658913739.png', 0, 0, 1658913739, '');
+INSERT INTO `user_albums` VALUES (40, 24, 'meet/static/user/album/MAMJUR4H/35404-4739-3439-8838-1658913747.png', 0, 0, 1658913747, '');
+INSERT INTO `user_albums` VALUES (41, 24, 'meet/static/user/album/MAMJUR4H/70001-8834-2504-2581-1658913753.png', 0, 0, 1658913753, '');
+INSERT INTO `user_albums` VALUES (42, 46, 'meet/static/user/album/Q8AQF7CP/86818-6579-4580-4523-1659000095.png', 0, 0, 1659000095, '');
+INSERT INTO `user_albums` VALUES (43, 46, 'meet/static/user/album/Q8AQF7CP/76024-8927-4652-5958-1659000095.png', 0, 0, 1659000095, '');
+INSERT INTO `user_albums` VALUES (44, 52, 'meet/static/user/album/I8AIK3MJ/54190-5531-5448-6565-1659001634.png', 0, 0, 1659001634, '');
+INSERT INTO `user_albums` VALUES (45, 58, 'meet/static/user/album/R8AR4HVE/72533-5437-6068-6951-1659003989.png', 0, 0, 1659003989, '');
+INSERT INTO `user_albums` VALUES (46, 86, 'meet/static/user/album/MSAMJUR4/53905-7114-9207-1613-1659007493.png', 0, 0, 1659007493, '');
+INSERT INTO `user_albums` VALUES (47, 74, 'meet/static/user/album/NSAN6BQF/74640-6611-2140-2976-1659053702.png', 0, 0, 1659053702, '');
+INSERT INTO `user_albums` VALUES (48, 74, 'meet/static/user/album/NSAN6BQF/89170-1377-2999-3568-1659053702.png', 0, 0, 1659053702, '');
 
 -- ----------------------------
 -- Table structure for user_attrs
@@ -4791,6 +4843,10 @@ CREATE TABLE `user_attrs`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户一些属性,主要用于搜索' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Records of user_attrs
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for user_devices
 -- ----------------------------
 DROP TABLE IF EXISTS `user_devices`;
@@ -4806,14 +4862,244 @@ CREATE TABLE `user_devices`  (
   `addtime` bigint(1) UNSIGNED NULL DEFAULT NULL COMMENT '添加时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `uid`(`uid`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户设备信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 234 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户设备信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_devices
 -- ----------------------------
-INSERT INTO `user_devices` VALUES (1, 2, '11111', 1, '', '', '', 2130706433, NULL);
-INSERT INTO `user_devices` VALUES (2, 2, '11111', 3, '', '', '', 2130706433, NULL);
-INSERT INTO `user_devices` VALUES (3, 2, '11111', 3, '', '', '', 2130706433, 1657182976);
+INSERT INTO `user_devices` VALUES (1, 1, 'C3695234688244', 3, '1', 'VOG-AL00', '', 2015724498, 1657249866);
+INSERT INTO `user_devices` VALUES (2, 10, 'C3695234688244', 3, '1', 'VOG-AL00', '', 2015724498, 1657250870);
+INSERT INTO `user_devices` VALUES (3, 2, 'CD01AB43-E001-4253-9EBE-CF623E415E58', 3, '1.0.0', 'iphone', '', 1851240147, 1657262742);
+INSERT INTO `user_devices` VALUES (4, 1, 'C3695234688244', 3, '1', 'VOG-AL00', '', 3748146533, 1657263559);
+INSERT INTO `user_devices` VALUES (5, 6, 'C6596535606247', 3, '1', 'M2012K11AC', '', 2102209945, 1657356449);
+INSERT INTO `user_devices` VALUES (6, 4, 'C3595334688244', 3, '1', 'YAL-AL00', '', 2015687756, 1657434518);
+INSERT INTO `user_devices` VALUES (7, 12, 'C8697535677244', 3, '1', 'RMX2040', '', 3032738717, 1657443020);
+INSERT INTO `user_devices` VALUES (8, 13, 'ca54a9c3eb422d2cd9261415c6f43b8026d4ee24084fb1be81870a784c639050', 3, '1', 'RMX3231', '', 2015186800, 1657443693);
+INSERT INTO `user_devices` VALUES (9, 14, 'C6698525679244', 3, '1', 'RMX3491', '', 1849074437, 1657445082);
+INSERT INTO `user_devices` VALUES (10, 15, 'C8697535677244', 3, '1', 'RMX2040', '', 831981648, 1657445250);
+INSERT INTO `user_devices` VALUES (11, 16, 'C8496525477244', 3, '1', 'CPH1969', '', 2292067316, 1657445284);
+INSERT INTO `user_devices` VALUES (12, 17, 'C7698575679244', 3, '1', 'RMX3363', '', 2015194148, 1657445368);
+INSERT INTO `user_devices` VALUES (13, 18, 'C2494835455248', 3, '1', 'V2134', '', 2212643616, 1657445568);
+INSERT INTO `user_devices` VALUES (14, 19, 'C8498585479244', 3, '1', 'CPH2203', '', 2947548010, 1657445816);
+INSERT INTO `user_devices` VALUES (15, 18, 'C2494835455248', 3, '1', 'V2134', '', 2292086153, 1657446070);
+INSERT INTO `user_devices` VALUES (16, 20, '1c4c90f740e63b94a154fce2885949aae51860c1e41f486f2f8909e4c159e195', 3, '1', 'RMX3261', '', 2046977637, 1657446253);
+INSERT INTO `user_devices` VALUES (17, 21, 'C7399595387247', 3, '1', 'LM-V500N', '', 19224794, 1657446853);
+INSERT INTO `user_devices` VALUES (18, 14, 'C6698525679244', 3, '1', 'RMX3491', '', 1024028911, 1657447157);
+INSERT INTO `user_devices` VALUES (19, 14, 'C6698525679244', 3, '1', 'RMX3491', '', 1849074437, 1657447533);
+INSERT INTO `user_devices` VALUES (20, 18, 'C2494835455248', 3, '1', 'V2134', '', 2212643616, 1657448016);
+INSERT INTO `user_devices` VALUES (21, 18, 'C2494835455248', 3, '1', 'V2134', '', 2292086153, 1657448055);
+INSERT INTO `user_devices` VALUES (22, 18, 'C2494835455248', 3, '1', 'V2134', '', 2212643616, 1657448938);
+INSERT INTO `user_devices` VALUES (23, 22, 'C2494835455248', 3, '1', 'V2042', '', 1849070799, 1657449430);
+INSERT INTO `user_devices` VALUES (24, 23, 'C2494835455248', 3, '1', 'V2134', '', 2212643616, 1657450152);
+INSERT INTO `user_devices` VALUES (25, 21, 'C7399595387247', 3, '1', 'LM-V500N', '', 2947560469, 1657450346);
+INSERT INTO `user_devices` VALUES (26, 24, '42580355-F54F-48BA-8696-E6EFE2CA7145', 3, '1.0.0', 'iphone', '', 2015687756, 1657461821);
+INSERT INTO `user_devices` VALUES (27, 23, 'C2494835455248', 3, '1', 'V2134', '', 2212643370, 1657462314);
+INSERT INTO `user_devices` VALUES (28, 18, 'C2494835455248', 3, '1', 'V2134', '', 2212643370, 1657462377);
+INSERT INTO `user_devices` VALUES (29, 14, 'C6698525679244', 3, '1', 'RMX3491', '', 1849070758, 1657501461);
+INSERT INTO `user_devices` VALUES (30, 1, 'C3695234688244', 3, '1', 'VOG-AL00', '', 3748146610, 1657502415);
+INSERT INTO `user_devices` VALUES (31, 1, 'C3695234688244', 3, '1', 'VOG-AL00', '', 3748146610, 1657502415);
+INSERT INTO `user_devices` VALUES (32, 25, 'C3695234688244', 3, '1', 'VOG-AL00', '', 3748146610, 1657502868);
+INSERT INTO `user_devices` VALUES (33, 16, 'C8496525477244', 3, '1', 'CPH1969', '', 2292067148, 1657512107);
+INSERT INTO `user_devices` VALUES (34, 7, '007418c006420713', 3, '1', 'Penguin', '', 2015724498, 1657512202);
+INSERT INTO `user_devices` VALUES (35, 12, 'C8697535677244', 3, '1', 'RMX2040', '', 831819480, 1657541464);
+INSERT INTO `user_devices` VALUES (36, 8, 'B010045027680431', 3, '1', 'V1938T', '', 1882304339, 1657546056);
+INSERT INTO `user_devices` VALUES (37, 7, 'B010067026371069', 3, '1', 'MI 9', '', 2015724498, 1657589323);
+INSERT INTO `user_devices` VALUES (38, 26, 'B010067026371069', 3, '1', 'MI 9', '', 2015724498, 1657589557);
+INSERT INTO `user_devices` VALUES (39, 27, 'B010067026371069', 3, '1', 'MI 9', '', 2015724498, 1657589739);
+INSERT INTO `user_devices` VALUES (40, 1, 'B010067026371069', 3, '1', 'MI 9', '', 2015724498, 1657591040);
+INSERT INTO `user_devices` VALUES (41, 25, 'C3695234688244', 3, '1', 'VOG-AL00', '', 3748146440, 1657591815);
+INSERT INTO `user_devices` VALUES (42, 1, 'C3695234688244', 3, '1', 'VOG-AL00', '', 3748146440, 1657610876);
+INSERT INTO `user_devices` VALUES (43, 1, 'B010067026371069', 3, '1', 'MI 9', '', 2015724498, 1657612145);
+INSERT INTO `user_devices` VALUES (44, 1, 'C3695234688244', 3, '1', 'VOG-AL00', '', 3748146440, 1657612374);
+INSERT INTO `user_devices` VALUES (45, 1, 'C3695234688244', 3, '1', 'VOG-AL00', '', 737394723, 1657614426);
+INSERT INTO `user_devices` VALUES (46, 1, 'C3695234688244', 3, '1', 'VOG-AL00', '', 2015724498, 1657614482);
+INSERT INTO `user_devices` VALUES (47, 1, 'C3695234688244', 3, '1', 'VOG-AL00', '', 737394723, 1657615139);
+INSERT INTO `user_devices` VALUES (48, 1, 'C3695234688244', 3, '1', 'VOG-AL00', '', 2015724498, 1657615243);
+INSERT INTO `user_devices` VALUES (49, 1, 'C3695234688244', 3, '1', 'VOG-AL00', '', 737394723, 1657615373);
+INSERT INTO `user_devices` VALUES (50, 5, 'B865166022425642', 3, '1', 'MI 9', '', 3661770053, 1657617645);
+INSERT INTO `user_devices` VALUES (51, 6, 'C6596535606247', 3, '1', 'M2012K11AC', '', 993560583, 1657695615);
+INSERT INTO `user_devices` VALUES (52, 1, '007418c006420713', 3, '103', 'Penguin', '', 2015724498, 1657768914);
+INSERT INTO `user_devices` VALUES (53, 2, '42580355-F54F-48BA-8696-E6EFE2CA7145', 3, '1.0.0', 'iphone', '', 2015687756, 1657787757);
+INSERT INTO `user_devices` VALUES (54, 16, 'C8496525477244', 3, '1', 'CPH1969', '', 2292067316, 1658052012);
+INSERT INTO `user_devices` VALUES (55, 6, 'C6596535606247', 3, '1', 'M2012K11AC', '', 2015888367, 1658110835);
+INSERT INTO `user_devices` VALUES (56, 1, 'C3695234688244', 3, '101', 'VOG-AL00', '', 312959215, 1658126038);
+INSERT INTO `user_devices` VALUES (57, 29, 'C3793125438241', 3, '101', 'Infinix X688B', '', 832032790, 1658126716);
+INSERT INTO `user_devices` VALUES (58, 2, '79DAD296-7AEF-45A7-8F93-31174DBD851D', 3, '1.0.0', 'iphone', '', 2015687717, 1658130295);
+INSERT INTO `user_devices` VALUES (59, 2, 'DF62C21F-C7A6-4503-ABA0-E31B8E4B62C0', 3, '1.0.0', 'iphone', '', 1599430268, 1658130723);
+INSERT INTO `user_devices` VALUES (60, 30, '2CF1BB48-DFF9-41AD-8517-1234BAAAC0F2', 3, '1.0.0', 'iphone', '', 3523449705, 1658130762);
+INSERT INTO `user_devices` VALUES (61, 24, '79DAD296-7AEF-45A7-8F93-31174DBD851D', 3, '1.0.0', 'iphone', '', 2015687717, 1658130861);
+INSERT INTO `user_devices` VALUES (62, 6, 'C6596535606247', 3, '1', 'M2012K11AC', '', 2015888051, 1658150747);
+INSERT INTO `user_devices` VALUES (63, 6, 'C6596535606247', 3, '101', 'M2012K11AC', '', 2586309873, 1658150893);
+INSERT INTO `user_devices` VALUES (64, 6, 'C9714985788243', 3, '102', 'SM-A226B', '', 1753549420, 1658294598);
+INSERT INTO `user_devices` VALUES (65, 18, 'C2494835455248', 3, '1', 'V2134', '', 2015186569, 1658311959);
+INSERT INTO `user_devices` VALUES (66, 7, 'C5595535695247', 3, '101', 'M2012K11C', '', 1875816003, 1658366274);
+INSERT INTO `user_devices` VALUES (67, 7, 'C4694535694247', 3, '101', '21051182C', '', 1875816007, 1658366833);
+INSERT INTO `user_devices` VALUES (68, 4, 'C3595334688244', 3, '1', 'YAL-AL00', '', 3748136454, 1658372958);
+INSERT INTO `user_devices` VALUES (69, 7, 'C3695234688244', 3, '101', 'VOG-AL00', '', 312959215, 1658374876);
+INSERT INTO `user_devices` VALUES (70, 13, 'ca54a9c3eb422d2cd9261415c6f43b8026d4ee24084fb1be81870a784c639050', 3, '1', 'RMX3231', '', 2015186410, 1658375326);
+INSERT INTO `user_devices` VALUES (71, 6, 'C6596535606247', 3, '101', 'M2012K11AC', '', 2102209890, 1658389650);
+INSERT INTO `user_devices` VALUES (72, 31, 'C6596535606247', 3, '101', 'M2012K11AC', '', 2102209890, 1658389931);
+INSERT INTO `user_devices` VALUES (73, 32, 'C3695234688244', 3, '101', 'VOG-AL00', '', 312959215, 1658391261);
+INSERT INTO `user_devices` VALUES (74, 33, 'C3695234688244', 3, '101', 'VOG-AL00', '', 312959215, 1658393884);
+INSERT INTO `user_devices` VALUES (75, 34, 'C3695234688244', 3, '101', 'VOG-AL00', '', 312959215, 1658393997);
+INSERT INTO `user_devices` VALUES (76, 35, 'C3695234688244', 3, '101', 'VOG-AL00', '', 312959215, 1658394310);
+INSERT INTO `user_devices` VALUES (77, 36, 'C3695234688244', 3, '101', 'VOG-AL00', '', 312959215, 1658394546);
+INSERT INTO `user_devices` VALUES (78, 31, 'C1713985785243', 3, '104', 'SM-A325F', '', 1138089239, 1658483151);
+INSERT INTO `user_devices` VALUES (79, 31, 'C6596535606247', 3, '101', 'M2012K11AC', '', 2102209890, 1658484720);
+INSERT INTO `user_devices` VALUES (80, 12, 'C8697535677244', 3, '1', 'RMX2040', '', 2947571144, 1658491600);
+INSERT INTO `user_devices` VALUES (81, 31, 'B355266048239931', 3, '104', 'OnePlus8Pro', '', 1249760502, 1658538428);
+INSERT INTO `user_devices` VALUES (82, 31, 'B355266048239931', 3, '104', 'OnePlus8Pro', '', 1249760506, 1658538438);
+INSERT INTO `user_devices` VALUES (83, 31, 'B355266048239931', 3, '104', 'OnePlus8Pro', '', 1249760502, 1658538583);
+INSERT INTO `user_devices` VALUES (84, 16, 'C8496525477244', 3, '1', 'CPH1969', '', 2292067310, 1658541872);
+INSERT INTO `user_devices` VALUES (85, 36, 'C3695234688244', 3, '104', 'VOG-AL00', '', 279144280, 1658567974);
+INSERT INTO `user_devices` VALUES (86, 36, 'C3695234688244', 3, '104', 'VOG-AL00', '', 279144280, 1658567974);
+INSERT INTO `user_devices` VALUES (87, 1, 'C3695234688244', 3, '104', 'VOG-AL00', '', 279144280, 1658568562);
+INSERT INTO `user_devices` VALUES (88, 31, 'C6596535606247', 3, '104', 'M2012K11AC', '', 462709625, 1658572251);
+INSERT INTO `user_devices` VALUES (89, 12, 'C8697535677244', 3, '1', 'RMX2040', '', 2212643681, 1658663853);
+INSERT INTO `user_devices` VALUES (90, 2, '73E2EE5D-1167-4763-908A-0813CC465B50', 3, '1.0.0', 'iphone', '', 737533524, 1658712909);
+INSERT INTO `user_devices` VALUES (91, 2, '149163F1-9D9A-477E-A342-CFAE3EC47CF3', 3, '1.0.0', 'iphone', '', 2043429362, 1658736956);
+INSERT INTO `user_devices` VALUES (92, 6, 'C9714985788243', 3, '105', 'SM-A217F', '', 1753549418, 1658739281);
+INSERT INTO `user_devices` VALUES (93, 31, 'C6596535606247', 3, '104', 'M2012K11AC', '', 2102209787, 1658741598);
+INSERT INTO `user_devices` VALUES (94, 31, 'C6596535606247', 3, '104', 'M2012K11AC', '', 2102209787, 1658741598);
+INSERT INTO `user_devices` VALUES (95, 6, 'C6596535606247', 3, '104', 'M2012K11AC', '', 2102209787, 1658741846);
+INSERT INTO `user_devices` VALUES (96, 37, 'C6596535606247', 3, '104', 'M2012K11AC', '', 2102209787, 1658752409);
+INSERT INTO `user_devices` VALUES (97, 37, 'C6596535606247', 3, '104', 'M2012K11AC', '', 462709625, 1658754371);
+INSERT INTO `user_devices` VALUES (98, 31, 'C6596535606247', 3, '104', 'M2012K11AC', '', 462709625, 1658755020);
+INSERT INTO `user_devices` VALUES (99, 36, 'C3695234688244', 3, '104', 'VOG-AL00', '', 1786395801, 1658756025);
+INSERT INTO `user_devices` VALUES (100, 36, 'C3695234688244', 3, '104', 'VOG-AL00', '', 1786395801, 1658756025);
+INSERT INTO `user_devices` VALUES (101, 37, 'C6596535606247', 3, '104', 'M2012K11AC', '', 2102209787, 1658756861);
+INSERT INTO `user_devices` VALUES (102, 31, 'C6596535606247', 3, '104', 'M2012K11AC', '', 2102209787, 1658756977);
+INSERT INTO `user_devices` VALUES (103, 31, 'C9714985788243', 3, '105', 'SM-A217F', '', 1935896310, 1658823802);
+INSERT INTO `user_devices` VALUES (104, 24, '7F6ADCB1-8464-4D16-8181-ECDFD62C7F63', 3, '1.0.0', 'iphone', '', 1886336894, 1658835297);
+INSERT INTO `user_devices` VALUES (105, 31, 'C6596535606247', 3, '104', 'M2012K11AC', '', 462709625, 1658835612);
+INSERT INTO `user_devices` VALUES (106, 2, '694AAFD6-C374-48BD-8EB2-DD819D9439A7', 3, '1.0.0', 'iphone', '', 1558136794, 1658842137);
+INSERT INTO `user_devices` VALUES (107, 2, '32700D00-FC3C-4842-9CF6-E024B7DE6A49', 3, '1.0.0', 'iphone', '', 3704105641, 1658847837);
+INSERT INTO `user_devices` VALUES (108, 31, 'EA2059B0-227E-473A-943D-F583377D02FB', 3, '1.0.0', 'iphone', '', 2015687807, 1658910442);
+INSERT INTO `user_devices` VALUES (109, 24, '7F6ADCB1-8464-4D16-8181-ECDFD62C7F63', 3, '1.0.0', 'iphone', '', 2015687807, 1658910835);
+INSERT INTO `user_devices` VALUES (110, 30, 'A2C5B197-7389-4A7A-8937-C72CBBBF4C45', 3, '1.0.0', 'iphone', '', 2015687807, 1658911225);
+INSERT INTO `user_devices` VALUES (111, 2, 'DCA1C13F-6357-441C-8BB7-FBDB884C04F3', 3, '1.0.0', 'iphone', '', 737533524, 1658988756);
+INSERT INTO `user_devices` VALUES (112, 2, '149163F1-9D9A-477E-A342-CFAE3EC47CF3', 3, '1.0.0', 'iphone', '', 2043429362, 1658994528);
+INSERT INTO `user_devices` VALUES (113, 4, 'C3595334688244', 3, '1', 'YAL-AL00', '', 2015687807, 1658998210);
+INSERT INTO `user_devices` VALUES (114, 14, 'C6698525679244', 3, '1', 'RMX3491', '', 1849068965, 1658998326);
+INSERT INTO `user_devices` VALUES (115, 38, 'C6699595629247', 3, '105', 'POCOPHONE F1', '', 2292064802, 1658998446);
+INSERT INTO `user_devices` VALUES (116, 39, 'B869881033950448', 3, '105', 'INE-LX2', '', 3032383298, 1658998494);
+INSERT INTO `user_devices` VALUES (117, 40, 'B862966047609275', 3, '105', 'INE-LX2', '', 1849071470, 1658998548);
+INSERT INTO `user_devices` VALUES (118, 41, 'C5498575479244', 3, '105', 'CPH2159', '', 2292073083, 1658998674);
+INSERT INTO `user_devices` VALUES (119, 42, 'C7697735677244', 3, '105', 'RMX1911', '', 3054685772, 1658998791);
+INSERT INTO `user_devices` VALUES (120, 17, 'C7698575679244', 3, '1', 'RMX3363', '', 2947550226, 1658999109);
+INSERT INTO `user_devices` VALUES (121, 43, 'B861709041767298', 3, '105', 'JKM-LX2', '', 3032465285, 1658999341);
+INSERT INTO `user_devices` VALUES (122, 44, 'B867121051157671', 3, '105', 'V1901A', '', 831589584, 1658999361);
+INSERT INTO `user_devices` VALUES (123, 45, 'B867789043835495', 3, '105', 'vivo 1811', '', 831570624, 1658999764);
+INSERT INTO `user_devices` VALUES (124, 46, 'C8697535677244', 3, '105', 'RMX2040', '', 831819735, 1658999768);
+INSERT INTO `user_devices` VALUES (125, 47, 'B866400039711846', 3, '105', 'Redmi 5 Plus', '', 1892205094, 1658999796);
+INSERT INTO `user_devices` VALUES (126, 48, 'B867121051157671', 3, '105', 'V1901A', '', 831589584, 1658999948);
+INSERT INTO `user_devices` VALUES (127, 50, 'C8497735477244', 3, '105', 'CPH1823', '', 831702428, 1659000076);
+INSERT INTO `user_devices` VALUES (128, 49, 'C8497735477244', 3, '105', 'CPH1823', '', 831702428, 1659000076);
+INSERT INTO `user_devices` VALUES (129, 51, 'C2793985787243', 3, '105', 'SM-A125F', '', 1892048643, 1659000380);
+INSERT INTO `user_devices` VALUES (130, 18, 'C2494835455248', 3, '105', 'V2134', '', 2015185953, 1659000620);
+INSERT INTO `user_devices` VALUES (131, 52, 'B869129034025970', 3, '105', 'vivo 1808', '', 2292058280, 1659001092);
+INSERT INTO `user_devices` VALUES (132, 53, 'C0797985782243', 3, '105', 'SM-G975F', '', 2947558182, 1659001139);
+INSERT INTO `user_devices` VALUES (133, 54, '03d850f3204cc9f1d00b7766eabf77ea93d43c029d1ac7b73555a20c22d942f7', 3, '105', 'RMX3231', '', 1849069373, 1659001295);
+INSERT INTO `user_devices` VALUES (134, 55, 'C8496535479244', 3, '105', 'CPH2179', '', 2292064716, 1659001384);
+INSERT INTO `user_devices` VALUES (135, 56, 'C8697535677244', 3, '105', 'RMX2020', '', 831613811, 1659001474);
+INSERT INTO `user_devices` VALUES (136, 57, 'C8697535677244', 3, '105', 'RMX2020', '', 831613811, 1659001474);
+INSERT INTO `user_devices` VALUES (137, 58, 'C9794985788243', 3, '105', 'SM-A217F', '', 1734053192, 1659001480);
+INSERT INTO `user_devices` VALUES (138, 59, 'C6699595629247', 3, '105', 'POCOPHONE F1', '', 2292064802, 1659002032);
+INSERT INTO `user_devices` VALUES (139, 60, 'C6697525677244', 3, '105', 'RMX1971', '', 2015184115, 1659002103);
+INSERT INTO `user_devices` VALUES (140, 61, 'C8494835494248', 3, '105', 'vivo 1906', '', 1892667862, 1659002438);
+INSERT INTO `user_devices` VALUES (141, 62, 'C8496535479244', 3, '1', 'CPH2269', '', 2292067484, 1659002501);
+INSERT INTO `user_devices` VALUES (142, 63, 'C8496535479244', 3, '105', 'CPH2269', '', 2947548306, 1659002683);
+INSERT INTO `user_devices` VALUES (143, 64, 'C6596535603247', 3, '105', 'M2003J15SC', '', 2947551432, 1659002980);
+INSERT INTO `user_devices` VALUES (144, 65, 'B868565031399135', 3, '105', 'HWV32', '', 1892565075, 1659003144);
+INSERT INTO `user_devices` VALUES (145, 66, 'B862786057608938', 3, '105', 'CPH2083', '', 2046977637, 1659003183);
+INSERT INTO `user_devices` VALUES (146, 67, 'C8494825494248', 3, '105', 'vivo 1906', '', 3508775834, 1659003341);
+INSERT INTO `user_devices` VALUES (147, 68, 'C4498585479244', 3, '105', 'CPH2145', '', 1849069375, 1659003447);
+INSERT INTO `user_devices` VALUES (148, 48, 'B867121051157671', 3, '105', 'V1901A', '', 831586883, 1659003843);
+INSERT INTO `user_devices` VALUES (149, 48, 'B867121051157671', 3, '105', 'V1901A', '', 831586883, 1659003843);
+INSERT INTO `user_devices` VALUES (150, 31, '84E8CF64-95A4-4C2C-99CA-4E9A8C3281BA', 3, '1.0.0', 'iphone', '', 289415604, 1659003880);
+INSERT INTO `user_devices` VALUES (151, 69, '3681150327', 3, '105', 'SM-J610G', '', 2292068381, 1659004071);
+INSERT INTO `user_devices` VALUES (152, 70, 'B636751132917896', 3, '105', 'ONEPLUS A5000', '', 2292067998, 1659004195);
+INSERT INTO `user_devices` VALUES (153, 71, 'C6696525679244', 3, '105', 'RMX2103', '', 1892164056, 1659004212);
+INSERT INTO `user_devices` VALUES (154, 72, 'C6696525679244', 3, '105', 'RMX2103', '', 1892164056, 1659004212);
+INSERT INTO `user_devices` VALUES (155, 73, 'C6696525679244', 3, '105', 'RMX2103', '', 1892164056, 1659004212);
+INSERT INTO `user_devices` VALUES (156, 74, 'C9714985786243', 3, '105', 'SM-A107F', '', 2292069228, 1659004236);
+INSERT INTO `user_devices` VALUES (157, 75, 'C7597535667247', 3, '105', 'Redmi Note 8 Pro', '', 2402059561, 1659004314);
+INSERT INTO `user_devices` VALUES (158, 76, 'C6696525679244', 3, '105', 'RMX2103', '', 1892164056, 1659004589);
+INSERT INTO `user_devices` VALUES (159, 77, 'C3713985785243', 3, '105', 'SM-A105G', '', 3032401674, 1659004642);
+INSERT INTO `user_devices` VALUES (160, 78, 'C1713985785243', 3, '105', 'SM-A105F', '', 2187975622, 1659004753);
+INSERT INTO `user_devices` VALUES (161, 79, 'C8496525477244', 3, '105', 'CPH1911', '', 2212643558, 1659004830);
+INSERT INTO `user_devices` VALUES (162, 80, 'B860900045924933', 3, '105', 'vivo 1820', '', 1892254215, 1659005220);
+INSERT INTO `user_devices` VALUES (163, 81, 'C6698585679244', 3, '105', 'RMX3241', '', 2212643558, 1659005325);
+INSERT INTO `user_devices` VALUES (164, 82, 'C6494835455248', 3, '105', 'V2131', '', 1892042179, 1659005326);
+INSERT INTO `user_devices` VALUES (165, 83, 'C5498575479244', 3, '105', 'CPH2237', '', 2292082210, 1659006120);
+INSERT INTO `user_devices` VALUES (166, 84, 'C9717985780243', 3, '105', 'SM-A013G', '', 1849069863, 1659006169);
+INSERT INTO `user_devices` VALUES (167, 17, 'C7698575679244', 3, '1', 'RMX3363', '', 2015194148, 1659006462);
+INSERT INTO `user_devices` VALUES (168, 40, 'B862966047609275', 3, '105', 'INE-LX2', '', 1849074545, 1659006498);
+INSERT INTO `user_devices` VALUES (169, 40, 'B862966047609275', 3, '105', 'INE-LX2', '', 1849074545, 1659006498);
+INSERT INTO `user_devices` VALUES (170, 85, 'B861314044067216', 3, '105', 'CPH1909', '', 2015156271, 1659006738);
+INSERT INTO `user_devices` VALUES (171, 86, 'C6496535603247', 3, '105', 'M2012K11AG', '', 1892648201, 1659006957);
+INSERT INTO `user_devices` VALUES (172, 87, 'C8496535479244', 3, '105', 'CPH2269', '', 2292064233, 1659007121);
+INSERT INTO `user_devices` VALUES (173, 88, 'C6699505677244', 3, '105', 'RMX2001', '', 1892548900, 1659007187);
+INSERT INTO `user_devices` VALUES (174, 89, 'C6699505677244', 3, '105', 'RMX2001', '', 1892548900, 1659007319);
+INSERT INTO `user_devices` VALUES (175, 39, 'B869881033950448', 3, '105', 'INE-LX2', '', 2212643350, 1659007404);
+INSERT INTO `user_devices` VALUES (176, 39, 'B869881033950448', 3, '105', 'INE-LX2', '', 2212643350, 1659007404);
+INSERT INTO `user_devices` VALUES (177, 90, 'C8496535479244', 3, '105', 'CPH2179', '', 3032406013, 1659007498);
+INSERT INTO `user_devices` VALUES (178, 91, 'C7719985789243', 3, '105', 'SM-A605K', '', 2087223078, 1659007662);
+INSERT INTO `user_devices` VALUES (179, 92, 'B860811044214590', 3, '105', 'CPH1853', '', 1849091289, 1659007667);
+INSERT INTO `user_devices` VALUES (180, 93, 'C0793085796243', 3, '105', 'SM-A505GN', '', 2947555527, 1659007787);
+INSERT INTO `user_devices` VALUES (181, 94, 'B869129034025970', 3, '105', 'vivo 1808', '', 2292058280, 1659007910);
+INSERT INTO `user_devices` VALUES (182, 95, 'C8496535479244', 3, '105', 'CPH2179', '', 3032406013, 1659008338);
+INSERT INTO `user_devices` VALUES (183, 96, 'C8496535479244', 3, '105', 'CPH2179', '', 3032406013, 1659008396);
+INSERT INTO `user_devices` VALUES (184, 97, 'B869593032689238', 3, '105', 'PAR-TL00', '', 2552259423, 1659009933);
+INSERT INTO `user_devices` VALUES (185, 98, 'B869593032689238', 3, '105', 'PAR-TL00', '', 2552259423, 1659010099);
+INSERT INTO `user_devices` VALUES (186, 21, 'C7399595387247', 3, '1', 'LM-V500N', '', 2292066455, 1659010500);
+INSERT INTO `user_devices` VALUES (187, 99, 'C8496535479244', 3, '105', 'CPH2239', '', 831843004, 1659011822);
+INSERT INTO `user_devices` VALUES (188, 100, 'C4510075007249', 3, '105', 'TECNO BC1s', '', 2212643754, 1659012636);
+INSERT INTO `user_devices` VALUES (189, 101, 'C8714985786243', 3, '1', 'SM-A015F', '', 2947568354, 1659012694);
+INSERT INTO `user_devices` VALUES (190, 102, 'C4510075007249', 3, '105', 'TECNO BC1s', '', 2212643754, 1659012884);
+INSERT INTO `user_devices` VALUES (191, 103, 'C3793925438241', 3, '105', 'Infinix X689B', '', 2047019007, 1659013329);
+INSERT INTO `user_devices` VALUES (192, 104, 'C2494835455248', 3, '105', 'V2134', '', 2015185953, 1659014292);
+INSERT INTO `user_devices` VALUES (193, 105, 'C3793925438241', 3, '105', 'Infinix X689B', '', 831617305, 1659014509);
+INSERT INTO `user_devices` VALUES (194, 24, '7F6ADCB1-8464-4D16-8181-ECDFD62C7F63', 3, '1.0.0', 'iphone', '', 620292488, 1659015912);
+INSERT INTO `user_devices` VALUES (195, 106, 'C3793985785243', 3, '105', 'SM-A325F', '', 2292062576, 1659016132);
+INSERT INTO `user_devices` VALUES (196, 105, 'C3793925438241', 3, '105', 'Infinix X689B', '', 2047019007, 1659016350);
+INSERT INTO `user_devices` VALUES (197, 107, 'C7698023677244', 3, '105', 'STK-L22', '', 1892041877, 1659017121);
+INSERT INTO `user_devices` VALUES (198, 108, 'B866197043397378', 3, '105', 'CPH1909', '', 831789997, 1659021302);
+INSERT INTO `user_devices` VALUES (199, 105, 'C3793925438241', 3, '105', 'Infinix X689B', '', 831617305, 1659022852);
+INSERT INTO `user_devices` VALUES (200, 109, 'C6494835494248', 3, '105', 'vivo 1804', '', 1919739934, 1659028831);
+INSERT INTO `user_devices` VALUES (201, 24, '7F6ADCB1-8464-4D16-8181-ECDFD62C7F63', 3, '1.0.0', 'iphone', '', 620292597, 1659034339);
+INSERT INTO `user_devices` VALUES (202, 110, '7F6ADCB1-8464-4D16-8181-ECDFD62C7F63', 3, '1.0.0', 'iphone', '', 620292597, 1659034512);
+INSERT INTO `user_devices` VALUES (203, 74, 'C9714985786243', 3, '105', 'SM-A107F', '', 831526559, 1659051322);
+INSERT INTO `user_devices` VALUES (204, 74, 'C9714985786243', 3, '105', 'SM-A107F', '', 831526559, 1659051322);
+INSERT INTO `user_devices` VALUES (205, 31, 'C6596535606247', 3, '104', 'M2012K11AC', '', 2102209787, 1659058168);
+INSERT INTO `user_devices` VALUES (206, 93, 'C0793085796243', 3, '105', 'SM-A505GN', '', 2947555338, 1659058381);
+INSERT INTO `user_devices` VALUES (207, 93, 'C0793085796243', 3, '105', 'SM-A505GN', '', 2947555338, 1659058381);
+INSERT INTO `user_devices` VALUES (208, 111, 'C5699535677244', 3, '105', 'RMX2061', '', 977632487, 1659060605);
+INSERT INTO `user_devices` VALUES (209, 110, '7F6ADCB1-8464-4D16-8181-ECDFD62C7F63', 3, '1.0.0', 'iphone', '', 620292538, 1659062240);
+INSERT INTO `user_devices` VALUES (210, 53, 'C0797985782243', 3, '105', 'SM-G975F', '', 2947558389, 1659062632);
+INSERT INTO `user_devices` VALUES (211, 53, 'C0797985782243', 3, '105', 'SM-G975F', '', 2947558389, 1659062632);
+INSERT INTO `user_devices` VALUES (212, 112, 'C7497735477244', 3, '105', 'CPH1903', '', 2292077417, 1659063728);
+INSERT INTO `user_devices` VALUES (213, 113, 'C2494835454248', 3, '105', 'V2026', '', 1906595414, 1659065701);
+INSERT INTO `user_devices` VALUES (214, 114, 'C3713225438241', 3, '105', 'Infinix X6512', '', 96230730, 1659067411);
+INSERT INTO `user_devices` VALUES (215, 40, 'B862966047609275', 3, '105', 'INE-LX2', '', 1849067184, 1659068211);
+INSERT INTO `user_devices` VALUES (216, 40, 'B862966047609275', 3, '105', 'INE-LX2', '', 1849067184, 1659068211);
+INSERT INTO `user_devices` VALUES (217, 115, 'C6698305628247', 3, '105', 'Redmi Note 7', '', 2947553324, 1659079341);
+INSERT INTO `user_devices` VALUES (218, 113, 'C2494835454248', 3, '105', 'V2026', '', 2885635652, 1659086297);
+INSERT INTO `user_devices` VALUES (219, 113, 'C2494835454248', 3, '105', 'V2026', '', 2885635652, 1659086297);
+INSERT INTO `user_devices` VALUES (220, 81, 'C6698585679244', 3, '105', 'RMX3241', '', 2212643037, 1659086557);
+INSERT INTO `user_devices` VALUES (221, 64, 'C6596535603247', 3, '105', 'M2003J15SC', '', 2947551581, 1659089262);
+INSERT INTO `user_devices` VALUES (222, 64, 'C6596535603247', 3, '105', 'M2003J15SC', '', 2947551581, 1659089262);
+INSERT INTO `user_devices` VALUES (223, 64, 'C6596535603247', 3, '105', 'M2003J15SC', '', 1851609118, 1659089595);
+INSERT INTO `user_devices` VALUES (224, 64, 'C6596535603247', 3, '105', 'M2003J15SC', '', 1851609118, 1659089595);
+INSERT INTO `user_devices` VALUES (225, 116, 'C6496535603247', 3, '105', 'M2012K11AG', '', 1892648201, 1659093315);
+INSERT INTO `user_devices` VALUES (226, 51, 'C2793985787243', 3, '105', 'SM-A125F', '', 1892048745, 1659108486);
+INSERT INTO `user_devices` VALUES (227, 117, 'C7399595387247', 3, '105', 'LM-V500N', '', 2292066455, 1659142491);
+INSERT INTO `user_devices` VALUES (228, 68, 'C4498585479244', 3, '105', 'CPH2145', '', 3508776091, 1659147229);
+INSERT INTO `user_devices` VALUES (229, 118, 'C7494815494248', 3, '105', 'vivo 1718', '', 2002653149, 1659147352);
+INSERT INTO `user_devices` VALUES (230, 119, 'C8714985786243', 3, '105', 'SM-A015F', '', 2947568354, 1659147624);
+INSERT INTO `user_devices` VALUES (231, 64, 'C6596535603247', 3, '105', 'M2003J15SC', '', 2947551336, 1659148299);
+INSERT INTO `user_devices` VALUES (232, 120, 'C5595585682247', 3, '105', 'M2101K6G', '', 1224684521, 1659148424);
+INSERT INTO `user_devices` VALUES (233, 121, 'C0494835455248', 3, '105', 'V2130', '', 1024028591, 1659149691);
 
 -- ----------------------------
 -- Table structure for user_invitees
@@ -4828,9 +5114,6 @@ CREATE TABLE `user_invitees`  (
 -- ----------------------------
 -- Records of user_invitees
 -- ----------------------------
-INSERT INTO `user_invitees` VALUES (2, 1);
-INSERT INTO `user_invitees` VALUES (2, 3);
-INSERT INTO `user_invitees` VALUES (4, 2);
 
 -- ----------------------------
 -- Table structure for user_likes
@@ -4846,6 +5129,10 @@ CREATE TABLE `user_likes`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户喜欢列表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Records of user_likes
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for user_logins
 -- ----------------------------
 DROP TABLE IF EXISTS `user_logins`;
@@ -4854,31 +5141,373 @@ CREATE TABLE `user_logins`  (
   `addtime` bigint(1) UNSIGNED NULL DEFAULT NULL COMMENT '登录时间戳',
   INDEX `addtime`(`addtime`) USING BTREE,
   INDEX `uid`(`uid`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户登录记录表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_logins
 -- ----------------------------
 INSERT INTO `user_logins` VALUES (1, 1657096629);
-INSERT INTO `user_logins` VALUES (2, 1657107984);
-INSERT INTO `user_logins` VALUES (2, 1657108196);
-INSERT INTO `user_logins` VALUES (2, 1657108232);
-INSERT INTO `user_logins` VALUES (2, 1657108529);
-INSERT INTO `user_logins` VALUES (2, 1657108611);
-INSERT INTO `user_logins` VALUES (2, 1657108630);
-INSERT INTO `user_logins` VALUES (2, 1657113594);
-INSERT INTO `user_logins` VALUES (2, 1657113715);
-INSERT INTO `user_logins` VALUES (2, 1657113761);
-INSERT INTO `user_logins` VALUES (2, 1657113798);
-INSERT INTO `user_logins` VALUES (2, 1657113829);
-INSERT INTO `user_logins` VALUES (2, 1657113879);
-INSERT INTO `user_logins` VALUES (2, 1657113888);
-INSERT INTO `user_logins` VALUES (2, 1657113941);
-INSERT INTO `user_logins` VALUES (2, 1657114025);
-INSERT INTO `user_logins` VALUES (2, 1657114044);
-INSERT INTO `user_logins` VALUES (2, 1657114087);
-INSERT INTO `user_logins` VALUES (2, 1657114112);
-INSERT INTO `user_logins` VALUES (2, 1657182731);
+INSERT INTO `user_logins` VALUES (8, 1657099355);
+INSERT INTO `user_logins` VALUES (5, 1657249397);
+INSERT INTO `user_logins` VALUES (1, 1657249866);
+INSERT INTO `user_logins` VALUES (10, 1657250870);
+INSERT INTO `user_logins` VALUES (1, 1657250979);
+INSERT INTO `user_logins` VALUES (11, 1657251012);
+INSERT INTO `user_logins` VALUES (2, 1657262742);
+INSERT INTO `user_logins` VALUES (2, 1657263154);
+INSERT INTO `user_logins` VALUES (2, 1657263247);
+INSERT INTO `user_logins` VALUES (2, 1657263306);
+INSERT INTO `user_logins` VALUES (2, 1657263428);
+INSERT INTO `user_logins` VALUES (2, 1657263514);
+INSERT INTO `user_logins` VALUES (2, 1657263616);
+INSERT INTO `user_logins` VALUES (2, 1657263695);
+INSERT INTO `user_logins` VALUES (2, 1657263762);
+INSERT INTO `user_logins` VALUES (2, 1657263865);
+INSERT INTO `user_logins` VALUES (2, 1657264014);
+INSERT INTO `user_logins` VALUES (6, 1657356449);
+INSERT INTO `user_logins` VALUES (4, 1657434518);
+INSERT INTO `user_logins` VALUES (12, 1657443020);
+INSERT INTO `user_logins` VALUES (13, 1657443693);
+INSERT INTO `user_logins` VALUES (14, 1657445082);
+INSERT INTO `user_logins` VALUES (15, 1657445250);
+INSERT INTO `user_logins` VALUES (16, 1657445284);
+INSERT INTO `user_logins` VALUES (17, 1657445368);
+INSERT INTO `user_logins` VALUES (18, 1657445568);
+INSERT INTO `user_logins` VALUES (19, 1657445816);
+INSERT INTO `user_logins` VALUES (20, 1657446253);
+INSERT INTO `user_logins` VALUES (21, 1657446853);
+INSERT INTO `user_logins` VALUES (22, 1657449430);
+INSERT INTO `user_logins` VALUES (23, 1657450152);
+INSERT INTO `user_logins` VALUES (24, 1657461821);
+INSERT INTO `user_logins` VALUES (24, 1657461822);
+INSERT INTO `user_logins` VALUES (18, 1657462377);
+INSERT INTO `user_logins` VALUES (25, 1657502868);
+INSERT INTO `user_logins` VALUES (7, 1657512202);
+INSERT INTO `user_logins` VALUES (8, 1657546056);
+INSERT INTO `user_logins` VALUES (7, 1657589323);
+INSERT INTO `user_logins` VALUES (26, 1657589557);
+INSERT INTO `user_logins` VALUES (27, 1657589739);
+INSERT INTO `user_logins` VALUES (27, 1657589813);
+INSERT INTO `user_logins` VALUES (28, 1657591012);
+INSERT INTO `user_logins` VALUES (1, 1657591040);
+INSERT INTO `user_logins` VALUES (1, 1657610876);
+INSERT INTO `user_logins` VALUES (1, 1657610968);
+INSERT INTO `user_logins` VALUES (1, 1657611201);
+INSERT INTO `user_logins` VALUES (1, 1657611202);
+INSERT INTO `user_logins` VALUES (1, 1657611203);
+INSERT INTO `user_logins` VALUES (1, 1657611203);
+INSERT INTO `user_logins` VALUES (1, 1657611205);
+INSERT INTO `user_logins` VALUES (1, 1657611205);
+INSERT INTO `user_logins` VALUES (1, 1657611206);
+INSERT INTO `user_logins` VALUES (1, 1657611206);
+INSERT INTO `user_logins` VALUES (1, 1657611208);
+INSERT INTO `user_logins` VALUES (1, 1657611208);
+INSERT INTO `user_logins` VALUES (1, 1657611209);
+INSERT INTO `user_logins` VALUES (1, 1657611216);
+INSERT INTO `user_logins` VALUES (1, 1657611217);
+INSERT INTO `user_logins` VALUES (1, 1657611217);
+INSERT INTO `user_logins` VALUES (1, 1657611218);
+INSERT INTO `user_logins` VALUES (1, 1657611219);
+INSERT INTO `user_logins` VALUES (1, 1657611219);
+INSERT INTO `user_logins` VALUES (1, 1657611220);
+INSERT INTO `user_logins` VALUES (1, 1657611221);
+INSERT INTO `user_logins` VALUES (7, 1657611275);
+INSERT INTO `user_logins` VALUES (7, 1657611276);
+INSERT INTO `user_logins` VALUES (1, 1657611286);
+INSERT INTO `user_logins` VALUES (1, 1657611325);
+INSERT INTO `user_logins` VALUES (28, 1657611345);
+INSERT INTO `user_logins` VALUES (1, 1657612145);
+INSERT INTO `user_logins` VALUES (1, 1657612374);
+INSERT INTO `user_logins` VALUES (1, 1657612384);
+INSERT INTO `user_logins` VALUES (1, 1657612724);
+INSERT INTO `user_logins` VALUES (1, 1657612736);
+INSERT INTO `user_logins` VALUES (1, 1657613817);
+INSERT INTO `user_logins` VALUES (1, 1657614426);
+INSERT INTO `user_logins` VALUES (1, 1657615139);
+INSERT INTO `user_logins` VALUES (1, 1657615449);
+INSERT INTO `user_logins` VALUES (5, 1657617645);
+INSERT INTO `user_logins` VALUES (1, 1657618768);
+INSERT INTO `user_logins` VALUES (28, 1657682614);
+INSERT INTO `user_logins` VALUES (28, 1657682729);
+INSERT INTO `user_logins` VALUES (28, 1657682734);
+INSERT INTO `user_logins` VALUES (6, 1657695615);
+INSERT INTO `user_logins` VALUES (6, 1657698170);
+INSERT INTO `user_logins` VALUES (1, 1657700451);
+INSERT INTO `user_logins` VALUES (1, 1657768914);
+INSERT INTO `user_logins` VALUES (2, 1657787757);
+INSERT INTO `user_logins` VALUES (6, 1658110847);
+INSERT INTO `user_logins` VALUES (1, 1658126038);
+INSERT INTO `user_logins` VALUES (29, 1658126716);
+INSERT INTO `user_logins` VALUES (29, 1658126737);
+INSERT INTO `user_logins` VALUES (29, 1658126750);
+INSERT INTO `user_logins` VALUES (29, 1658126777);
+INSERT INTO `user_logins` VALUES (29, 1658126824);
+INSERT INTO `user_logins` VALUES (29, 1658127104);
+INSERT INTO `user_logins` VALUES (2, 1658130295);
+INSERT INTO `user_logins` VALUES (2, 1658130723);
+INSERT INTO `user_logins` VALUES (30, 1658130762);
+INSERT INTO `user_logins` VALUES (30, 1658130763);
+INSERT INTO `user_logins` VALUES (24, 1658130856);
+INSERT INTO `user_logins` VALUES (24, 1658130861);
+INSERT INTO `user_logins` VALUES (24, 1658131182);
+INSERT INTO `user_logins` VALUES (24, 1658131551);
+INSERT INTO `user_logins` VALUES (24, 1658131641);
+INSERT INTO `user_logins` VALUES (6, 1658150875);
+INSERT INTO `user_logins` VALUES (6, 1658150893);
+INSERT INTO `user_logins` VALUES (6, 1658150904);
+INSERT INTO `user_logins` VALUES (6, 1658294598);
+INSERT INTO `user_logins` VALUES (6, 1658294617);
+INSERT INTO `user_logins` VALUES (6, 1658294680);
+INSERT INTO `user_logins` VALUES (6, 1658295149);
+INSERT INTO `user_logins` VALUES (6, 1658295204);
+INSERT INTO `user_logins` VALUES (7, 1658366274);
+INSERT INTO `user_logins` VALUES (7, 1658366774);
+INSERT INTO `user_logins` VALUES (7, 1658366833);
+INSERT INTO `user_logins` VALUES (7, 1658367468);
+INSERT INTO `user_logins` VALUES (7, 1658367500);
+INSERT INTO `user_logins` VALUES (7, 1658374876);
+INSERT INTO `user_logins` VALUES (6, 1658389650);
+INSERT INTO `user_logins` VALUES (31, 1658389931);
+INSERT INTO `user_logins` VALUES (31, 1658390034);
+INSERT INTO `user_logins` VALUES (32, 1658391261);
+INSERT INTO `user_logins` VALUES (33, 1658393884);
+INSERT INTO `user_logins` VALUES (34, 1658393997);
+INSERT INTO `user_logins` VALUES (35, 1658394310);
+INSERT INTO `user_logins` VALUES (36, 1658394546);
+INSERT INTO `user_logins` VALUES (31, 1658483151);
+INSERT INTO `user_logins` VALUES (31, 1658484720);
+INSERT INTO `user_logins` VALUES (31, 1658538428);
+INSERT INTO `user_logins` VALUES (31, 1658538438);
+INSERT INTO `user_logins` VALUES (31, 1658538441);
+INSERT INTO `user_logins` VALUES (31, 1658538474);
+INSERT INTO `user_logins` VALUES (31, 1658538485);
+INSERT INTO `user_logins` VALUES (31, 1658538488);
+INSERT INTO `user_logins` VALUES (36, 1658568523);
+INSERT INTO `user_logins` VALUES (1, 1658568562);
+INSERT INTO `user_logins` VALUES (36, 1658568694);
+INSERT INTO `user_logins` VALUES (1, 1658569102);
+INSERT INTO `user_logins` VALUES (36, 1658570379);
+INSERT INTO `user_logins` VALUES (31, 1658572251);
+INSERT INTO `user_logins` VALUES (2, 1658712909);
+INSERT INTO `user_logins` VALUES (2, 1658713534);
+INSERT INTO `user_logins` VALUES (2, 1658714025);
+INSERT INTO `user_logins` VALUES (2, 1658734479);
+INSERT INTO `user_logins` VALUES (2, 1658736956);
+INSERT INTO `user_logins` VALUES (2, 1658737206);
+INSERT INTO `user_logins` VALUES (6, 1658739282);
+INSERT INTO `user_logins` VALUES (6, 1658739284);
+INSERT INTO `user_logins` VALUES (6, 1658739286);
+INSERT INTO `user_logins` VALUES (6, 1658739287);
+INSERT INTO `user_logins` VALUES (6, 1658739288);
+INSERT INTO `user_logins` VALUES (6, 1658739289);
+INSERT INTO `user_logins` VALUES (6, 1658739292);
+INSERT INTO `user_logins` VALUES (31, 1658741609);
+INSERT INTO `user_logins` VALUES (6, 1658741846);
+INSERT INTO `user_logins` VALUES (37, 1658752409);
+INSERT INTO `user_logins` VALUES (37, 1658752420);
+INSERT INTO `user_logins` VALUES (37, 1658754312);
+INSERT INTO `user_logins` VALUES (31, 1658755020);
+INSERT INTO `user_logins` VALUES (37, 1658755070);
+INSERT INTO `user_logins` VALUES (31, 1658756977);
+INSERT INTO `user_logins` VALUES (2, 1658797206);
+INSERT INTO `user_logins` VALUES (2, 1658800111);
+INSERT INTO `user_logins` VALUES (2, 1658800412);
+INSERT INTO `user_logins` VALUES (2, 1658800676);
+INSERT INTO `user_logins` VALUES (8, 1658801542);
+INSERT INTO `user_logins` VALUES (8, 1658805352);
+INSERT INTO `user_logins` VALUES (2, 1658812365);
+INSERT INTO `user_logins` VALUES (2, 1658812828);
+INSERT INTO `user_logins` VALUES (2, 1658812977);
+INSERT INTO `user_logins` VALUES (2, 1658813153);
+INSERT INTO `user_logins` VALUES (2, 1658813275);
+INSERT INTO `user_logins` VALUES (2, 1658813464);
+INSERT INTO `user_logins` VALUES (2, 1658813636);
+INSERT INTO `user_logins` VALUES (2, 1658821022);
+INSERT INTO `user_logins` VALUES (2, 1658821753);
+INSERT INTO `user_logins` VALUES (31, 1658823802);
+INSERT INTO `user_logins` VALUES (24, 1658835289);
+INSERT INTO `user_logins` VALUES (24, 1658835297);
+INSERT INTO `user_logins` VALUES (24, 1658835356);
+INSERT INTO `user_logins` VALUES (24, 1658835559);
+INSERT INTO `user_logins` VALUES (31, 1658835612);
+INSERT INTO `user_logins` VALUES (31, 1658835616);
+INSERT INTO `user_logins` VALUES (2, 1658842137);
+INSERT INTO `user_logins` VALUES (2, 1658846371);
+INSERT INTO `user_logins` VALUES (2, 1658846970);
+INSERT INTO `user_logins` VALUES (2, 1658847041);
+INSERT INTO `user_logins` VALUES (2, 1658847211);
+INSERT INTO `user_logins` VALUES (2, 1658847837);
+INSERT INTO `user_logins` VALUES (2, 1658848046);
+INSERT INTO `user_logins` VALUES (2, 1658848419);
+INSERT INTO `user_logins` VALUES (2, 1658848682);
+INSERT INTO `user_logins` VALUES (2, 1658848954);
+INSERT INTO `user_logins` VALUES (2, 1658849300);
+INSERT INTO `user_logins` VALUES (2, 1658849360);
+INSERT INTO `user_logins` VALUES (2, 1658849436);
+INSERT INTO `user_logins` VALUES (2, 1658849520);
+INSERT INTO `user_logins` VALUES (2, 1658849577);
+INSERT INTO `user_logins` VALUES (2, 1658849631);
+INSERT INTO `user_logins` VALUES (2, 1658849742);
+INSERT INTO `user_logins` VALUES (31, 1658910442);
+INSERT INTO `user_logins` VALUES (31, 1658910599);
+INSERT INTO `user_logins` VALUES (24, 1658910835);
+INSERT INTO `user_logins` VALUES (30, 1658911220);
+INSERT INTO `user_logins` VALUES (30, 1658911225);
+INSERT INTO `user_logins` VALUES (30, 1658911994);
+INSERT INTO `user_logins` VALUES (24, 1658913523);
+INSERT INTO `user_logins` VALUES (24, 1658913863);
+INSERT INTO `user_logins` VALUES (2, 1658935876);
+INSERT INTO `user_logins` VALUES (2, 1658936113);
+INSERT INTO `user_logins` VALUES (2, 1658988756);
+INSERT INTO `user_logins` VALUES (2, 1658994528);
+INSERT INTO `user_logins` VALUES (38, 1658998446);
+INSERT INTO `user_logins` VALUES (39, 1658998494);
+INSERT INTO `user_logins` VALUES (40, 1658998548);
+INSERT INTO `user_logins` VALUES (41, 1658998674);
+INSERT INTO `user_logins` VALUES (42, 1658998791);
+INSERT INTO `user_logins` VALUES (43, 1658999341);
+INSERT INTO `user_logins` VALUES (44, 1658999361);
+INSERT INTO `user_logins` VALUES (45, 1658999764);
+INSERT INTO `user_logins` VALUES (46, 1658999768);
+INSERT INTO `user_logins` VALUES (47, 1658999796);
+INSERT INTO `user_logins` VALUES (48, 1658999948);
+INSERT INTO `user_logins` VALUES (50, 1659000076);
+INSERT INTO `user_logins` VALUES (49, 1659000076);
+INSERT INTO `user_logins` VALUES (51, 1659000380);
+INSERT INTO `user_logins` VALUES (18, 1659000620);
+INSERT INTO `user_logins` VALUES (52, 1659001092);
+INSERT INTO `user_logins` VALUES (53, 1659001139);
+INSERT INTO `user_logins` VALUES (54, 1659001295);
+INSERT INTO `user_logins` VALUES (55, 1659001384);
+INSERT INTO `user_logins` VALUES (56, 1659001474);
+INSERT INTO `user_logins` VALUES (57, 1659001474);
+INSERT INTO `user_logins` VALUES (58, 1659001480);
+INSERT INTO `user_logins` VALUES (48, 1659001555);
+INSERT INTO `user_logins` VALUES (59, 1659002032);
+INSERT INTO `user_logins` VALUES (60, 1659002103);
+INSERT INTO `user_logins` VALUES (61, 1659002438);
+INSERT INTO `user_logins` VALUES (62, 1659002501);
+INSERT INTO `user_logins` VALUES (63, 1659002683);
+INSERT INTO `user_logins` VALUES (64, 1659002980);
+INSERT INTO `user_logins` VALUES (65, 1659003144);
+INSERT INTO `user_logins` VALUES (66, 1659003183);
+INSERT INTO `user_logins` VALUES (67, 1659003341);
+INSERT INTO `user_logins` VALUES (68, 1659003447);
+INSERT INTO `user_logins` VALUES (31, 1659003880);
+INSERT INTO `user_logins` VALUES (69, 1659004071);
+INSERT INTO `user_logins` VALUES (70, 1659004195);
+INSERT INTO `user_logins` VALUES (71, 1659004212);
+INSERT INTO `user_logins` VALUES (72, 1659004212);
+INSERT INTO `user_logins` VALUES (73, 1659004212);
+INSERT INTO `user_logins` VALUES (74, 1659004236);
+INSERT INTO `user_logins` VALUES (75, 1659004314);
+INSERT INTO `user_logins` VALUES (52, 1659004322);
+INSERT INTO `user_logins` VALUES (52, 1659004583);
+INSERT INTO `user_logins` VALUES (76, 1659004589);
+INSERT INTO `user_logins` VALUES (77, 1659004642);
+INSERT INTO `user_logins` VALUES (78, 1659004753);
+INSERT INTO `user_logins` VALUES (79, 1659004830);
+INSERT INTO `user_logins` VALUES (80, 1659005220);
+INSERT INTO `user_logins` VALUES (81, 1659005325);
+INSERT INTO `user_logins` VALUES (82, 1659005326);
+INSERT INTO `user_logins` VALUES (83, 1659006120);
+INSERT INTO `user_logins` VALUES (84, 1659006169);
+INSERT INTO `user_logins` VALUES (85, 1659006738);
+INSERT INTO `user_logins` VALUES (86, 1659006957);
+INSERT INTO `user_logins` VALUES (87, 1659007121);
+INSERT INTO `user_logins` VALUES (87, 1659007170);
+INSERT INTO `user_logins` VALUES (87, 1659007174);
+INSERT INTO `user_logins` VALUES (87, 1659007176);
+INSERT INTO `user_logins` VALUES (88, 1659007187);
+INSERT INTO `user_logins` VALUES (89, 1659007319);
+INSERT INTO `user_logins` VALUES (89, 1659007348);
+INSERT INTO `user_logins` VALUES (89, 1659007351);
+INSERT INTO `user_logins` VALUES (89, 1659007356);
+INSERT INTO `user_logins` VALUES (89, 1659007359);
+INSERT INTO `user_logins` VALUES (87, 1659007394);
+INSERT INTO `user_logins` VALUES (87, 1659007398);
+INSERT INTO `user_logins` VALUES (87, 1659007399);
+INSERT INTO `user_logins` VALUES (90, 1659007498);
+INSERT INTO `user_logins` VALUES (91, 1659007662);
+INSERT INTO `user_logins` VALUES (92, 1659007667);
+INSERT INTO `user_logins` VALUES (93, 1659007787);
+INSERT INTO `user_logins` VALUES (91, 1659007809);
+INSERT INTO `user_logins` VALUES (91, 1659007814);
+INSERT INTO `user_logins` VALUES (91, 1659007821);
+INSERT INTO `user_logins` VALUES (91, 1659007838);
+INSERT INTO `user_logins` VALUES (94, 1659007910);
+INSERT INTO `user_logins` VALUES (94, 1659007941);
+INSERT INTO `user_logins` VALUES (94, 1659007945);
+INSERT INTO `user_logins` VALUES (94, 1659007948);
+INSERT INTO `user_logins` VALUES (94, 1659007954);
+INSERT INTO `user_logins` VALUES (93, 1659008084);
+INSERT INTO `user_logins` VALUES (93, 1659008088);
+INSERT INTO `user_logins` VALUES (94, 1659008177);
+INSERT INTO `user_logins` VALUES (94, 1659008181);
+INSERT INTO `user_logins` VALUES (94, 1659008185);
+INSERT INTO `user_logins` VALUES (95, 1659008338);
+INSERT INTO `user_logins` VALUES (96, 1659008396);
+INSERT INTO `user_logins` VALUES (94, 1659008507);
+INSERT INTO `user_logins` VALUES (94, 1659008519);
+INSERT INTO `user_logins` VALUES (94, 1659008523);
+INSERT INTO `user_logins` VALUES (94, 1659008526);
+INSERT INTO `user_logins` VALUES (94, 1659008531);
+INSERT INTO `user_logins` VALUES (94, 1659008805);
+INSERT INTO `user_logins` VALUES (94, 1659008809);
+INSERT INTO `user_logins` VALUES (94, 1659008820);
+INSERT INTO `user_logins` VALUES (94, 1659008824);
+INSERT INTO `user_logins` VALUES (94, 1659008828);
+INSERT INTO `user_logins` VALUES (94, 1659008831);
+INSERT INTO `user_logins` VALUES (52, 1659008863);
+INSERT INTO `user_logins` VALUES (97, 1659009933);
+INSERT INTO `user_logins` VALUES (98, 1659010099);
+INSERT INTO `user_logins` VALUES (99, 1659011822);
+INSERT INTO `user_logins` VALUES (100, 1659012636);
+INSERT INTO `user_logins` VALUES (101, 1659012694);
+INSERT INTO `user_logins` VALUES (102, 1659012884);
+INSERT INTO `user_logins` VALUES (103, 1659013329);
+INSERT INTO `user_logins` VALUES (104, 1659014292);
+INSERT INTO `user_logins` VALUES (105, 1659014509);
+INSERT INTO `user_logins` VALUES (24, 1659015912);
+INSERT INTO `user_logins` VALUES (106, 1659016132);
+INSERT INTO `user_logins` VALUES (107, 1659017121);
+INSERT INTO `user_logins` VALUES (108, 1659021302);
+INSERT INTO `user_logins` VALUES (108, 1659021390);
+INSERT INTO `user_logins` VALUES (108, 1659021395);
+INSERT INTO `user_logins` VALUES (109, 1659028831);
+INSERT INTO `user_logins` VALUES (24, 1659034339);
+INSERT INTO `user_logins` VALUES (110, 1659034512);
+INSERT INTO `user_logins` VALUES (110, 1659034513);
+INSERT INTO `user_logins` VALUES (110, 1659034900);
+INSERT INTO `user_logins` VALUES (24, 1659034946);
+INSERT INTO `user_logins` VALUES (2, 1659057420);
+INSERT INTO `user_logins` VALUES (2, 1659057518);
+INSERT INTO `user_logins` VALUES (31, 1659058168);
+INSERT INTO `user_logins` VALUES (2, 1659059279);
+INSERT INTO `user_logins` VALUES (111, 1659060605);
+INSERT INTO `user_logins` VALUES (110, 1659062240);
+INSERT INTO `user_logins` VALUES (110, 1659062273);
+INSERT INTO `user_logins` VALUES (112, 1659063728);
+INSERT INTO `user_logins` VALUES (2, 1659065339);
+INSERT INTO `user_logins` VALUES (2, 1659065454);
+INSERT INTO `user_logins` VALUES (113, 1659065701);
+INSERT INTO `user_logins` VALUES (2, 1659066778);
+INSERT INTO `user_logins` VALUES (2, 1659066866);
+INSERT INTO `user_logins` VALUES (2, 1659067023);
+INSERT INTO `user_logins` VALUES (2, 1659067091);
+INSERT INTO `user_logins` VALUES (114, 1659067411);
+INSERT INTO `user_logins` VALUES (115, 1659079341);
+INSERT INTO `user_logins` VALUES (116, 1659093315);
+INSERT INTO `user_logins` VALUES (117, 1659142491);
+INSERT INTO `user_logins` VALUES (118, 1659147352);
+INSERT INTO `user_logins` VALUES (119, 1659147624);
+INSERT INTO `user_logins` VALUES (120, 1659148424);
+INSERT INTO `user_logins` VALUES (120, 1659148456);
+INSERT INTO `user_logins` VALUES (120, 1659149249);
+INSERT INTO `user_logins` VALUES (120, 1659149253);
+INSERT INTO `user_logins` VALUES (120, 1659149257);
+INSERT INTO `user_logins` VALUES (120, 1659149406);
+INSERT INTO `user_logins` VALUES (121, 1659149691);
 
 -- ----------------------------
 -- Table structure for users
@@ -4901,7 +5530,7 @@ CREATE TABLE `users`  (
   `signature` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '签名',
   `visits` int(11) NULL DEFAULT 0 COMMENT '访问量',
   `addtime` int(1) UNSIGNED NULL DEFAULT 0 COMMENT '注册时间',
-  `status` tinyint(1) UNSIGNED NULL DEFAULT 1 COMMENT '账号状态,1为正常,其他值均为不正常',
+  `status` tinyint(1) NULL DEFAULT 1 COMMENT '账号状态,1为正常,其他值均为不正常',
   `sex` tinyint(1) NULL DEFAULT 0 COMMENT '性别,0保密,1男，2女',
   `height` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '身高cm',
   `weight` float(5, 2) UNSIGNED NULL DEFAULT 0.00 COMMENT '体重kg',
@@ -4917,27 +5546,146 @@ CREATE TABLE `users`  (
   `country` smallint(1) UNSIGNED NULL DEFAULT 0 COMMENT '国家id',
   `province` smallint(1) UNSIGNED NULL DEFAULT NULL COMMENT '省份id',
   `city` smallint(1) UNSIGNED NULL DEFAULT NULL COMMENT '城市id',
-  `singleid` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '单点登录token id',
+  `singleid` int(1) NULL DEFAULT 0 COMMENT '单点登录token id',
   `lang` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户手动选择的语言',
   `currency` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户手动选择的币种',
   `timezone` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户时区',
   `platform` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '用户注册平台,0未知,1安卓,2苹果,3web',
-  `md5` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户设备和ip变更验证',
+  `md5` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户设备和ip变更验证',
   `private` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '是否是私密账号',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `account`(`account`) USING BTREE,
   INDEX `mail`(`mail`) USING BTREE,
   INDEX `phone`(`phone`) USING BTREE,
   INDEX `status`(`status`) USING BTREE,
-  INDEX `private`(`private`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
+  INDEX `private`(`private`) USING BTREE,
+  INDEX `invite`(`invite`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 122 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (1, 2, '8A8S2DZX', '2', '', '784471540@qq.com', '', 1, 0, '$2a$10$UcItn.1jpIHlTiNxWMWcYe05Jj5InI.kYFo4o9JOzERvIUGpJTyhu', '顶顶顶', 'meet/static/user/avatars/16566539378A8S2DZX.png', '', '', 0, 1656653800, 1, 1, 0, 0.00, 721929600, 29, '', 0, 0, 0, 0, '9,10,13', 2015724498, 2, 0, 344, 1, '', NULL, 'Asia/Shanghai', 0, NULL, 1);
-INSERT INTO `users` VALUES (2, 0, 'SAS2DZX9', '', '', '1603601628@qq.com', '', 0, 0, '$2a$10$x56aQjxqDap4NemywfxEne3E3Ee6I6CZu7LeAyOUCHhacCWSdCB.6', '1603601628', 'meet/user/avatars/1656987216SAS2DZX9.png', '', '', 0, 1656655064, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2130706433, 0, 0, 0, 21, '', NULL, '', 0, '84aa369f1e1f7b9795e54c59b9b7d9f5', 1);
-INSERT INTO `users` VALUES (3, 0, 'rwersdf', NULL, NULL, 'sdfdsf@cc.com', NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, 1, 0, 0, 0.00, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, NULL, NULL, NULL, 0, NULL, 1);
+INSERT INTO `users` VALUES (1, 0, '8A8S2DZX', '', '', '784471540@qq.com', '86177', 1, 0, '$2a$10$UcItn.1jpIHlTiNxWMWcYe05Jj5InI.kYFo4o9JOzERvIUGpJTyhu', '欧密', 'meet/static/user/avatars/16572502558A8S2DZX.png', '', 'come on1', 16, 1656653800, 1, 1, 180, 65.00, 721929600, 29, '', 0, 3, 3, 0, '9,10,13', 2015724498, 2, 0, 344, 61, '', NULL, 'Asia/Shanghai', 0, '93f8aaa9d71518f36764988eca533442', NULL);
+INSERT INTO `users` VALUES (2, 0, 'SAS2DZX9', '', '', '123456789@qq.com', '', 1, 0, '$2a$10$ExrkHw1Xvy76cw9DPzeH0uiEhQ1w6dgZB/AboLTLMWRyt/QmNbzNe', '卡哇伊', 'meet/static/user/avatars/1658813477SAS2DZX9.png', '', '', 22, 1656660574, 1, 2, 0, 0.00, 1308412800, 11, '', 0, 1, 3, 0, '29,21,25', 2015387098, 1, 0, 112, 100, '', NULL, 'Asia/Shanghai', 0, 'c36cbcf0910804bfe5160ed0e4d0d7a2', NULL);
+INSERT INTO `users` VALUES (3, 0, '2A2DZX9W', '', '', '446232346@qq.com', '', 1, 0, '$2a$10$W6gE5K7YsOYGbCUEj92nAeAIzJiGZ.wdzbIG.R5WtnzDeFTNyY.Q6', '446232346', '', '', '', 16, 1656660578, 1, 1, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 1964934832, 1, 0, 0, 26, '', NULL, 'Asia/Shanghai', 0, NULL, NULL);
+INSERT INTO `users` VALUES (4, 0, 'DADZX9WY', '', '', '3220025885@qq.com', '', 1, 0, '$2a$10$GGaigZR8Y/CrgMr7T9AMsuHySuDFJeLKN5ZZMgjLURhpMh3Rgr.xW', '3220025885', 'meet/static/user/avatars/1658998273DADZX9WY.png', '', '', 20, 1656660810, 1, 0, 0, 0.00, 906307200, 23, '', 0, 0, 6, 0, '', 1964934832, 1, 0, 0, 40, '', NULL, 'Asia/Shanghai', 0, '55fbb724a71d11284ef750499afc240d', NULL);
+INSERT INTO `users` VALUES (5, 0, 'ZAZX9WYL', '', '', '1603601629@qq.com', '', 0, 0, '$2a$10$/qrejFN2SOi0QcDPNfilyeeV433vhG6sktff2s6g0gWDT29DyFAyO', 'omg', 'meet/user/avatars/1656988380ZAZX9WYL.png', '', '', 14, 1656669644, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 1850778140, 1, 1, 0, 20, '', NULL, 'Asia/Shanghai', 0, '77a5ec81aa3adb9ce188c98c8b56a304', NULL);
+INSERT INTO `users` VALUES (6, 0, 'XAX9WYLT', '', '', '286907248@qq.com', '244123456789', 1, 0, '$2a$10$AYgbcW6k4DYgvxWXE1wdU.85.NHUJdNLCMCsKXGftZLpfrceml8Sq', '286907248', 'meet/static/user/avatars/1657695776XAX9WYLT.png', '', 'Hello！', 16, 1656751826, 1, 1, 175, 45.00, 721929600, 29, 'engineer', 5, 1, 12, 4, '4,12,3', 2102209880, 132, 0, 2150, 36, '', NULL, 'Asia/Shanghai', 0, '2cf5b3ac8d7c91f04ec8b1a2150bcc85', NULL);
+INSERT INTO `users` VALUES (7, 0, '9A9WYLTN', '', '', '177@qq.com', '', 1, 0, '$2a$10$YeIKZGt40hB4Csmmo7fLKe9ZMsyoejXp9NEKb0qIxAVyrfm7HX4c.', '啦啦啦', 'meet/static/user/avatars/16568304109A9WYLTN.png', '', '', 12, 1656830359, 1, 1, 0, 0.00, 721929600, 29, '', 0, 0, 0, 0, '4,7', 3086849395, 1, 0, 332, 12, '', NULL, 'Asia/Shanghai', 0, '601f962b5611a398e9e30dc90d41d758', NULL);
+INSERT INTO `users` VALUES (8, 0, 'WAWYLTN6', '', '', '1603601628@qq.com', '', 0, 0, '$2a$10$Kk3fh25tHIow8197ZJuiuuXJ4Dh6mMBKNcEuUUJ.5sEi9TTGvRB2i', 'Judy', 'meet/static/user/avatars/1657546528WAWYLTN6.png', '', 'rtyrtyghfzz', 8, 1656990680, 1, 2, 178, 52.00, 690372000, 30, '', 0, 0, 0, 0, '', 641079704, 132, 0, 1993, 13, '', NULL, 'America/Adak', 0, '4c8012aedb2f1e8f83bf0b2add7e987d', NULL);
+INSERT INTO `users` VALUES (9, 0, 'YAYLTN6B', '', '', '1536874884@qq.com', '', 1, 0, '$2a$10$9Cik30zYjEPe5VNbQRCWjez.l1wnln0amScvj1G7xFaNc1/4WQIxa', '1536874884', '', '', '', 0, 1657015886, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 1964935156, 1, 0, 0, 4, '', NULL, 'Asia/Shanghai', 0, NULL, NULL);
+INSERT INTO `users` VALUES (10, 0, 'LALTN6BQ', '', '', '178@qq.com', '', 1, 0, '$2a$10$DbIlgYFDgF0DhYZvf8kZKOJ5NRll7QOYJZiwk7/ODLKu5JXm3NMNC', '啊啊啊', 'meet/static/user/avatars/1657250893LALTN6BQ.png', '', '', 16, 1657250870, 1, 1, 0, 0.00, 721929600, 29, '', 0, 0, 11, 0, '5,13', 2015724498, 1, 0, 287, 1, '', NULL, 'Asia/Shanghai', 0, 'b6aaccc221df3048bd7032c8d74f29e4', NULL);
+INSERT INTO `users` VALUES (11, 0, 'TATN6BQF', '', '', '1601601628@qq.com', '', 1, 0, '', '1601601628', '', '', '', 2, 1657251012, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 641079704, 132, 0, 0, 1, '', NULL, 'America/Adak', 0, '', NULL);
+INSERT INTO `users` VALUES (12, 0, 'NAN6BQF7', '', '', 'sharalyndabalos22@gmail.com', '', 1, 0, '$2a$10$JWjnCk8ZM8p0dsIuTyWBw.SkPslt1iKBAxIgXdmiWJAeirAZJ0c56', 'Aniana ', 'meet/static/user/avatars/1657443678NAN6BQF7.png', '', 'Hello', 10, 1657443020, 1, 2, 152, 51.00, 720979200, 29, 'Teacher ', 3, 1, 4, 4, '34,27,32', 3032738717, 63, 0, 1088, 1, '', NULL, 'Asia/Manila', 0, '7181690096227d55690f0f104e046cb4', 0);
+INSERT INTO `users` VALUES (13, 0, '6A6BQF7C', '', '', 'joannaestrada4@icloud.com', '', 1, 0, '$2a$10$2Lgb52EwKD9Aru2IYC3mzemyWO2bxV1nlBqezt/.28XM9LNaYS03O', 'Kath', 'meet/static/user/avatars/16574481486A6BQF7C.png', '', '', 2, 1657443693, 1, 2, 0, 0.00, 870624000, 24, '', 0, 0, 0, 0, '32,30,33', 2015186800, 63, 0, 1087, 1, '', NULL, 'Asia/Manila', 0, 'd1d40ec41a5be95864d39213ce2c0d2e', 0);
+INSERT INTO `users` VALUES (14, 0, 'BABQF7CP', '', '', 'caraaure66@gmail.com', '', 1, 0, '$2a$10$T07QMJ9t0uGe4TmqEWnmE.ogVQnIzTpR7fHdannbPYpNx3.cG4Ola', 'Cara', 'meet/static/user/avatars/1657445156BABQF7CP.png', '', '', 10, 1657445082, 1, 2, 0, 0.00, 942508800, 22, '', 0, 0, 0, 0, '20,23,31', 1849074437, 48, 0, 876, 1, '', NULL, 'Asia/Manila', 0, '747e5d6878e89a6b579fbaebe8bcc4c0', 0);
+INSERT INTO `users` VALUES (15, 0, 'QAQF7CP5', '', '', 'jendilynjocosol@gmail.com', '', 1, 0, '$2a$10$.KMQtrgZn.ukPksxN/b8BukdXmb1qHkQLE2zv5u/HdSyi9dqNmrJa', 'jenny', 'meet/static/user/avatars/1657445364QAQF7CP5.png', '', '', 8, 1657445250, 1, 2, 0, 0.00, 705427200, 30, '', 0, 0, 0, 0, '24,25,31', 831981648, 1, 0, 253, 1, '', NULL, 'Asia/Manila', 0, '60b1e6926e33bd17236a3273049c63f1', 0);
+INSERT INTO `users` VALUES (16, 0, 'FAF7CP5I', '', '', 'ariatecharievel@gmail.com', '', 1, 0, '$2a$10$ivpg.GPqBe2IfjOs6sfFQ./Hu.OgsF8ssO7PiMBZnQLbBk8.IC2Um', 'Jenny', 'meet/static/user/avatars/1657445695FAF7CP5I.png', '', '', 14, 1657445284, 1, 2, 0, 0.00, 721929600, 29, '', 0, 0, 0, 0, '31,26,20', 2292067316, 18, 0, 569, 1, '', NULL, 'Asia/Manila', 0, '9c6014160fb65e5372cee616e9d3cadc', 0);
+INSERT INTO `users` VALUES (17, 0, '7A7CP5IK', '', '', 'srisaisin145@gmail.com', '', 1, 0, '$2a$10$qH4/RT5T5uZuU88l7YoqKOQAwCdfd2tqBMJCFONiMt74giBYcv9Ea', 'Jenny', 'meet/static/user/avatars/16574454317A7CP5IK.png', '', '', 32, 1657445368, 1, 2, 0, 0.00, 682358400, 30, '', 0, 0, 0, 0, '18', 2015194148, 49, 0, 894, 1, '', NULL, 'Asia/Manila', 0, 'f2e9fe66959f30244d55b8dbaba9755a', 0);
+INSERT INTO `users` VALUES (18, 0, 'CACP5IK3', '', '', 'peach091811@gmail.com', '', 1, 0, '$2a$10$QDQoHs/6XH3bqzXpq9FbDOW7K0jYwTnzZr4/e0dkRz36EtfsrXrq6', 'Peach', 'meet/static/user/avatars/1657445717CACP5IK3.png', '', '', 18, 1657445568, 1, 2, 0, 0.00, 721929600, 29, '', 0, 0, 0, 0, '18,21,26', 2212643616, 63, 0, 1087, 3, '', NULL, 'Asia/Manila', 0, 'd8125d6418685a9e3e2aa6e25abc2dfd', 0);
+INSERT INTO `users` VALUES (19, 0, 'PAP5IK3M', '', '', 'jovelynpascuasevilleja@gmail.com', '', 1, 0, '$2a$10$CvxZg3ExWuhG1dfkwA/waeHqBKOM4Z1mzzEHi5B0psRUQfuHnwDou', 'Jenny', 'meet/static/user/avatars/1657445883PAP5IK3M.png', '', '', 16, 1657445816, 1, 2, 0, 0.00, 690307200, 30, '', 0, 0, 0, 0, '18,24,34', 2947548010, 181, 0, 2766, 1, '', NULL, 'Asia/Manila', 0, '43adf975bbf5e9ad1f9db429d0a29856', 0);
+INSERT INTO `users` VALUES (20, 0, '5A5IK3MJ', '', '', 'lv205580@gmail.com', '', 1, 0, '$2a$10$/3P9IlC7hi72UUNdZHJoiunm3NqBvvXIuVyYhgtaYXVLMMbojFMF2', 'Jenny', 'meet/static/user/avatars/16574463185A5IK3MJ.png', '', '', 14, 1657446253, 1, 2, 0, 0.00, 466790400, 37, '', 0, 0, 0, 0, '33,26,31', 2046977637, 49, 0, 894, 1, '', NULL, 'Asia/Manila', 0, 'c6a5e688f246e9a1917dcd31e86abf07', 0);
+INSERT INTO `users` VALUES (21, 0, 'IAIK3MJU', '', '', 'paliguanmoko@gmail.com', '', 1, 0, '$2a$10$iv/Tv4YPAZbvpi9JaqG4Uev0sQqPwrGmLnehOjaOsCzjr6962hT4y', 'Chin-Ai', 'meet/static/user/avatars/1657447041IAIK3MJU.png', '', '', 32, 1657446853, 1, 2, 162, 48.00, 811958400, 26, '', 0, 1, 6, 0, '26,29,33', 19224794, 164, 0, 2649, 1, '', NULL, 'Asia/Manila', 0, 'f40c724cd0da65e47f5cdceeb23ee038', 0);
+INSERT INTO `users` VALUES (22, 0, 'KAK3MJUR', '', '', 'q.grgs16@gmail.com', '', 1, 0, '$2a$10$Hzv4Zjym4ZW6sRt9FbLWW.Y7LZ7ArCQXN2QKMSUFOeDYv8qnWT8Uu', 'sweeterthanhim', 'meet/static/user/avatars/1657449819KAK3MJUR.png', '', '', 18, 1657449430, 1, 1, 0, 0.00, 782236800, 27, '', 0, 0, 0, 0, '13,14,7', 1849070799, 12, 0, 481, 1, '', NULL, 'Asia/Manila', 0, '0580a9a196e9693337e78cda92f15825', 0);
+INSERT INTO `users` VALUES (23, 0, '3A3MJUR4', '', '', 'shecurt7@gmail.com', '', 1, 0, '$2a$10$7pye8B3r.9wVd0WF9oZGt.XXGwunikc8wLW/kHTn7Z.EA7IhenKNC', 'Curt', 'meet/static/user/avatars/16574502233A3MJUR4.png', '', '', 20, 1657450152, 1, 1, 0, 0.00, 721929600, 29, '', 0, 0, 0, 0, '1,6,10', 2212643616, 63, 0, 1087, 1, '', NULL, 'Asia/Manila', 0, 'c78e266aff8aa7ec1ffb981bebe4cd71', 0);
+INSERT INTO `users` VALUES (24, 0, 'MAMJUR4H', '', '', '784117424@qq.com', '', 1, 0, '$2a$10$Npw/Pg6/C4zw/WxyjemkPu2tF5Czxld/k8/d391m.mesgG.bEYf6u', 'Candy', 'meet/static/user/avatars/1658913711MAMJUR4H.png', '', 'Every encounter is a fate', 10, 1657461821, 1, 2, 170, 49.00, 809452800, 26, '', 0, 1, 3, 0, '34,23,18,25', 2015687756, 49, 0, 925, 17, '', NULL, 'Asia/Shanghai', 0, 'f0e03f36d39bf325e4e491f3d0905e8f', 0);
+INSERT INTO `users` VALUES (25, 0, 'JAJUR4HV', '', '', '1033956752@qq.com', '', 1, 0, '$2a$10$Ieul7XM4cQtHyEVSZ8hJZe6SGFsqtplKkqUyw4ctdVO1TzUit0I5e', 'James', 'meet/static/user/avatars/1657503009JAJUR4HV.png', '', '', 18, 1657502868, 1, 2, 0, 0.00, 721929600, 29, '', 0, 0, 0, 0, '27', 3748146610, 1, 0, 253, 1, '', NULL, 'Asia/Shanghai', 0, 'ba0b5a863210c10ca8fc6b52a47b8c32', 0);
+INSERT INTO `users` VALUES (26, 0, 'UAUR4HVE', '', '', '1028@qq.com', '', 1, 0, '$2a$10$tLC9oY19qhy2N18FV0uNt.wJUmH/GU04oaL2eblvHg97S2GtUpOtO', '1028', '', '', '', 0, 1657589557, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2015724498, 1, 0, 115, 1, '', NULL, 'Asia/Shanghai', 0, 'c955f060a4d57ad23c6af74474fdbb02', 0);
+INSERT INTO `users` VALUES (27, 0, 'RAR4HVE8', '', '', '110@qq.com', '', 1, 0, '$2a$10$8Xjn4BwI7wB2ci.I9xD7JOI4Y2ABrsh81E3sokNGJF7Rgq/qZHQ7a', '110', '', '', '', 2, 1657589739, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2015724498, 1, 0, 115, 2, '', NULL, 'Asia/Shanghai', 0, 'c955f060a4d57ad23c6af74474fdbb02', 0);
+INSERT INTO `users` VALUES (28, 0, '4A4HVE8S', '', '', '1029@qq.com', '', 1, 0, '$2a$10$SR9av./c.1H0tOYpStr/6uSh5A1BEc/kd/9Xtlp3BQ3tg8PRmYfC.', '1029', '', '', '', 4, 1657591012, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 641079704, 132, 0, 0, 5, '', NULL, 'America/Adak', 0, '', 0);
+INSERT INTO `users` VALUES (29, 0, 'HAHVE8S2', '', '', 'juanbergeline23.bj@gmail.com', '', 1, 0, '$2a$10$osi7xY2gNDgEO3CFQK6VYeYw64l.dH1ixN7kUZdVsbppwGU9E/Fg6', 'juanbergeline23.bj', '', '', '', 0, 1658126716, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 832032790, 63, 0, 0, 6, '', NULL, 'Asia/Manila', 0, '234bb4c49b40d9a75c3550930902cc19', 0);
+INSERT INTO `users` VALUES (30, 0, 'VAVE8S2D', '', '', '3512424961@qq.com', '', 1, 0, '$2a$10$YMo7jXPBLTCyD/kl8fXQM.qWekpyeWdxDnL4KmOhiTIkswDnAXsz2', 'Fie', 'meet/static/user/avatars/1658911687VAVE8S2D.png', '', 'My limited edition is happy.', 34, 1658130762, 1, 1, 164, 73.00, 806774400, 27, '', 0, 1, 7, 0, '5,9,2', 3523449705, 8, 0, 445, 5, '', NULL, '', 0, '24d2c7a9c9bec5a8684f6099333e8e65', 0);
+INSERT INTO `users` VALUES (31, 0, 'E8AE8S2D', '', '', '123456@qq.com', '930111865935', 1, 0, '$2a$10$WaCCsTKfNpsvjvKuZLl7XeMisuUQbfhJitpXj4OQGd0o8p7B7l6Qu', 'Jack', 'meet/static/user/avatars/1658390115E8AE8S2D.png', '', 'I am a cheerful person.', 36, 1658389931, 1, 1, 180, 75.00, 721929600, 29, 'teacher', 5, 1, 3, 3, '11,13,15', 2102209890, 219, 0, 3347, 21, '', NULL, 'Asia/Shanghai', 0, '2cf5b3ac8d7c91f04ec8b1a2150bcc85', 0);
+INSERT INTO `users` VALUES (32, 0, '88A8S2DZ', '', '', '152@qq.com', '', 1, 0, '$2a$10$ktoLsnV8dLUT6DN95neJD.LkUjarDbR4grfCePG9r9AtUu/PsXDRa', '152', '', '', '', 0, 1658391261, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 312959215, 0, 0, 0, 1, '', NULL, '', 0, '601f962b5611a398e9e30dc90d41d758', 0);
+INSERT INTO `users` VALUES (33, 0, 'S8AS2DZX', '', '', '520520@qq.com', '', 1, 0, '$2a$10$uhWyPSStuzf5pZ3G//SPWeJxukJjY01i5WxjBNBOgFs5JNA5CO4yG', '520520', '', '', '', 0, 1658393884, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 312959215, 0, 0, 0, 1, '', NULL, '', 0, '601f962b5611a398e9e30dc90d41d758', 0);
+INSERT INTO `users` VALUES (34, 0, '28A2DZX9', '', '', '1520@qq.com', '', 1, 0, '$2a$10$H7TQ4Q1CSzpk2KtvNoSu.eQyKhu2JPCT8eI96h3XZcgSDmu9zYJ6a', '1520', '', '', '', 0, 1658393997, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 312959215, 0, 0, 0, 1, '', NULL, '', 0, '601f962b5611a398e9e30dc90d41d758', 0);
+INSERT INTO `users` VALUES (35, 0, 'D8ADZX9W', '', '', '123123@qq.com', '', 1, 0, '$2a$10$xm5nWkFAjeRMptEg52.Of.pQoqwQs4KqE2PPqs0nITnWHjB6c/kfe', '123123', '', '', '', 0, 1658394310, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 312959215, 0, 0, 0, 1, '', NULL, '', 0, '601f962b5611a398e9e30dc90d41d758', 0);
+INSERT INTO `users` VALUES (36, 0, 'Z8AZX9WY', '', '', '111@qq.com', '', 1, 0, '$2a$10$UE6N2PMZajYVZU6YNKOUue5J5Sdxj.KadkxMpzchyj5x1FjTqsJ7O', 'JJ', 'meet/static/user/avatars/1658568020Z8AZX9WY.png', '', '', 18, 1658394546, 1, 2, 0, 0.00, 721994400, 29, '', 0, 0, 0, 0, '3,6,7', 312959215, 1, 0, 253, 4, '', NULL, '', 0, '60fd4fbb18cb253269b039d14e90e4df', 0);
+INSERT INTO `users` VALUES (37, 0, 'X8AX9WYL', '', '', '235689@qq.com', '355123456789', 1, 0, '$2a$10$DvOBN/xpv6eGgjgM2NgAhOo1r8l399B43EtpnsHliRwLd0YqoX2q6', 'Lucky', 'meet/static/user/avatars/1658754475X8AX9WYL.png', '', 'I am a lucky girl.', 2, 1658752409, 1, 2, 168, 50.00, 808675200, 26, 'Nures', 4, 2, 11, 0, '29,25,32', 2102209787, 132, 0, 2128, 4, '', NULL, 'Asia/Shanghai', 0, '2cf5b3ac8d7c91f04ec8b1a2150bcc85', 0);
+INSERT INTO `users` VALUES (38, 0, '98A9WYLT', '', '', 'alicesanchez387@yahoo.com', '', 1, 0, '$2a$10$UdTJnvvO2.tD.ilig/vZkeJPMzjszFyBWp1btp69gSH82bA6jMFIq', 'ancerry', 'meet/static/user/avatars/165900180498A9WYLT.png', '', '', 0, 1658998446, 1, 2, 0, 0.00, 703785600, 30, '', 0, 0, 0, 0, '23,30,31', 2292064802, 18, 0, 567, 1, '', NULL, 'Asia/Manila', 0, '841811ac9de252f6b73011fe998ea87d', 0);
+INSERT INTO `users` VALUES (39, 0, 'W8AWYLTN', '', '', 'rochellemagallanes2@gmail.com', '', 1, 0, '$2a$10$ngXD/Clxs6nWFM3vmtO6/eP9ye4mb7L.xPrD0XHlouZLVbNNQ2L0.', 'Jastiny', 'meet/static/user/avatars/1658998694W8AWYLTN.png', '', '', 0, 1658998494, 1, 2, 152, 0.00, 821808000, 26, '', 0, 1, 5, 0, '21,29,34', 3032383298, 18, 0, 571, 1, '', NULL, 'Asia/Manila', 0, '984701ed1ad930d4a384cf2cb71ca13c', 0);
+INSERT INTO `users` VALUES (40, 0, 'Y8AYLTN6', '', '', 'mercynave7@gmail.com', '', 1, 0, '$2a$10$ChRWipaK9fG7UCzJ7tl7iuxybrc3H/os0i1IOp1z5DKAFZhZbgJxa', 'mercynave7', '', '', '', 0, 1658998548, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 1849071470, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '49ed35f17361bdbb550244625fd0b12f', 0);
+INSERT INTO `users` VALUES (41, 0, 'L8ALTN6B', '', '', 'moisesglaiza1201@yahoo.com', '', 1, 0, '$2a$10$Yhpd4XinEShZiFYAbsnC7ODJSPXlD.ItvhitofEpZnCcjeRtkupNW', 'Miray', 'meet/static/user/avatars/1658999674L8ALTN6B.png', '', '', 0, 1658998674, 1, 2, 0, 0.00, 793728000, 27, '', 0, 0, 0, 0, '18,20,22', 2292073083, 132, 0, 2256, 1, '', NULL, 'Asia/Manila', 0, '0461c18fa079921a8b7efee714d83193', 0);
+INSERT INTO `users` VALUES (42, 0, 'T8ATN6BQ', '', '', 'clara.huset@gmail.com', '', 1, 0, '$2a$10$uvwFO6UmSWK9X9qSHNMMsOz2.DKh0jsVliDPALFqawC0smzkKkjk.', 'Minjee', 'meet/static/user/avatars/1658998940T8ATN6BQ.png', '', '', 2, 1658998791, 1, 2, 0, 0.00, 1005926400, 20, '', 0, 0, 0, 0, '30,18,20', 3054685772, 82, 0, 1260, 1, '', NULL, 'Asia/Manila', 0, 'af0c10ae97211f3185a1e75be0d04f46', 0);
+INSERT INTO `users` VALUES (43, 0, 'N8AN6BQF', '', '', 'amaliamancao1@gmail.com', '', 1, 0, '$2a$10$F2cpOgoH2h0nao2XP7fxaOBJi.HlEVIPygEuAc7/orkzIoeSfmgHC', 'joyce1990', 'meet/static/user/avatars/1658999527N8AN6BQF.png', '', '', 0, 1658999341, 1, 2, 0, 0.00, 648403200, 32, '', 0, 0, 0, 0, '32,20,30', 3032465285, 132, 0, 2025, 1, '', NULL, 'Asia/Manila', 0, 'f9e210d8197053635870d49ae01ac780', 0);
+INSERT INTO `users` VALUES (44, 0, '68A6BQF7', '', '', 'novamaeacosta81@gmail.com', '', 1, 0, '$2a$10$I50MYHLbbTzz5MhR2HechOG3bl7sM5.c60CuuCgskNLTD2ZOoG3h6', 'hanyu', 'meet/static/user/avatars/165899949068A6BQF7.png', '', '', 34, 1658999361, 1, 1, 0, 0.00, 658771200, 31, '', 0, 0, 0, 0, '4', 831589584, 224, 0, 3392, 1, '', NULL, 'Asia/Manila', 0, '16af0252d3813562d3271cb7ae2fb2ea', 0);
+INSERT INTO `users` VALUES (45, 0, 'B8ABQF7C', '', '', 'inofreprincess32@gmail.com', '', 1, 0, '$2a$10$7pcHGxpDWJMLIP1kdo.DpeDzcK7mU8UgvL7Efyrljy0kDSlRE8hQu', 'princess', 'meet/static/user/avatars/1658999903B8ABQF7C.png', '', '', 0, 1658999764, 1, 2, 0, 0.00, 1013097600, 20, '', 0, 0, 0, 0, '28,18', 831570624, 49, 0, 894, 1, '', NULL, 'Asia/Manila', 0, '6b2e5c7ff74443ac5a59bb795ff73ded', 0);
+INSERT INTO `users` VALUES (46, 0, 'Q8AQF7CP', '', '', 'jakecorpuz225@gmail.com', '', 1, 0, '$2a$10$bfWyEAA7Hmt9WwsGQm5tbuHEefHDVE..dH4MOAnYLOXSeDNLuVuhO', 'Shaye', 'meet/static/user/avatars/1658999874Q8AQF7CP.png', '', '', 2, 1658999768, 1, 2, 153, 50.00, 772214400, 28, '', 0, 1, 0, 0, '31,33,17', 831819735, 18, 0, 548, 1, '', NULL, 'Asia/Manila', 0, '9fcd16ee54be6fd03bcaa9d535a1fa1a', 0);
+INSERT INTO `users` VALUES (47, 0, 'F8AF7CP5', '', '', 'dclenyrose@gmail.com', '', 1, 0, '$2a$10$M/m1ORtTz4pL7iuweFUzNu9/OyN8bYjHYbQWmqz6yAkF4H4JE7Cv.', 'Forest', 'meet/static/user/avatars/1658999915F8AF7CP5.png', '', '', 0, 1658999796, 1, 2, 150, 60.00, 762883200, 28, 'Cook', 0, 0, 0, 3, '34,29,18', 1892205094, 132, 0, 2269, 1, '', NULL, 'Asia/Manila', 0, 'e58d64c3484470929e90f2b1e0cfd6ba', 0);
+INSERT INTO `users` VALUES (48, 0, '78A7CP5I', '', '', 'acostamae21@gmail.com', '', 1, 0, '$2a$10$KIQWqmymuxviAM.BWzlPM.zDyZ1RrQmi0cnO/q.7NWill/VQcdymO', 'mae021322', 'meet/static/user/avatars/165900192578A7CP5I.png', '', '', 6, 1658999948, 1, 2, 0, 0.00, 847641600, 25, '', 0, 0, 0, 0, '6', 831589584, 132, 0, 2187, 2, '', NULL, 'Asia/Manila', 0, 'cb46cb8c6ea19df374c872c6d641c92d', 0);
+INSERT INTO `users` VALUES (49, 0, 'C8ACP5IK', '', '', 'ali0414.ra@gmail.com', '', 1, 0, '$2a$10$55pX93pjDBnlpgMcVLsmeeo/7AuA4qoXW9e3CTcaC/7QBcVsKzO8C', 'saxyGirl', 'meet/static/user/avatars/1659000205C8ACP5IK.png', '', '', 0, 1659000076, 1, 2, 0, 0.00, 848160000, 25, '', 0, 0, 0, 0, '34,29,32', 831702428, 132, 0, 2239, 1, '', NULL, 'Asia/Manila', 0, 'd94f3f633e9e0a2f67922728c7037f21', 0);
+INSERT INTO `users` VALUES (50, 0, 'P8AP5IK3', '', '', 'ali0414.ra@gmail.com', '', 1, 0, '$2a$10$CFkJt2ITnHzLhIg8z7v6F.7eiPkDt88atoHtj4UnVitmeM/2MzE7C', 'ali0414.ra', '', '', '', 0, 1659000076, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 831702428, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, 'd94f3f633e9e0a2f67922728c7037f21', 0);
+INSERT INTO `users` VALUES (51, 0, '58A5IK3M', '', '', 'qen9631@gmail.com', '', 1, 0, '$2a$10$.0Ze4PWRLOKJ1SKHDfSSAeSP36mKeZwdzFzJpTuUWxC0n8KU6m5ba', 'iamQueen', 'meet/static/user/avatars/165900052158A5IK3M.png', '', '', 0, 1659000380, 1, 2, 0, 0.00, 834422400, 26, '', 0, 0, 0, 0, '31,34,26', 1892048643, 227, 0, 3514, 1, '', NULL, 'Asia/Manila', 0, 'ef45c9200cf68586eeaf56b67d9bafdb', 0);
+INSERT INTO `users` VALUES (52, 0, 'I8AIK3MJ', '', '', 'krisangelquiambao@gmail.com', '', 1, 0, '$2a$10$FDmy/88wfwgv01VO8uyQ8u8oQWos7vZP3e05XiBmakNX8RJjMv3ii', 'Yhumie', 'meet/static/user/avatars/1659001728I8AIK3MJ.png', '', '', 0, 1659001092, 1, 2, 0, 0.00, 765302400, 28, '', 0, 0, 0, 0, '32,33,29', 2292058280, 29, 0, 648, 4, '', NULL, 'Asia/Manila', 0, '45e4284759df6b4a78e09f6199e0f128', 0);
+INSERT INTO `users` VALUES (53, 0, 'K8AK3MJU', '', '', 'grahezi0306@gmail.com', '', 1, 0, '$2a$10$yDtxVxda4163dj9XpKr2puUKtVjj0QXoLWWmAq/WGc0Z.qfEqP70q', 'Maia', 'meet/static/user/avatars/1659001438K8AK3MJU.png', '', '', 0, 1659001139, 1, 2, 162, 55.00, 636307200, 32, '', 0, 1, 11, 0, '20,23,29', 2947558182, 49, 0, 894, 1, '', NULL, 'Asia/Manila', 0, 'a86c76c89e3478df537cd5e83fbfeb4f', 0);
+INSERT INTO `users` VALUES (54, 0, '38A3MJUR', '', '', 'maquilanshaina@gmail.com', '', 1, 0, '$2a$10$0DUtaaFgkBMJxLXS9/F67.lZYY2/7Frqiib32Q6iuXzxtreXHOU1u', 'yna', 'meet/static/user/avatars/165900172438A3MJUR.png', '', '', 0, 1659001295, 1, 2, 0, 0.00, 1082736000, 18, '', 0, 0, 0, 0, '29,33,19', 1849069373, 57, 0, 1075, 1, '', NULL, 'Asia/Manila', 0, 'e2ddfd7e80916a077b6bf1d5d005b9fd', 0);
+INSERT INTO `users` VALUES (55, 0, 'M8AMJUR4', '', '', 'ladyinblack414@gmail.com', '', 1, 0, '$2a$10$DZD2wD7EaFK0SYa3n3l2YuD8x6C8hD18p9khKoW30RrBXBgcxRKAe', 'prettylady', 'meet/static/user/avatars/1659002122M8AMJUR4.png', '', '', 0, 1659001384, 1, 2, 0, 0.00, 814550400, 26, '', 0, 0, 0, 0, '29,34,26', 2292064716, 49, 0, 894, 1, '', NULL, 'Asia/Manila', 0, 'a75853049c07d6025c9acea1f6c30dd0', 0);
+INSERT INTO `users` VALUES (56, 0, 'J8AJUR4H', '', '', 'casoivy18@gmail.com', '', 1, 0, '$2a$10$x1B1Az3opeSnKL8rqp5nNei7J5e0MPUD8x7j/rzKPRtuDsCHHojS.', 'hnn', 'meet/static/user/avatars/1659001806J8AJUR4H.png', '', '\n...', 2, 1659001474, 1, 2, 0, 0.00, 835200000, 26, '', 0, 0, 0, 0, '30,18,23', 831613811, 19, 0, 585, 1, '', NULL, 'Asia/Manila', 0, 'a9ea0a84ed617298b7c42dcd9386c866', 0);
+INSERT INTO `users` VALUES (57, 0, 'U8AUR4HV', '', '', 'casoivy18@gmail.com', '', 1, 0, '$2a$10$D6fpEIt850/vOwG9U9zF5u.vZmOzSzQ7rJ9dYN58wwEwCIT9e0xP.', 'casoivy18', '', '', '', 0, 1659001474, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 831613811, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, 'a9ea0a84ed617298b7c42dcd9386c866', 0);
+INSERT INTO `users` VALUES (58, 0, 'R8AR4HVE', '', '', 'annaa.cruz1999@gmail.com', '', 1, 0, '$2a$10$oY2uGlmLSyaCQ.GEsXVb.Ow8aNXpGrwnvHc6pZx4o6T.DPbwiYNzW', 'Denise', 'meet/static/user/avatars/1659003868R8AR4HVE.png', '', '', 0, 1659001480, 1, 2, 156, 55.00, 945964800, 22, '', 0, 1, 9, 0, '23,30,18', 1734053192, 57, 0, 1072, 1, '', NULL, 'Asia/Manila', 0, '33d27c531a2485d547e069834ec73098', 0);
+INSERT INTO `users` VALUES (59, 0, '48A4HVE8', '', '', 'marieangeles75@yahoo.com', '', 1, 0, '$2a$10$Cgk82jAO4cWlOGRLYbvCpuM2TQTfk9vRmnuzvafEHFptJw3LvLTXe', 'ancerry', 'meet/static/user/avatars/165900212848A4HVE8.png', '', '', 0, 1659002032, 1, 2, 0, 0.00, 703785600, 30, '', 0, 0, 0, 0, '25,31,32', 2292064802, 18, 0, 567, 1, '', NULL, 'Asia/Manila', 0, '841811ac9de252f6b73011fe998ea87d', 0);
+INSERT INTO `users` VALUES (60, 0, 'H8AHVE8S', '', '', 'bunnyjobee01@gmail.com', '', 1, 0, '$2a$10$XS8iN26UhknTKgWl4U29Sun7mdFKrSaTe1m5dAUtGU18HmE0h1mbC', 'Jill', 'meet/static/user/avatars/1659002293H8AHVE8S.png', '', '', 0, 1659002103, 1, 2, 0, 0.00, 800726400, 27, '', 0, 0, 0, 0, '31,33,34', 2015184115, 57, 0, 1066, 1, '', NULL, 'Asia/Manila', 0, '9c4f4b6cff02b896bb56e112d8aa7d2e', 0);
+INSERT INTO `users` VALUES (61, 0, 'V8AVE8S2', '', '', 'jezzikeila@gmail.com', '', 1, 0, '$2a$10$SiKmy5UTrmo0ZCIJYdbV0eCAN2jr.Fmn9t9u4Ncv3WJ7OE11vuMdq', 'keila', 'meet/static/user/avatars/1659002537V8AVE8S2.png', '', '', 0, 1659002438, 1, 2, 0, 0.00, 721929600, 29, '', 0, 0, 0, 0, '34,27,32', 1892667862, 57, 0, 1066, 1, '', NULL, 'Asia/Manila', 0, '2759ecf3d732c79a5a3997e3793e8c4d', 0);
+INSERT INTO `users` VALUES (62, 0, 'ESAE8S2D', '', '', 'hyunpark666@gmail.com', '', 1, 0, '$2a$10$spk347BgexSR1XXU8GtfoOc.VpmukCfuewfNZgCVEudBncYrmGz9a', 'angieee', 'meet/static/user/avatars/1659002902ESAE8S2D.png', '', '', 0, 1659002501, 1, 2, 0, 0.00, 1006531200, 20, '', 0, 0, 0, 0, '30,18,31', 2292067484, 57, 0, 1066, 1, '', NULL, 'Asia/Manila', 0, '2431dcaae9d18d17d46f4712f73634f5', 0);
+INSERT INTO `users` VALUES (63, 0, '8SA8S2DZ', '', '', 'juanbergeline5@gmail.com', '', 1, 0, '$2a$10$pXObLXu48YtiHSdqTBYwrutzaelx0MvWjwuQJBlLeuRG34ymv1WQe', 'berry', 'meet/static/user/avatars/16590065178SA8S2DZ.png', '', '', 16, 1659002683, 1, 1, 0, 0.00, 827510400, 26, '', 0, 0, 0, 0, '17,18,31', 2947548306, 57, 0, 1064, 1, '', NULL, 'Asia/Manila', 0, 'd6dd4a988cd912f65e9bc3795184e3c7', 0);
+INSERT INTO `users` VALUES (64, 0, 'SSAS2DZX', '', '', 'carolineaboulafia0420@gmail.com', '', 1, 0, '$2a$10$YJO55W.P/CUChoSeGndQtO3QdvP.2ZbxuThGTEFa/dz/tLA.grUYC', 'alice', 'meet/static/user/avatars/1659004275SSAS2DZX.png', '', '', 0, 1659002980, 1, 2, 160, 47.00, 640540800, 32, 'back office analysis', 0, 1, 1, 2, '20,18,32', 2947551432, 57, 0, 1066, 1, '', NULL, 'Asia/Manila', 0, '7faba1343b8adbb7748f1e1035f4288d', 0);
+INSERT INTO `users` VALUES (65, 0, '2SA2DZX9', '', '', 'gelbuelalea@gmail.com', '', 1, 0, '$2a$10$AaFlWAGRamK7tQDMUWrNKuBMFZpiJo/xoB8Zf17uleGtsaPnPlWWu', 'liane', 'meet/static/user/avatars/16590036162SA2DZX9.png', '', '', 0, 1659003144, 1, 2, 0, 0.00, 692380800, 30, '', 0, 0, 0, 0, '19,31,32', 1892565075, 57, 0, 1076, 1, '', NULL, 'Asia/Manila', 0, 'c9a5cbd65c267f5409a30ab52f6bd359', 0);
+INSERT INTO `users` VALUES (66, 0, 'DSADZX9W', '', '', 'madonalyn98@gmail.com', '', 1, 0, '$2a$10$wg/Em6K6jVQ/Ss81VjY/QOsNAYMxM/uQt0qLccW9qXheHdlv9fwGW', 'Dona', 'meet/static/user/avatars/1659003914DSADZX9W.png', '', '', 0, 1659003183, 1, 2, 0, 0.00, 957283200, 22, '', 0, 0, 0, 0, '26,20,19', 2046977637, 49, 0, 894, 1, '', NULL, 'Asia/Manila', 0, '9fb333db40b7fbb4971a7754bf5fe757', 0);
+INSERT INTO `users` VALUES (67, 0, 'ZSAZX9WY', '', '', 'q54857558@gmail.com', '', 1, 0, '$2a$10$/yY0mnh2Zvq.8uFm611l5OAqDBlcCfHTR4/b606DOvy6B5C3uHCzG', 'Sheen', 'meet/static/user/avatars/1659008666ZSAZX9WY.png', '', '', 0, 1659003341, 1, 2, 0, 0.00, 911750400, 23, '', 0, 0, 0, 0, '25,19,34', 3508775834, 132, 0, 2010, 1, '', NULL, 'Asia/Manila', 0, '87614f1aa0998ae5ccfb5aea6c2377b5', 0);
+INSERT INTO `users` VALUES (68, 0, 'XSAX9WYL', '', '', 'ajmgodoy@gmail.com', '', 1, 0, '$2a$10$6mm/O.lSCcWMOsh2wc34EuSkZfPsK6TgEB9Rw/z1HvE1SZjoQwIYK', 'Aj0606', 'meet/static/user/avatars/1659003764XSAX9WYL.png', '', '', 0, 1659003447, 1, 2, 156, 56.00, 618336000, 32, '', 0, 1, 5, 0, '26,24,19', 1849069375, 132, 0, 2182, 1, '', NULL, 'Asia/Manila', 0, 'b78c01c115c81d006296ae05bb0c7516', 0);
+INSERT INTO `users` VALUES (69, 0, '9SA9WYLT', '', '', 'naveapatriciaann@gmail.com', '', 1, 0, '$2a$10$YJPGSPFiucUfTpLN3dG7WOk6ftnaoFi5/sc6KmhdzVUI0DC2CDqKy', 'Peia', 'meet/static/user/avatars/16590042449SA9WYLT.png', '', '', 0, 1659004071, 1, 2, 0, 0.00, 936547200, 22, '', 0, 0, 0, 0, '25,31,30', 2292068381, 57, 0, 1066, 1, '', NULL, 'Asia/Manila', 0, '69f5c1bb006c084faad20fb38d1fdd93', 0);
+INSERT INTO `users` VALUES (70, 0, 'WSAWYLTN', '', '', 'queenzelbonifacio27@gmail.com', '', 1, 0, '$2a$10$70xrYJhUxR1TyUvXifOfOuLvVya/X3y.xoBcl9MbUW1dKbfGsJyFa', 'Joana', 'meet/static/user/avatars/1659004323WSAWYLTN.png', '', '', 0, 1659004195, 1, 2, 0, 0.00, 831744000, 26, '', 0, 0, 0, 0, '18,20,29', 2292067998, 49, 0, 892, 1, '', NULL, 'Asia/Manila', 0, '507cc74bd60eb59b45de5836d0ab786f', 0);
+INSERT INTO `users` VALUES (71, 0, 'YSAYLTN6', '', '', 'xyzchivizcnde@gmail.com', '', 1, 0, '$2a$10$7krXXGDv6R/Go17Pa1iFtuQzKI2VgjbJefSskrlDon9qm5re3VaKq', 'xyzchivizcnde', '', '', '', 0, 1659004212, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 1892164056, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '610d70ddffeb2fc59869032ea61ce546', 0);
+INSERT INTO `users` VALUES (72, 0, 'LSALTN6B', '', '', 'xyzchivizcnde@gmail.com', '', 1, 0, '$2a$10$rAju/XrMGEBQnz5B2Nynx.Rh/nVVEGuGv2H7r98dYNelIEldGHcGy', 'xyzchivizcnde', '', '', '', 0, 1659004212, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 1892164056, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '610d70ddffeb2fc59869032ea61ce546', 0);
+INSERT INTO `users` VALUES (73, 0, 'TSATN6BQ', '', '', 'xyzchivizcnde@gmail.com', '', 1, 0, '$2a$10$kDvy5ORQd7oi.yBGy8ntROMx4ILjvyveOmbhakI7O7C3exA/onEKO', 'xyzchivizcnde', '', '', '', 0, 1659004212, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 1892164056, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '610d70ddffeb2fc59869032ea61ce546', 0);
+INSERT INTO `users` VALUES (74, 0, 'NSAN6BQF', '', '', 'coleenlauraine@gmail.com', '', 1, 0, '$2a$10$tfHrPpTYMWWmR7s2Ua2AFOdx74JTbrhQqUBQOHSmyTlNprhmW9AXq', 'Alexa', 'meet/static/user/avatars/1659053667NSAN6BQF.png', '', 'Hi there dont be shy to chat me😉', 0, 1659004236, 1, 2, 0, 45.00, 807984000, 26, '', 0, 0, 0, 2, '25,19,32', 2292069228, 57, 0, 1066, 1, '', NULL, 'Asia/Manila', 0, '79f2081c65ca2e11436e01b6c16c57cb', 0);
+INSERT INTO `users` VALUES (75, 0, '6SA6BQF7', '', '', 'zameiiramos@gmail.com', '', 1, 0, '$2a$10$toEO8UWxHLpL.Zsc/ngDBeh3oNOxHwItTMbY4Q22AmA5250geEqZS', 'zameii', 'meet/static/user/avatars/16590046706SA6BQF7.png', '', '', 0, 1659004314, 1, 2, 0, 0.00, 674928000, 31, '', 0, 0, 0, 0, '29,28,25', 2402059561, 18, 0, 554, 1, '', NULL, 'Asia/Manila', 0, '98055fbda01244a0b6f832c207d98ba9', 0);
+INSERT INTO `users` VALUES (76, 0, 'BSABQF7C', '', '', 'eyesoberyin@gmail.com', '', 1, 0, '$2a$10$7Q0sTMCjT3cIRSUnE8ffC.mIbcU0.NIi8j5nVKrprSFPFgkU/qHcO', 'Shan', 'meet/static/user/avatars/1659005200BSABQF7C.png', '', '', 0, 1659004589, 1, 2, 0, 0.00, 1058544000, 19, '', 0, 0, 0, 0, '26,31,33', 1892164056, 19, 0, 584, 1, '', NULL, 'Asia/Manila', 0, '610d70ddffeb2fc59869032ea61ce546', 0);
+INSERT INTO `users` VALUES (77, 0, 'QSAQF7CP', '', '', 'irishlazaga5@gmail.com', '', 1, 0, '$2a$10$G9J2bMA5Lm3R1fN3C3iYQ.MerYXLY/iJ95Z4gq080Yg0obAnmrIOq', 'nicole', 'meet/static/user/avatars/1659004841QSAQF7CP.png', '', '', 0, 1659004642, 1, 2, 0, 0.00, 849715200, 25, '', 0, 0, 0, 0, '32,31,25', 3032401674, 49, 0, 890, 1, '', NULL, 'Asia/Manila', 0, '06ba247ab96e927d5f71d335120668a1', 0);
+INSERT INTO `users` VALUES (78, 0, 'FSAF7CP5', '', '', 'qreyes011@yahoo.com', '', 1, 0, '$2a$10$y6r3fl2Wduh2XtpqNpVpHOgzjHWl/lZ3o.gynBSn/7tIg1xa9fedW', 'Winnie', 'meet/static/user/avatars/1659005086FSAF7CP5.png', '', '', 0, 1659004753, 1, 2, 152, 70.00, 901468800, 24, '', 0, 1, 5, 0, '31,20,30', 2187975622, 132, 0, 2256, 1, '', NULL, 'Asia/Manila', 0, 'a44255908a90a1337121f0931120279d', 0);
+INSERT INTO `users` VALUES (79, 0, '7SA7CP5I', '', '', 'anfly4191@gmail.com', '', 1, 0, '$2a$10$eb6X7tcfkoM5PFSRCJu.cOaHaoF5ZXId4kQIl0yYZGscGGRbFOdCW', 'BeMine', 'meet/static/user/avatars/16590049677SA7CP5I.png', '', '', 0, 1659004830, 1, 2, 0, 0.00, 752083200, 28, '', 0, 0, 0, 0, '21,24,29', 2212643558, 132, 0, 2108, 1, '', NULL, 'Asia/Manila', 0, '995da1d32eb4aeb31bf4bd66375fe81d', 0);
+INSERT INTO `users` VALUES (80, 0, 'CSACP5IK', '', '', 'reginenacario13@gmail.com', '', 1, 0, '$2a$10$3h7UT4CPqXlJvhaVfojiguU5bveYheowrIf1nN1E9JU7F9vXcQdY.', 'RCLove', 'meet/static/user/avatars/1659005637CSACP5IK.png', '', '', 0, 1659005220, 1, 2, 0, 0.00, 880128000, 24, '', 0, 0, 0, 0, '20,23,19', 1892254215, 18, 0, 548, 1, '', NULL, 'Asia/Manila', 0, '02ec75cdecc16dfe6b3fdd400e3e4962', 0);
+INSERT INTO `users` VALUES (81, 0, 'PSAP5IK3', '', '', 'love321hateu@gmail.com', '', 1, 0, '$2a$10$CggjlzTTJ4hsKmRm5jMAgOUFbtIDnXRQ8ddnxnbx815k3eYrZgGxS', 'HeartMe', 'meet/static/user/avatars/1659005410PSAP5IK3.png', '', '', 0, 1659005325, 1, 2, 0, 0.00, 662659200, 31, '', 0, 0, 0, 0, '20,23,30', 2212643558, 57, 0, 1066, 1, '', NULL, 'Asia/Manila', 0, 'efea2909cd38111334cf6877750afc28', 0);
+INSERT INTO `users` VALUES (82, 0, '5SA5IK3M', '', '', 'kimberlypot1994@gmail.com', '', 1, 0, '$2a$10$5N.hOAVwSy8lBQXE3yie/O0.dp6jTFPbkcLyBoE80ni9nKdXLi.T6', '@khimmchi019', 'meet/static/user/avatars/16590055265SA5IK3M.png', '', '', 0, 1659005326, 1, 2, 0, 0.00, 771955200, 28, '', 0, 0, 0, 0, '28,17,26', 1892042179, 132, 0, 2225, 1, '', NULL, 'Asia/Manila', 0, 'bd0f461396dc8e6a487c18357fcdfffb', 0);
+INSERT INTO `users` VALUES (83, 0, 'ISAIK3MJ', '', '', 'hatakemitzi@gmail.com', '', 1, 0, '$2a$10$fK1mlgQGr2ybR5G2zOjJL.FS0.7rHvS2p91Y.XHfEjq22HO7ZsqxK', 'mizzy', 'meet/static/user/avatars/1659006517ISAIK3MJ.png', '', '', 0, 1659006120, 1, 2, 0, 0.00, 683654400, 30, '', 0, 0, 0, 0, '29,17,18', 2292082210, 57, 0, 1076, 1, '', NULL, 'Asia/Manila', 0, '8075438f9d96edb5e973c66b324ce3bf', 0);
+INSERT INTO `users` VALUES (84, 0, 'KSAK3MJU', '', '', 'cailey0215@gmail.com', '', 1, 0, '$2a$10$9V1AgKatr1mdHEYfWbRuM.99R7tRnfeQbyeiSyTDNZt89RmsmUFZy', 'Sheann', 'meet/static/user/avatars/1659006281KSAK3MJU.png', '', '', 0, 1659006169, 1, 2, 0, 0.00, 653328000, 31, '', 0, 0, 0, 0, '23,25,31', 1849069863, 18, 0, 548, 1, '', NULL, 'Asia/Manila', 0, '5214d7b5dc145dda850545f72035d120', 0);
+INSERT INTO `users` VALUES (85, 0, '3SA3MJUR', '', '', 'sedu2085@gmail.com', '', 1, 0, '$2a$10$mYEMbY6Mgau5cBxL4e3Ha.8LsBDPOc1bbTa2KD.ccR3MaoXtGSCC.', 'Macy', 'meet/static/user/avatars/16590068433SA3MJUR.png', '', '', 0, 1659006738, 1, 2, 0, 0.00, 708710400, 30, '', 0, 0, 0, 0, '26,23,19', 2015156271, 57, 0, 1066, 1, '', NULL, 'Asia/Manila', 0, 'bad9fea3cdc5d81aeb18fb0e1677622f', 0);
+INSERT INTO `users` VALUES (86, 0, 'MSAMJUR4', '', '', 'yapizumi@gmail.com', '', 1, 0, '$2a$10$dtedir9CeRLBipJXEz4oIu0f7xKD2lyE9IdSKWM/xgXVq6J8BnwJ2', 'Abby', 'meet/static/user/avatars/1659007350MSAMJUR4.png', '', '', 0, 1659006957, 1, 2, 158, 48.00, 721929600, 29, '', 0, 1, 8, 0, '34,27,31', 1892648201, 49, 0, 894, 1, '', NULL, 'Asia/Manila', 0, 'ee691e38fb523aff1830c147f814c0e2', 0);
+INSERT INTO `users` VALUES (87, 0, 'JSAJUR4H', '', '', 'honeymae244@gmail.com', '', 1, 0, '$2a$10$zmFOv.pFYp1bGOc4o7hhWOZfHYT03CFmV4nbW0IGxI2TPQDUPwDyq', 'Honey', 'meet/static/user/avatars/1659007752JSAJUR4H.png', '', '', 0, 1659007121, 1, 2, 0, 0.00, 816537600, 26, '', 0, 0, 0, 0, '26,28,19', 2292064233, 63, 0, 1087, 7, '', NULL, 'Asia/Manila', 0, '4d203f35fd1f0aacd8cbe3e1b63e8794', 0);
+INSERT INTO `users` VALUES (88, 0, 'USAUR4HV', '', '', 'ronaldtenedero3@gmail.com', '', 1, 0, '$2a$10$6DtPk242hXHifKmIPumNAe6F9yq7nePWxGpotSRAXYS7fqJkNWSQ.', 'ronaldtenedero3', '', '', '', 0, 1659007187, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 1892548900, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '4eab1abce90602dcdc1e6fb243e64549', 0);
+INSERT INTO `users` VALUES (89, 0, 'RSAR4HVE', '', '', 'oleazprincess@gmail.com', '', 1, 0, '$2a$10$KJBFTsU62bM3DhnP5iWArO4TYDeMPkNlnYljPK6K0iaJaKunYKE3u', '@Chuchay', 'meet/static/user/avatars/1659007653RSAR4HVE.png', '', '', 0, 1659007319, 1, 2, 0, 0.00, 912355200, 23, '', 0, 0, 0, 0, '18,20,30', 1892548900, 49, 0, 894, 5, '', NULL, 'Asia/Manila', 0, '4eab1abce90602dcdc1e6fb243e64549', 0);
+INSERT INTO `users` VALUES (90, 0, '4SA4HVE8', '', '', 'clarabels62@gmail.com', '', 1, 0, '$2a$10$hhQYTHSSchbpEb7sS5yaOOy2ZFYeFFReE3ovE95mTAzZ.jJrJ/eBW', 'clarabels62', '', '', '', 0, 1659007498, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 3032406013, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '9e0c1127552232c6e34445b18933f825', 0);
+INSERT INTO `users` VALUES (91, 0, 'HSAHVE8S', '', '', 'imagenacionph2021@gmail.com', '', 1, 0, '$2a$10$8Eup8K2Wb5Qsw/nOaMye7.kE5wqczLmW2hVSOme2FEY1UN8a.tN1e', 'imagenacionph2021', '', '', '', 0, 1659007662, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2087223078, 63, 0, 0, 5, '', NULL, 'Asia/Manila', 0, '30eca2a85e308f7f5ff77d6d4adaef96', 0);
+INSERT INTO `users` VALUES (92, 0, 'VSAVE8S2', '', '', 'danestarlettcallado@gmail.com', '', 1, 0, '$2a$10$cuNDP5xJrmm2EP5CbhANtuFi2p1QkCIpf4Yu1a/vH4kh269eSPR5m', 'danestarlettcallado', '', '', '', 0, 1659007667, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 1849091289, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '9f8c2fb986652049ce0dd9dbe7625ef4', 0);
+INSERT INTO `users` VALUES (93, 0, 'E2AE8S2D', '', '', 'marshgenito@gmail.com', '', 1, 0, '$2a$10$55ZE2QLY.8PQEcusFsg8wub7FIxopVh/fTwhi28jAinWK9yRIaGRG', 'Le Yang', 'meet/static/user/avatars/1659081530E2AE8S2D.png', '', 'interested to meet you.', 0, 1659007787, 1, 2, 0, 0.00, 979660800, 21, '', 0, 0, 0, 0, '26,18,21', 2947555527, 49, 0, 894, 3, '', NULL, 'Asia/Manila', 0, '0aaaec8a07c71c136b5ac0b2a75eeea8', 0);
+INSERT INTO `users` VALUES (94, 0, '82A8S2DZ', '', '', 'dhaddylovesyou@gmail.com', '', 1, 0, '$2a$10$qeTkXUnxgMRX1fFZjpEK8Ocq2G97zpDZ2IrFCLo2345/rPeVoyKjm', 'dhaddylovesyou', '', '', '', 0, 1659007910, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2292058280, 63, 0, 0, 19, '', NULL, 'Asia/Manila', 0, '45e4284759df6b4a78e09f6199e0f128', 0);
+INSERT INTO `users` VALUES (95, 0, 'S2AS2DZX', '', '', 'claraclassic25@gmail.com', '', 1, 0, '$2a$10$bvMEhh9XcNryj2lAQZM0xuRVdp.ApX3JfD24xrSn1XlSZiHCop1Fm', 'claraclassic25', '', '', '', 0, 1659008338, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 3032406013, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '9e0c1127552232c6e34445b18933f825', 0);
+INSERT INTO `users` VALUES (96, 0, '22A2DZX9', '', '', 'inacutie20@gmail.com', '', 1, 0, '$2a$10$hmDApK9DcCgNRFzBrHoMHeLJVHyVkSakNCazrHq3M0mDtmAK9Fyem', 'ritz123', 'meet/static/user/avatars/165900898022A2DZX9.png', '', '', 0, 1659008396, 1, 2, 0, 0.00, 662486400, 31, '', 0, 0, 0, 0, '31,22,24', 3032406013, 211, 0, 3242, 1, '', NULL, 'Asia/Manila', 0, '9e0c1127552232c6e34445b18933f825', 0);
+INSERT INTO `users` VALUES (97, 0, 'D2ADZX9W', '', '', 'saramiller0524@gmail.com', '', 1, 0, '$2a$10$lh/5nJTNJs7hMAFa0QL9v.9qmiRFJlI2NXom/8zNpWuto.TiAXiw.', 'saramiller0524', '', '', '', 0, 1659009933, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2552259423, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '0b741715ce3c7c99cc340f19b1eb7725', 0);
+INSERT INTO `users` VALUES (98, 0, 'Z2AZX9WY', '', '', 'gadielpineda37@gmail.com', '', 1, 0, '$2a$10$qniZt3MbzMyeHSTTT9ynX.DP4piYcGOZ872RJ162TAw7C57A1ZsNG', 'gadielpineda37', '', '', '', 0, 1659010099, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2552259423, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '0b741715ce3c7c99cc340f19b1eb7725', 0);
+INSERT INTO `users` VALUES (99, 0, 'X2AX9WYL', '', '', 'bacusalexamae@gmail.com', '', 1, 0, '$2a$10$kSM1QkcA2f58WzYR5CJOvuzj//TpVM4R5Ti766Z5asEMKZCAY2jGW', 'Alexandra', 'meet/static/user/avatars/1659012468X2AX9WYL.png', '', '', 0, 1659011822, 1, 2, 0, 0.00, 842976000, 25, '', 0, 0, 0, 0, '29,31,20', 831843004, 49, 0, 905, 1, '', NULL, 'Asia/Manila', 0, '38b2057687c25152a605a1d14b1adafd', 0);
+INSERT INTO `users` VALUES (100, 0, '92A9WYLT', '', '', 'jennobea09@gmail.com', '', 1, 0, '$2a$10$4dT/4AWM1IFSeGqnCHrNfuQpOouIGp1PaaY2nPyPJY5FzZhrC2i0y', 'jennobea09', '', '', '', 0, 1659012636, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2212643754, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, 'f6ca0e079b6624137a7e1ad1615a75af', 0);
+INSERT INTO `users` VALUES (101, 0, 'W2AWYLTN', '', '', 'gey08cinco@gmail.com', '', 1, 0, '$2a$10$HIQcU59E9a0WUep273ASAOg.7QV93v4gyX45SCh3pcMiQsaI01Ipi', 'gey08cinco', '', '', '', 0, 1659012694, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2947568354, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '64ad407ff9a54f3c95cbd6434bd2d545', 0);
+INSERT INTO `users` VALUES (102, 0, 'Y2AYLTN6', '', '', 'jhennobea@gmail.com', '', 1, 0, '$2a$10$3YAgUMBysqMu168c3Gc55..HLXtfgK4LcvUKyxjflG01uY0iTGwDO', 'jhennobea', '', '', '', 0, 1659012884, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2212643754, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, 'f6ca0e079b6624137a7e1ad1615a75af', 0);
+INSERT INTO `users` VALUES (103, 0, 'L2ALTN6B', '', '', 'womangorgeous71@gmail.com', '', 1, 0, '$2a$10$5T38Ip5B/zbuXOwMljFFDeTk8AbrwhbXqcUQf.dzydkX0MYhtet/y', 'womangorgeous71', '', '', '', 0, 1659013329, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2047019007, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '5584ed7f7e63dd51b1c2985fe99a0ca8', 0);
+INSERT INTO `users` VALUES (104, 0, 'T2ATN6BQ', '', '', 'sheyjoy18@gmail.com', '', 1, 0, '$2a$10$lW7.a0Ts4J7gW8zH9DzbkeHU4uFDlfg/URN1vi3YDaF4Q7f/0W1HW', 'sheyjoy18', '', '', '', 0, 1659014292, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2015185953, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, 'd8125d6418685a9e3e2aa6e25abc2dfd', 0);
+INSERT INTO `users` VALUES (105, 0, 'N2AN6BQF', '', '', 'prettyrico4@gmail.com', '', 1, 0, '$2a$10$lfYvQ9WYSaiUtyAkfDNWbu409WwH.uRAMD8/Ah8VfoLS9GmcU//gC', 'prettyrico4', '', '', '', 0, 1659014509, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 831617305, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '05a6b0ef27c46b0d9413ea2287a9c11a', 0);
+INSERT INTO `users` VALUES (106, 0, '62A6BQF7', '', '', 'sarahjanesolera4@gmail.com', '', 1, 0, '$2a$10$gyA8rNscM4ercURGBwxZDeRPn55di1QPioIZ3U8rAcijpKalV6r7y', 'Hanyu', 'meet/static/user/avatars/165906136162A6BQF7.png', '', '', 0, 1659016132, 1, 2, 0, 0.00, 760118400, 28, '', 0, 0, 0, 0, '21,27,31', 2292062576, 230, 0, 3587, 1, '', NULL, 'Asia/Manila', 0, '38fd4210620d5fbf2a72e822290bad52', 0);
+INSERT INTO `users` VALUES (107, 0, 'B2ABQF7C', '', '', 'druzellegalang@gmail.com', '', 1, 0, '$2a$10$vNpek1yw9t/E9Mi2LrSvtetrAUaP89Zefk2NG/yntn1SkB2JRAhxW', 'yoona', 'meet/static/user/avatars/1659018108B2ABQF7C.png', '', '', 0, 1659017121, 1, 2, 0, 0.00, 785001600, 27, '', 0, 0, 0, 0, '33,34,30', 1892041877, 164, 0, 2646, 1, '', NULL, 'Asia/Manila', 0, '006eb7821d9d2d83d494143c854a3f20', 0);
+INSERT INTO `users` VALUES (108, 0, 'Q2AQF7CP', '', '', 'anatamez1225@gmail.com', '', 1, 0, '$2a$10$.rHq21Xft3X8psYXNigEU.CMHtPM0K9/0xEVcuSTODj.H.9qhRshG', 'Honey', 'meet/static/user/avatars/1659021517Q2AQF7CP.png', '', '', 0, 1659021302, 1, 2, 0, 0.00, 721929600, 29, '', 0, 0, 0, 0, '17,26,28', 831789997, 18, 0, 548, 3, '', NULL, 'Asia/Manila', 0, 'de1ccb58a81471527107a89fe62dde3e', 0);
+INSERT INTO `users` VALUES (109, 0, 'F2AF7CP5', '', '', 'nicksabelarde@gmail.com', '', 1, 0, '$2a$10$smwrakIpVGPHungLspe6b.ryw7WWTIlisuZgNdACBz29fAtQL3L9a', 'nicksabelarde', '', '', '', 0, 1659028831, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 1919739934, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '4f2e566c1d995e7e9bbbc5c95a60120d', 0);
+INSERT INTO `users` VALUES (110, 0, '72A7CP5I', '', '', '1309345490@qq.com', '', 1, 0, '$2a$10$ePd/HZDWrZPgw5mBN8g9du.7DcfY4lbAGZwv2Jv0MQAJQ1js36lKK', 'George520', 'meet/static/user/avatars/165903460472A7CP5I.png', '', 'I will give you some color to see see.haha', 30, 1659034512, 1, 1, 180, 75.00, 809539200, 26, '', 0, 1, 0, 0, '11,9,13', 620292597, 18, 0, 549, 5, '', NULL, 'Asia/Shanghai', 0, '97d5903d003dd438852123a8df6442c7', 0);
+INSERT INTO `users` VALUES (111, 0, 'C2ACP5IK', '', '', 'judysaavedra141517@gmail.com', '', 1, 0, '$2a$10$WQJEsZo61XKDNxn4zIbIm.oUXi2TOdxe1JtJK.O7tbWCyk7j2PPrS', 'BOSSBEAST', 'meet/static/user/avatars/1659061100C2ACP5IK.png', '', '', 0, 1659060605, 1, 2, 0, 0.00, 625852800, 32, '', 0, 0, 0, 0, '27,29', 977632487, 18, 0, 562, 1, '', NULL, 'Asia/Manila', 0, 'c86c8ee5d8fea0d769ba4f34689c57c0', 0);
+INSERT INTO `users` VALUES (112, 0, 'P2AP5IK3', '', '', 'marites031490@gmail.com', '', 1, 0, '$2a$10$u4uWDyTDtFuifna.Mf24DePQdHz1DJmyDf6mqGUoUYXoF86xkfa..', 'marites031490', '', '', '', 0, 1659063728, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2292077417, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '2584a7cb0161919e197ff5de5a682ede', 0);
+INSERT INTO `users` VALUES (113, 0, '52A5IK3M', '', '', 'luanhabk230899@gmail.com', '', 1, 0, '$2a$10$rphrMlW/ch/Mj8MC/OGku.RUTaXc9n1kUWr9vJtcgrPpnGj1a7GTq', 'Minny', 'meet/static/user/avatars/165906972852A5IK3M.png', '', '', 0, 1659065701, 1, 2, 169, 47.00, 848163600, 25, '', 0, 0, 0, 0, '32,34,31', 1906595414, 1, 0, 287, 1, '', NULL, 'Asia/Ho_Chi_Minh', 0, '89a00397a7075891bfd524168d2f7c26', 0);
+INSERT INTO `users` VALUES (114, 0, 'I2AIK3MJ', '', '', 'dioreleanor189@gmail.com', '', 1, 0, '$2a$10$MGaVtu1Vi0IfaVSUpLIUCOykd6gGijmnczFpCDKupvfIh0lUzNsJm', 'Dior', 'meet/static/user/avatars/1659089432I2AIK3MJ.png', '', 'girls just wanna have fun', 0, 1659067411, 1, 2, 0, 0.00, 799624800, 27, '', 0, 0, 0, 0, '18,19,17', 96230730, 132, 0, 2083, 1, '', NULL, 'Europe/Paris', 0, '3b66777a6423032deedebc0b8ee18514', 0);
+INSERT INTO `users` VALUES (115, 0, 'K2AK3MJU', '', '', 'piscasiomaricar78@gmail.com', '', 1, 0, '$2a$10$xrqAgjy5yDoAWhU1WwRbyuZdN/p3WDlPv7mbQeAGg6V.MjlwbGspu', 'Acemallow', 'meet/static/user/avatars/1659079860K2AK3MJU.png', '', '', 0, 1659079341, 1, 2, 148, 50.00, 1003420800, 20, '', 0, 1, 7, 0, '33,17,30', 2947553324, 132, 0, 2128, 1, '', NULL, 'Asia/Manila', 0, 'eb03d77a1849d8f3bcb7a2281cb7b5e7', 0);
+INSERT INTO `users` VALUES (116, 0, '32A3MJUR', '', '', 'jenl30036@gmail.com', '', 1, 0, '$2a$10$IZWbgmCbf5hOSZvcOOuUgeanCBPx155GZmqZ5ITm/D96b6zWIN9.u', 'Alice', 'meet/static/user/avatars/165909362132A3MJUR.png', '', '', 0, 1659093315, 1, 2, 0, 0.00, 637948800, 32, '', 0, 0, 0, 0, '26,18,23', 1892648201, 227, 0, 3526, 1, '', NULL, 'Asia/Manila', 0, 'ee691e38fb523aff1830c147f814c0e2', 0);
+INSERT INTO `users` VALUES (117, 0, 'M2AMJUR4', '', '', 'nikieheron@gmail.com', '', 1, 0, '$2a$10$KW4KOweQ1WP56IwBxxO1bOJlw7.oO3P.qpFGn7SxMeC.b9oFNWs.e', 'Chia', 'meet/static/user/avatars/1659142729M2AMJUR4.png', '', '', 0, 1659142491, 1, 2, 0, 0.00, 833385600, 26, '', 0, 0, 0, 0, '32,18,20', 2292066455, 49, 0, 906, 1, '', NULL, 'Asia/Manila', 0, 'f40c724cd0da65e47f5cdceeb23ee038', 0);
+INSERT INTO `users` VALUES (118, 0, 'J2AJUR4H', '', '', 'tgalice29@gmail.com', '', 1, 0, '$2a$10$9JOynjaQFv0xwQ6vGyZ9yeM43wgO8ygwjDP2xBK4b/BQ622AppW7u', 'tgalice29', '', '', '', 0, 1659147352, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2002653149, 63, 0, 1087, 1, '', NULL, 'Asia/Manila', 0, 'cf6d847347b62c6a3b2302301e7989ab', 0);
+INSERT INTO `users` VALUES (119, 0, 'U2AUR4HV', '', '', 'lj.tymon@fillnoo.com', '', 1, 0, '$2a$10$hLZxQ3Q.YUWvsVeCMJ.uqOCIThTAvSq6qfzVtCM4HQFBNb3uu1Xl.', 'lj.tymon', '', '', '', 0, 1659147624, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 2947568354, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, '64ad407ff9a54f3c95cbd6434bd2d545', 0);
+INSERT INTO `users` VALUES (120, 0, 'R2AR4HVE', '', '', 'muddassirmalik120@gmail.com', '', 1, 0, '$2a$10$QJLvvqzH8FDxC8WROZE1WuA6H94lv2UR9s6/Z/lSlOJ3irFND/A1e', 'muddassirmalik120', '', '', '', 0, 1659148424, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 1224684521, 24, 0, 611, 6, '', NULL, 'Asia/Karachi', 0, '4150e9d16fcfe9728ee70721d1d44847', 0);
+INSERT INTO `users` VALUES (121, 0, '42A4HVE8', '', '', 'sunseamoon19@gmail.com', '', 1, 0, '$2a$10$tlnfAqBcCGmgzYGK7.6jNex3QJETK2.QaPg38BxTnzrioEYFeh6mq', 'sunseamoon19', '', '', '', 0, 1659149691, 1, 0, 0, 0.00, 0, 0, '', 0, 0, 0, 0, '', 1024028591, 63, 0, 0, 1, '', NULL, 'Asia/Manila', 0, 'f95d2866bb7cb61b55e79f279983b339', 0);
 
 -- ----------------------------
 -- Table structure for users_removed
@@ -4978,7 +5726,11 @@ CREATE TABLE `users_removed`  (
   `currency` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户手动选择的币种',
   `timezone` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户时区',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '注销用户信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of users_removed
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for zh-cn_applangs
@@ -4990,6 +5742,10 @@ CREATE TABLE `zh-cn_applangs`  (
   `val` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`key`, `path`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'app端多语言表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of zh-cn_applangs
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for zh-cn_articles
@@ -5010,7 +5766,11 @@ CREATE TABLE `zh-cn_articles`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `key`(`key`) USING BTREE,
   INDEX `title`(`title`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '内容表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of zh-cn_articles
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for zh-cn_cities
@@ -5024,7 +5784,7 @@ CREATE TABLE `zh-cn_cities`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `country_id`(`country_id`) USING BTREE,
   INDEX `name`(`name`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3628 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '城市信息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3628 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of zh-cn_cities
@@ -8688,7 +9448,7 @@ CREATE TABLE `zh-cn_countries`  (
   `id` smallint(1) UNSIGNED NOT NULL,
   `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '多语言国家表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of zh-cn_countries
@@ -8938,7 +9698,7 @@ CREATE TABLE `zh-cn_currencies`  (
   `id` smallint(1) NOT NULL,
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '多语言货币表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of zh-cn_currencies
