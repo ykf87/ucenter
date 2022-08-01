@@ -6,18 +6,18 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	// "fmt"
 	"log"
 	"os"
 	"ucenter/app/launch"
-	"ucenter/app/safety/aess"
+	// "ucenter/app/safety/aess"
 )
 
 var configFile = flag.String("c", "config.yaml", "配置文件路径")
 var port = flag.Int("port", 0, "端口")
 
 func main() {
-	fmt.Println(string(aess.AESKEY))
+	// fmt.Println(string(aess.AESKEY))
 	flag.Parse()
 	if *configFile == "" {
 		log.Println("请指定配置文件")
