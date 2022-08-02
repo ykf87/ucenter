@@ -2,6 +2,7 @@ package user
 
 import (
 	"fmt"
+	"net/mail"
 	"os"
 	"strconv"
 	"strings"
@@ -26,6 +27,11 @@ import (
 //获取邮箱验证码
 func Emailcode(c *gin.Context) {
 	email := c.PostForm("email")
+	_, err := mail.ParseAddress(email)
+	if err != nil {
+		controllers.ErrorNoData(c, "Incorrect email address format")
+		return
+	}
 	var lang string
 	langos, exits := c.Get("_lang")
 	if !exits {

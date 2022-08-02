@@ -156,7 +156,7 @@ func Send(mail, lang string) (error, int) {
 	if err != nil {
 		redis.Del(key)
 		log.Println("Send Email Code Err(coder): ", err)
-		logs.Logger.Error("Send Email Code Err(coder): " + err.Error())
+		logs.Logger.Error("Send Email Code Err(coder: " + mail + "): " + err.Error())
 		return errors.New("Captcha sending failure"), 0
 	}
 
@@ -164,8 +164,8 @@ func Send(mail, lang string) (error, int) {
 	r := s.SetGeter(mail).SetMessage(emailBody).SetSubject(string(sub)).Send()
 	if r != nil {
 		redis.Del(key)
-		logs.Logger.Error("Send Email Code Err: " + r.Error())
-		log.Println("Send Email Code Err: ", r)
+		logs.Logger.Error("Send Email Code Err(coder: " + mail + "): " + r.Error())
+		log.Println("Send Email Code Err(coder: "+mail+"): ", r)
 		return errors.New("Captcha sending failure"), 0
 	}
 

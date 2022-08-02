@@ -6,18 +6,20 @@ package main
 
 import (
 	"flag"
-	// "fmt"
 	"log"
 	"os"
 	"ucenter/app/launch"
-	// "ucenter/app/safety/aess"
 )
 
 var configFile = flag.String("c", "config.yaml", "配置文件路径")
 var port = flag.Int("port", 0, "端口")
 
 func main() {
-	// fmt.Println(string(aess.AESKEY))
+	// tk := "R0RLWTN4Q0JTOWRXMW5mVzAtNVBNcV9xd2d0MG1jemFTa05wcWFjdkV4czdaVzhVbFl0UzlRWDBObGxuZ3RsQg=="
+	// b, _ := base64.StdEncoding.DecodeString(tk)
+	// fmt.Println(aess.EcbDecrypt(string(b), nil))
+	// fmt.Println(string(aess.AESKEY), aess.EcbEncrypt(`{"time":111111,"id":1,"sid":1}`, nil))
+
 	flag.Parse()
 	if *configFile == "" {
 		log.Println("请指定配置文件")
