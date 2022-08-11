@@ -34,6 +34,13 @@ type RedisConf struct {
 	Dbname   int
 }
 
+type PaymentConf struct {
+	Appid     string
+	Secret    string
+	ReturnUrl string
+	CancelUrl string
+}
+
 type ConfigStruct struct {
 	APPName          string `required:"true"`
 	Domain           string `required:"true"`
@@ -72,6 +79,9 @@ type ConfigStruct struct {
 		Datefmt     string
 		Timefmt     string
 	}
+
+	Payment  string                  `required:"true"`
+	Payments map[string]*PaymentConf `required:"true"`
 
 	Im        map[string]*ImConf `required:"true"`
 	Imagethum map[string]map[string]int

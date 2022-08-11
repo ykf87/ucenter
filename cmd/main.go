@@ -100,6 +100,13 @@ imagethum://缩略图尺寸
   medium:
     width: 650
     height: 720
+payment: "paypal"
+payments:
+  paypal:
+    appid: "11111"
+    secret: "2222"
+    returnurl: "http://sdfdfsf.rrr"
+    cancelurl: "http://sdfdfsf.ccc"
 `
 	f, err := os.OpenFile(filepath, os.O_CREATE|os.O_RDWR, os.ModePerm)
 	if err != nil {
