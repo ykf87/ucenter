@@ -59,6 +59,17 @@ func Sign(c *gin.Context) {
 	platform := c.GetHeader("platform")
 	langos, exit := c.Get("_lang")
 
+	deviceId := c.GetHeader("deviceid")
+	if deviceId == "" {
+		controllers.ErrorNoData(c, "Bad request")
+		return
+	}
+	reged := models.UserDeviceRowsRegs(deviceId)
+	if len(reged) >= 3 {
+		controllers.ErrorNoData(c, "The maximum number of registrations has been reached")
+		return
+	}
+
 	timezoneo, _ := c.Get("_timezone")
 	timezone := timezoneo.(string)
 
@@ -94,7 +105,7 @@ func Sign(c *gin.Context) {
 		controllers.Error(c, nil, &controllers.Msg{Str: "Voucher generation failed, please try again later"})
 		return
 	}
-	go user.CheckUserUseEnvironment(c)
+	go user.CheckUserUseEnvironment(c, true)
 	controllers.Success(c, map[string]interface{}{
 		"token":     token,
 		"id":        user.Id,
@@ -130,7 +141,7 @@ func Login(c *gin.Context) {
 	var msg string
 	if user != nil && user.Id > 0 {
 		if veried == true {
-			go user.CheckUserUseEnvironment(c)
+			go user.CheckUserUseEnvironment(c, false)
 			controllers.SuccessStr(c, user.UserAfterLogin(), "Success")
 			return
 		} else if user.Pwd != "" {
@@ -147,7 +158,7 @@ func Login(c *gin.Context) {
 				if user.Status != 1 {
 					msg = "Your account is abnormal"
 				} else {
-					go user.CheckUserUseEnvironment(c)
+					go user.CheckUserUseEnvironment(c, false)
 					controllers.SuccessStr(c, user.UserAfterLogin(), "Success")
 					return
 				}
@@ -636,6 +647,30 @@ func EditBatch(c *gin.Context) {
 		cgdata["background"] = filename
 		rsdata["background"] = images.FullPath(filename, "")
 		rsdata["background_thumb"] = images.FullPath(filename, "medium")
+	}
+
+	//实拍实名图
+	realuser := c.PostForm("realuser")
+	if realuser != "" && strings.Contains(realuser, "base64") == true {
+		filename, err := images.SaveFileBase64(models.REALUSERPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), realuser, nil, nil)
+		if err != nil {
+			logs.Logger.Error(err, " - when SetRealuser model upload from form file in batch!")
+			controllers.Error(c, map[string]string{"col": "realuser"}, &controllers.Msg{Str: "Image upload failed"})
+			return
+		}
+		cgdata["realuser"] = filename
+		rsdata["realuser"] = images.FullPath(filename, "")
+		rsdata["realuser_thumb"] = images.FullPath(filename, "medium")
+	} else if realuserFile, err := c.FormFile("realuser"); err == nil {
+		filename, err := images.SaveFileFromUpload(models.REALUSERPATH, fmt.Sprintf("%d%s", time.Now().Unix(), user.Invite), realuserFile, nil, nil)
+		if err != nil {
+			logs.Logger.Error(err, " - when SetRealuser model upload from form file in batch!")
+			controllers.Error(c, map[string]string{"col": "realuser"}, &controllers.Msg{Str: "Image upload failed"})
+			return
+		}
+		cgdata["realuser"] = filename
+		rsdata["realuser"] = images.FullPath(filename, "")
+		rsdata["realuser_thumb"] = images.FullPath(filename, "medium")
 	}
 
 	if cgdata != nil && len(cgdata) > 0 {

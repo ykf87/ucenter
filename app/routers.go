@@ -179,7 +179,7 @@ func Auth() gin.HandlerFunc {
 				c.Set("_timezone", user.Timezone)
 			}
 
-			go user.CheckUserUseEnvironment(c)
+			go user.CheckUserUseEnvironment(c, false)
 
 			c.Next()
 		}

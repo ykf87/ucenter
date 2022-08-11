@@ -18,10 +18,11 @@ type UserDeviceModel struct {
 	Devicemodel string `json:"devicemodel"`
 	Ip          int64  `json:"ip"`
 	Addtime     int64  `json:"addtime"`
+	Tp          int    `json:"tp"`
 }
 
 //记录一次使用环境变动
-func AddUserEnvironmentChange(c *gin.Context, user *UserModel) {
+func AddUserEnvironmentChange(c *gin.Context, user *UserModel, isreg bool) {
 	if c.GetHeader("deviceid") == "" {
 		return
 	}
@@ -38,5 +39,17 @@ func AddUserEnvironmentChange(c *gin.Context, user *UserModel) {
 	m.Devicemodel = c.GetHeader("devicemodel")
 	m.Ip = funcs.InetAtoN(c.ClientIP())
 	m.Addtime = time.Now().Unix()
+	if isreg == true {
+		m.Tp = 1
+	} else {
+		m.Tp = 0
+	}
 	DB.Table("user_devices").Create(m)
+}
+
+//获取设备登录详情
+func UserDeviceRowsRegs(deviceid string) []*UserDeviceModel {
+	var list []*UserDeviceModel
+	DB.Table("user_devices").Where("deviceid = ?", deviceid).Where("tp=1").Find(&list)
+	return list
 }

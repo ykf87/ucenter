@@ -30,6 +30,7 @@ import (
 const (
 	AVATARPATH     = "static/user/avatars/"
 	BACKGROUNDPATH = "static/user/background/"
+	REALUSERPATH   = "static/user/realuser/"
 )
 
 type UserModel struct {
@@ -69,7 +70,8 @@ type UserModel struct {
 	Timezone      string  `json:"timezone"`
 	Platform      int     `json:"platform"`
 	Md5           string  `json:"md5"`
-	Singleid      int64
+	Realuser      string  `json:"realuser"`
+	Singleid      int64   `json:"singleid"`
 }
 
 //账号修改器
@@ -583,7 +585,7 @@ func (this *UserModel) FmtAddTime(lang, timezone string) string {
 }
 
 //检查当前登录环境是否较上次有变动
-func (this *UserModel) CheckUserUseEnvironment(c *gin.Context) {
+func (this *UserModel) CheckUserUseEnvironment(c *gin.Context, isreg bool) {
 	md5str := funcs.UserDeviceMd5(c)
 	if md5str == "" {
 		return
@@ -591,7 +593,7 @@ func (this *UserModel) CheckUserUseEnvironment(c *gin.Context) {
 	if md5str == this.Md5 {
 		return
 	}
-	AddUserEnvironmentChange(c, this)
+	AddUserEnvironmentChange(c, this, isreg)
 	DB.Table("users").Where("id = ?", this.Id).Update("md5", md5str)
 	return
 }
