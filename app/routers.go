@@ -6,6 +6,7 @@ import (
 	"ucenter/app/controllers/albums"
 	"ucenter/app/controllers/article"
 	"ucenter/app/controllers/index"
+	"ucenter/app/controllers/pays"
 	"ucenter/app/controllers/user"
 	"ucenter/app/controllers/userlikes"
 	"ucenter/app/rdsmps"
@@ -65,6 +66,17 @@ func (this *AppClient) WebRouter() {
 			mustLoginRouter.POST("/liked", userlikes.Liked) //用户喜欢列表
 			mustLoginRouter.POST("/liker", userlikes.Liker) //喜欢当前用户的列表
 			mustLoginRouter.POST("/likes", userlikes.Likes) //相互喜欢列表
+
+			payRouters := mustLoginRouter.Group("/pay") //与支付相关
+			{
+				payRouters.GET("/lists", pays.Index) //充值产品列表
+				payRouters.POST("", pays.Pay)        //充值
+			}
+
+			consumerRouters := mustLoginRouter.Group("/consumer") //扣费相关
+			{
+				consumerRouters.GET("lists", pays.Index)
+			}
 		}
 
 		mainGroup.GET("/media/:path", index.Media)                 //静态内容,经过解密处理的返回,目的是加密存储一些敏感内容,并解密后显示
@@ -77,6 +89,7 @@ func (this *AppClient) WebRouter() {
 		mainGroup.GET("/search", index.Search)     //搜索用户
 		mainGroup.GET("/positive", index.Positive) //获取活跃用户列表
 		mainGroup.GET("/applangs", index.Applangs) //客户端多语言信息
+
 	}
 
 	webRouters := this.Engine.Group("")

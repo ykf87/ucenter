@@ -68,3 +68,5 @@ zh-cn:
   "Existed": "已存在"
   "Too many errors, please try again later": "错误次数过多,请稍后重试"
   "Incorrect email address format": "邮箱地址格式错误"
+  "Payment requests are too frequent": "支付请求频率太高"
+  "Initialization failure": "初始化失败"

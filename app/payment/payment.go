@@ -8,7 +8,7 @@ import (
 )
 
 type Payment interface {
-	Pay(string, float64) error
+	Pay(string, float64) (string, error)
 }
 
 func Get(lang, pm string) (p Payment, e error) {
@@ -16,7 +16,7 @@ func Get(lang, pm string) (p Payment, e error) {
 		pm = config.Config.Payment
 	}
 
-	pn, ok := config.Config.Payments[pm]
+	_, ok := config.Config.Payments[pm]
 	if !ok {
 		e = errors.New(fmt.Sprintf("支付方式 [%s] 不存在!", pm))
 		return
@@ -25,5 +25,5 @@ func Get(lang, pm string) (p Payment, e error) {
 	case "paypal":
 		return paypal.Client(lang)
 	}
-	return nil
+	return nil, errors.New("Initialization failure")
 }

@@ -118,3 +118,7 @@ payments:
 	}
 	return nil
 }
+
+//https://www.tiktok.com/passport/web/get_qrcode/?next=https%3A%2F%2Fwww.tiktok.com&aid=1459&msToken=4W3hUJnG5DDAl994cdGnqAWAEZrK-PYXQOcRgtTQ4iF91kjeQskOF1j39X8VpqdB7VxESNzCUbIw0OahA3fq8QyjYaYShkY9zO7rFwl_cIB6_RL4AJiG1lwy5dkCp2KZLUMfdLUegXOpJ7rGGw==
+
+//https://www.tiktok.com/passport/web/get_qrcode/?next=https%3A%2F%2Fwww.tiktok.com&aid=1459&msToken=4W3hUJnG5DDAl994cdGnqAWAEZrK-PYXQOcRgtTQ4iF91kjeQskOF1j39X8VpqdB7VxESNzCUbIw0OahA3fq8QyjYaYShkY9zO7rFwl_cIB6_RL4AJiG1lwy5dkCp2KZLUMfdLUegXOpJ7rGGw==

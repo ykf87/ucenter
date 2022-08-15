@@ -47,14 +47,14 @@ func Client(lang string) (c *Pp, err error) {
 	return
 }
 
-func (this *Pp) Pay(currency string, price float64) error {
+func (this *Pp) Pay(currency string, price float64) (string, error) {
 	var pus []*P.PurchaseUnit
 
 	var item = &P.PurchaseUnit{
 		ReferenceId: util.RandomString(16),
 		Amount: &P.Amount{
 			CurrencyCode: currency,
-			Value:        fmt.Sprintf("%0.4f", price),
+			Value:        fmt.Sprintf("%0.2f", price),
 		},
 	}
 	pus = append(pus, item)
@@ -69,14 +69,19 @@ func (this *Pp) Pay(currency string, price float64) error {
 				Set("cancel_url", this.CancelUrl)
 		})
 
-	var ctx context.Context
-	ppRsp, err := this.Client.CreateOrder(ctx, bm)
+	//var ctx context.Background()
+	ppRsp, err := this.Client.CreateOrder(context.Background(), bm)
 	if err != nil {
 		xlog.Error(err)
-		return err
+		return "", err
 	}
 	if ppRsp.Code != P.Success {
-		return errors.New("error")
+		return "", errors.New("error")
 	}
-	return nil
+	for _, v := range ppRsp.Response.Links {
+		if v.Rel == "approve" {
+			return v.Href, nil
+		}
+	}
+	return "", errors.New("error")
 }

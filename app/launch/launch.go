@@ -19,7 +19,6 @@ func Start(filename string, port int) {
 		return
 	}
 
-	fmt.Println(*config.Config.Payments["paypal"])
 	rds := redis.Init(config.Config.Redis.Addr, config.Config.Redis.Password, config.Config.Redis.Dbname)
 	if rds != nil {
 		logs.Logger.Error(rds)
