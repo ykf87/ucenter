@@ -33,6 +33,7 @@ func Client(lang string) (c *Pp, err error) {
 		err = errs
 		return
 	}
+	// rrs.IsProd = true
 	rrs.DebugSwitch = gopay.DebugOn
 
 	cp := new(Pp)
@@ -47,7 +48,7 @@ func Client(lang string) (c *Pp, err error) {
 	return
 }
 
-func (this *Pp) Pay(currency string, price float64) (string, error) {
+func (this *Pp) Pay(currency string, price float64) (orderid string, url string, errs error) {
 	var pus []*P.PurchaseUnit
 
 	var item = &P.PurchaseUnit{
@@ -73,15 +74,27 @@ func (this *Pp) Pay(currency string, price float64) (string, error) {
 	ppRsp, err := this.Client.CreateOrder(context.Background(), bm)
 	if err != nil {
 		xlog.Error(err)
-		return "", err
+		errs = err
+		return
 	}
 	if ppRsp.Code != P.Success {
-		return "", errors.New("error")
+		errs = errors.New("error")
+		return
 	}
+	orderid = ppRsp.Response.Id
 	for _, v := range ppRsp.Response.Links {
 		if v.Rel == "approve" {
-			return v.Href, nil
+			url = v.Href
+			return
 		}
 	}
-	return "", errors.New("error")
+	orderid = ""
+	errs = errors.New("error")
+	return
+}
+
+//获取订单详情
+func (this *Pp) GetOrderDetail(orderid string) {
+	resp, err := this.Client.OrderDetail(context.Background(), orderid, nil)
+	fmt.Println(resp, err)
 }

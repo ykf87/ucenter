@@ -1,7 +1,6 @@
 package pays
 
 import (
-	"fmt"
 	"time"
 	"ucenter/app/controllers"
 	"ucenter/app/logs"
@@ -46,12 +45,58 @@ func Pay(c *gin.Context) {
 		logs.Logger.Error(err, " - 调用支付.")
 		return
 	}
-	reurl, err := p.Pay("USD", po.Price)
+	orderid, reurl, err := p.Pay("USD", po.Price)
 	if err != nil {
 		controllers.ErrorNoData(c, "Illegal payments")
 		logs.Logger.Error(err, " - 调用支付!")
 		return
 	}
-	controllers.SuccessStr(c, map[string]interface{}{"url": reurl}, "")
-	fmt.Println(err)
+
+	od := models.InitNewOrder()
+	od.Amount = po.Price
+	od.Bi = po.Bi
+	od.Orderid = orderid
+	od.Pid = po.Id
+	od.Uid = user.Id
+	res := models.DB.Create(od)
+	if res.Error != nil {
+		logs.Logger.Error(res.Error)
+		controllers.ErrorNoData(c, "Illegal payments")
+		return
+	}
+
+	controllers.SuccessStr(c, map[string]interface{}{"url": reurl, "orderid": orderid, "id": od.Id}, "")
+}
+
+func CheckOrder(c *gin.Context) {
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
+	rs, _ = c.Get("_lang")
+	lang := rs.(string)
+
+	id := c.PostForm("id")
+	orderid := c.PostForm("orderid")
+
+	od := new(models.Order)
+	if id != "" {
+		models.DB.Where("id = ?", id).First(od)
+	} else if orderid != "" {
+		models.DB.Where("orderid = ?", orderid).First(od)
+	} else {
+		controllers.ErrorNoData(c, "Missing queries")
+		return
+	}
+	if od.Id < 1 || od.Uid != user.Id {
+		controllers.ErrorNoData(c, "Order does not exist")
+		return
+	}
+
+	p, err := payment.Get(lang, "")
+	if err != nil {
+		controllers.ErrorNoData(c, "Illegal payments")
+		logs.Logger.Error(err, " - 调用支付.")
+		return
+	}
+
+	p.GetOrderDetail(od.Orderid)
 }

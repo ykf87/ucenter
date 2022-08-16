@@ -69,8 +69,9 @@ func (this *AppClient) WebRouter() {
 
 			payRouters := mustLoginRouter.Group("/pay") //与支付相关
 			{
-				payRouters.GET("/lists", pays.Index) //充值产品列表
-				payRouters.POST("", pays.Pay)        //充值
+				payRouters.GET("/lists", pays.Index)       //充值产品列表
+				payRouters.POST("", pays.Pay)              //充值
+				payRouters.POST("/check", pays.CheckOrder) //充值结果查询
 			}
 
 			consumerRouters := mustLoginRouter.Group("/consumer") //扣费相关

@@ -70,3 +70,4 @@ zh-cn:
   "Incorrect email address format": "邮箱地址格式错误"
   "Payment requests are too frequent": "支付请求频率太高"
   "Initialization failure": "初始化失败"
+  "Order does not exist": "订单不存在"
