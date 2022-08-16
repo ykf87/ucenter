@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"ucenter/app/config"
 	"ucenter/app/payment/paypal"
+
+	P "github.com/go-pay/gopay/paypal"
 )
 
 type Payment interface {
 	Pay(string, float64) (string, string, error)
-	GetOrderDetail(string)
+	GetOrderDetail(string) (*P.OrderDetail, error)
 }
 
 func Get(lang, pm string) (p Payment, e error) {

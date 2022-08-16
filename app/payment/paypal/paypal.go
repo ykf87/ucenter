@@ -214,6 +214,7 @@ func (c *Pp) Pay(currency string, price float64) (orderid string, urls string, e
 	bs, err := funcs.Request("POST", url, []byte(body), header, "")
 
 	if err != nil {
+		errs = err
 		fmt.Println("---", err)
 		return
 	}
@@ -223,7 +224,7 @@ func (c *Pp) Pay(currency string, price float64) (orderid string, urls string, e
 
 	orderDetail := new(P.OrderDetail)
 	if err = json.Unmarshal(bs, orderDetail); err != nil {
-		err = fmt.Errorf("[%w]: %v, bytes: %s", gopay.UnmarshalErr, err, string(bs))
+		errs = fmt.Errorf("[%w]: %v, bytes: %s", gopay.UnmarshalErr, err, string(bs))
 		return
 	}
 	orderid = orderDetail.Id
@@ -260,7 +261,59 @@ func (c *Pp) Pay(currency string, price float64) (orderid string, urls string, e
 }
 
 //获取订单详情
-func (this *Pp) GetOrderDetail(orderid string) {
-	// resp, err := this.Client.OrderDetail(context.Background(), orderid, nil)
+func (this *Pp) GetOrderDetail(orderid string) (odt *P.OrderDetail, err error) {
+	// rrs, err := P.NewClient(this.Clientid, this.Secret, false)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// resp, err := rrs.OrderDetail(context.Background(), orderid, nil)
 	// fmt.Println(resp, err)
+	if orderid == "" {
+		err = errors.New("Order Id is empty")
+		return
+	}
+
+	uri := fmt.Sprintf(orderDetail, orderid)
+	od, errs := this.get(uri)
+	if errs != nil {
+		err = errs
+		return
+	}
+	odt = od
+	return
+}
+
+//发起请求
+func (c *Pp) get(uri string) (ress *P.OrderDetail, errs error) {
+	var url = baseUrlProd + uri
+	if !c.IsProd {
+		url = baseUrlSandbox + uri
+	}
+	authHeader := AuthorizationPrefixBearer + c.AccessToken
+	if c.DebugSwitch == gopay.DebugOn {
+		xlog.Debugf("PayPal_Url: %s", url)
+		xlog.Debugf("PayPal_Authorization: %s", authHeader)
+	}
+	header := map[string]string{
+		HeaderAuthorization: authHeader,
+		"Accept":            "*/*",
+	}
+
+	rs, err := funcs.Request("GET", url, nil, header, "")
+	if err != nil {
+		errs = err
+		return
+	}
+	if c.DebugSwitch == gopay.DebugOn {
+		xlog.Debugf("PayPal_Body: %s", string(rs))
+	}
+
+	orderDetail := new(P.OrderDetail)
+	if err = json.Unmarshal(rs, orderDetail); err != nil {
+		errs = fmt.Errorf("[%w]: %v, bytes: %s", gopay.UnmarshalErr, err, string(rs))
+		return
+	}
+	ress = orderDetail
+	return
 }

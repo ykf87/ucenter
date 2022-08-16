@@ -90,6 +90,10 @@ func CheckOrder(c *gin.Context) {
 		controllers.ErrorNoData(c, "Order does not exist")
 		return
 	}
+	if od.Status == 1 {
+		controllers.SuccessStr(c, od, "Success")
+		return
+	}
 
 	p, err := payment.Get(lang, "")
 	if err != nil {
