@@ -1,13 +1,18 @@
 package funcs
 
 import (
+	"bytes"
 	"crypto/md5"
+	"crypto/tls"
 	"errors"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"math/big"
 	"math/rand"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 	"ucenter/app/config"
@@ -113,4 +118,68 @@ func UserDeviceMd5(c *gin.Context) string {
 
 	ip := c.ClientIP()
 	return string(fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s%d", deviceid, ip)))))
+}
+
+//网络请求
+//发起网络请求
+//如果发起的是get请求,uri请自行拼接
+//uri为完整的http连接地址
+func Request(method, uri string, data []byte, header map[string]string, proxy string) ([]byte, error) {
+	var body io.Reader
+	if method == "POST" && data != nil {
+		// cont, err := json.Marshal(data)
+		// if err == nil {
+		// 	body = bytes.NewBuffer(cont)
+		// }
+		body = bytes.NewBuffer(data)
+	}
+
+	tr := &http.Transport{TLSClientConfig: &tls.Config{
+		InsecureSkipVerify: true,
+	}}
+
+	if proxy != "" {
+		proxyUrl, err := url.Parse(proxy)
+		if err == nil { //使用传入代理
+			tr.Proxy = http.ProxyURL(proxyUrl)
+		}
+	}
+
+	client := &http.Client{Transport: tr}
+	req, _ := http.NewRequest(method, uri, body)
+	if header == nil {
+		header = make(map[string]string)
+		header["Content-Type"] = "application/json"
+		header["accept-language"] = "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7"
+		header["pragma"] = "no-cache"
+		header["cache-control"] = "no-cache"
+		header["upgrade-insecure-requests"] = "1"
+		header["user-agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36"
+	} else {
+		// header["Content-Type"] = "application/json"
+		// header["accept-language"] = "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7"
+		// header["pragma"] = "no-cache"
+		// header["cache-control"] = "no-cache"
+		// header["upgrade-insecure-requests"] = "1"
+		// header["user-agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36"
+	}
+
+	for k, v := range header {
+		req.Header.Set(k, v)
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	respbody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != 200 && resp.StatusCode != 201 {
+		return nil, errors.New(fmt.Sprintf("请求发生错误:\r\n\turi: %s.\r\n\thttpcode: %d.\r\n\tmessage: %s", uri, resp.StatusCode, string(respbody)))
+	}
+	return respbody, nil
 }
