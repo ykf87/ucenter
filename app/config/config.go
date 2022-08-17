@@ -90,7 +90,18 @@ type ConfigStruct struct {
 var Config = new(ConfigStruct)
 var Cpath string
 
+func init() {
+	cc := new(ConfigStruct)
+	err := configor.Load(cc, "config.yaml")
+	if err == nil {
+		Config = cc
+	}
+}
+
 func Init(path string) (err error) {
+	if Config != nil {
+		return
+	}
 	cc := new(ConfigStruct)
 	err = configor.Load(cc, path)
 	if err != nil {

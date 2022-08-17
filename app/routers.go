@@ -76,7 +76,8 @@ func (this *AppClient) WebRouter() {
 
 			consumerRouters := mustLoginRouter.Group("/consumer") //扣费相关
 			{
-				consumerRouters.GET("lists", pays.Index)
+				consumerRouters.POST("/billing", pays.Billing) //计费
+				consumerRouters.GET("/balance", pays.Balance)  //查询余额
 			}
 		}
 
@@ -107,7 +108,8 @@ func (this *AppClient) WebRouter() {
 		{
 			articleRouter.GET("/info/:key", article.Info) //文章详情
 		}
-
+		webRouters.GET("order/success", index.OrderSuccess)
+		webRouters.GET("order/cancle", index.CancleOrder)
 	}
 
 	this.Engine.POST("/34598fds93/panic", index.Panics)

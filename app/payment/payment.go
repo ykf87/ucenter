@@ -12,6 +12,7 @@ import (
 type Payment interface {
 	Pay(string, float64) (string, string, error)
 	GetOrderDetail(string) (*P.OrderDetail, error)
+	SetLang(string)
 }
 
 func Get(lang, pm string) (p Payment, e error) {

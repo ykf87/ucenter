@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 	"ucenter/app/config"
 	"ucenter/app/funcs"
 
@@ -63,7 +64,7 @@ type Pp struct {
 	ReturnUrl   string `json:"return_url"`
 	CancelUrl   string `json:"cancel_url"`
 	Lang        string `json:"lang"`
-	ExpiresIn   int    `json:"expires_in"`
+	ExpiresIn   int64  `json:"expires_in"`
 	AccessToken string `json:"access_token"`
 	IsProd      bool   `json:"-"`
 	DebugSwitch int8   `json:"-"`
@@ -101,7 +102,7 @@ func Client(lang string) (c *Pp, err error) {
 	cp.ReturnUrl = cres.ReturnUrl
 	cp.CancelUrl = cres.CancelUrl
 	cp.IsProd = true
-	cp.DebugSwitch = gopay.DebugOn
+	cp.DebugSwitch = gopay.DebugOff
 
 	_, err = cp.GetAccessToken()
 	if err != nil {
@@ -110,6 +111,11 @@ func Client(lang string) (c *Pp, err error) {
 
 	c = cp
 	return
+}
+
+//修改语言
+func (this *Pp) SetLang(lang string) {
+	this.Lang = lang
 }
 
 // 获取AccessToken（Get an access token）
@@ -151,7 +157,9 @@ func (c *Pp) GetAccessToken() (token *AccessToken, err error) {
 		return nil, fmt.Errorf("json.Unmarshal(%s)：%w", string(resp), err)
 	}
 	c.AccessToken = token.AccessToken
-	c.ExpiresIn = token.ExpiresIn
+	exp := int64(token.ExpiresIn)
+	n := time.Now().Unix()
+	c.ExpiresIn = n + exp
 	// res, bs, err := httpClient.Type(xhttp.TypeForm).Post(url).SendBodyMap(bm).EndBytes(c.ctx)
 	// if err != nil {
 	// 	return nil, err
@@ -173,12 +181,19 @@ func (c *Pp) GetAccessToken() (token *AccessToken, err error) {
 	return
 }
 
+func (c *Pp) actk() string {
+	if (c.ExpiresIn - time.Now().Unix()) <= 30 {
+		go c.GetAccessToken()
+	}
+	return c.AccessToken
+}
+
 func (c *Pp) Pay(currency string, price float64) (orderid string, urls string, errs error) {
 	var url = baseUrlProd + orderCreate
 	if !c.IsProd {
 		url = baseUrlSandbox + orderCreate
 	}
-	authHeader := AuthorizationPrefixBearer + c.AccessToken
+	authHeader := AuthorizationPrefixBearer + c.actk()
 
 	var pus []*P.PurchaseUnit
 
@@ -290,7 +305,7 @@ func (c *Pp) get(uri string) (ress *P.OrderDetail, errs error) {
 	if !c.IsProd {
 		url = baseUrlSandbox + uri
 	}
-	authHeader := AuthorizationPrefixBearer + c.AccessToken
+	authHeader := AuthorizationPrefixBearer + c.actk()
 	if c.DebugSwitch == gopay.DebugOn {
 		xlog.Debugf("PayPal_Url: %s", url)
 		xlog.Debugf("PayPal_Authorization: %s", authHeader)

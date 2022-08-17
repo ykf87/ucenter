@@ -71,3 +71,6 @@ zh-cn:
   "Payment requests are too frequent": "支付请求频率太高"
   "Initialization failure": "初始化失败"
   "Order does not exist": "订单不存在"
+  "Insufficient balance": "余额不足"
+  "Failed to create": "创建失败"
+  "User does not exist": "用户不存在"

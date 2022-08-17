@@ -347,7 +347,7 @@ func UnToken(token string) *UserModel {
 		return nil
 	}
 	user := GetUser(int64(id), "", "", "")
-	if sid != user.Singleid {
+	if user == nil || sid != user.Singleid {
 		return nil
 	}
 	return user
@@ -612,4 +612,14 @@ func (this *UserModel) Cancellation() {
 	fmt.Println("sdfsddsffd", this.Id)
 	rs := DB.Table("users").Where("id = ?", this.Id).Updates(map[string]interface{}{"status": -1, "singleid": -1})
 	fmt.Println(rs.Error)
+}
+
+//获取余额
+func (this *UserModel) GetUserBalance() int64 {
+	reched := Recharged(this.Id)
+	if reched <= 0 {
+		return reched
+	}
+	used := IUsed(this.Id)
+	return reched - used
 }
