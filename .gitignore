@@ -1,5 +1,6 @@
 cmd/*.exe
 cmd/cmd
+cmd/cmd-backup
 .DS_Store
 cmd/.ssh
 cmd/config.yaml

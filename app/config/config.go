@@ -63,6 +63,7 @@ type ConfigStruct struct {
 	Useim            string `required:"true"` //使用的im
 	Useoss           string `required:"true"`
 	Heterosexual     int    `default: 1` //对于用户搜索结果,是否仅显示异性
+	ShowPay          int    `default:0`  //是否开启支付
 
 	DB []struct {
 		Type string

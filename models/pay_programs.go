@@ -9,6 +9,7 @@ type PayProgram struct {
 	Used    int     `json:"used" gorm:"default:0"`
 	Pin     int     `json:"-" gorm:"default:0"`
 	PinTime int64   `json:"-" gorm:"default:0"`
+	Appleid string  `json:"appleid"`
 }
 
 //func init() {
@@ -16,6 +17,6 @@ type PayProgram struct {
 //}
 func GetPayPriceLists() []*PayProgram {
 	var ll []*PayProgram
-	DB.Select("id", "price", "bi", "remark", "used").Where("status = 1").Order("price asc").Find(&ll)
+	DB.Select("id", "price", "bi", "remark", "used", "appleid").Where("status = 1").Order("price asc").Find(&ll)
 	return ll
 }

@@ -74,3 +74,5 @@ zh-cn:
   "Insufficient balance": "余额不足"
   "Failed to create": "创建失败"
   "User does not exist": "用户不存在"
+  "The order already exists": "订单已经存在"
+  "Failed to recharge": "充值失败"

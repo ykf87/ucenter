@@ -209,6 +209,7 @@ func Index(c *gin.Context) {
 	}
 	info["albums"] = albums
 	info["inviurl"] = funcs.InviUrl(user.Invite)
+	info["isShowPay"] = config.Config.ShowPay
 	controllers.SuccessStr(c, info, "Success")
 	// controllers.Success(c, info, &controllers.Msg{Str: "Success"})
 }

@@ -72,6 +72,9 @@ type UserModel struct {
 	Md5           string  `json:"md5"`
 	Realuser      string  `json:"realuser"`
 	Singleid      int64   `json:"singleid"`
+	Recharge      float64 `json:"-"`
+	Used          float64 `json:"-"`
+	Balance       float64 `json:"-"`
 }
 
 //账号修改器
@@ -622,4 +625,39 @@ func (this *UserModel) GetUserBalance() int64 {
 	}
 	used := IUsed(this.Id)
 	return reched - used
+}
+
+//更改用户充值总额
+func (this *UserModel) ChangeRecharge(recharge float64) {
+	if recharge <= 0 {
+		r, _ := strconv.ParseFloat(fmt.Sprintf("%d", Recharged(this.Id)), 64)
+		this.Recharge = r
+	} else {
+		this.Recharge += recharge
+	}
+
+	data := map[string]float64{
+		"recharges": this.Recharge,
+		"balance":   this.Recharge - this.Used,
+	}
+	DB.Model(&UserModel{}).Updates(data)
+}
+
+//更改用户使用总额
+func (this *UserModel) ChangeUsed(used float64, balance float64) {
+	if used <= 0 && balance <= 0 {
+		return
+	}
+	if used <= 0 {
+		used = this.Recharge - balance
+	}
+	if balance <= 0 {
+		balance = this.Recharge - used
+	}
+
+	data := map[string]float64{
+		"used":    this.Used,
+		"balance": balance,
+	}
+	DB.Model(&UserModel{}).Updates(data)
 }

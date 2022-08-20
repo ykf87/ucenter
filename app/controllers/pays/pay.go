@@ -1,6 +1,7 @@
 package pays
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 	"ucenter/app/controllers"
@@ -62,6 +63,7 @@ func Pay(c *gin.Context) {
 	od.Orderid = orderid
 	od.Pid = po.Id
 	od.Uid = user.Id
+	od.Mail = user.Mail
 	res := models.DB.Create(od)
 	if res.Error != nil {
 		logs.Logger.Error(res.Error)
@@ -107,9 +109,13 @@ func CheckOrder(c *gin.Context) {
 	// 	return
 	// }
 	if rightNow != "" {
-		od.FollowerStatus()
+		if od.FollowerStatus() == nil {
+			go user.ChangeRecharge(0.0)
+		}
 	} else if od.Status == 0 && time.Now().Unix()-od.Addtime >= 420 { //订单未支付,七分钟后开启用户查询
-		od.FollowerStatus()
+		if od.FollowerStatus() == nil {
+			go user.ChangeRecharge(0.0)
+		}
 		// rs, _ = c.Get("_lang")
 		// lang := rs.(string)
 		// p := models.Paypal
@@ -137,7 +143,7 @@ func Billing(c *gin.Context) {
 	rs, _ := c.Get("_user")
 	user, _ := rs.(*models.UserModel)
 
-	interid := c.PostForm("interid")
+	interid := c.PostForm("id") //对方用户id
 	isend := c.PostForm("ended")
 	tp := c.PostForm("type") //1-语音, 2-视频
 	tttp, _ := strconv.Atoi(tp)
@@ -153,9 +159,10 @@ func Billing(c *gin.Context) {
 	}
 
 	cos := new(models.Consume)
-	models.DB.Where("uid = ?", user.Id).Where("connect_id = ?", interid).First(cos)
+	now := time.Now().Unix()
+	lt := now - 80
+	models.DB.Where("uid = ?", user.Id).Where("connect_id = ?", interid).Where("status = 0").Where("uptime >= ?", lt).First(cos)
 	if cos.Id > 0 {
-		now := time.Now().Unix()
 		usetime := now - cos.Start
 		cost := ((usetime / 60) + 1) * cos.Seccost
 		data := map[string]interface{}{
@@ -177,6 +184,10 @@ func Billing(c *gin.Context) {
 		msg = "Insufficient balance"
 	}
 	cos.Balance = balance
+	if isend == "1" {
+		bbs, _ := strconv.ParseFloat(fmt.Sprintf("%d", balance), 64)
+		go user.ChangeUsed(0.0, bbs)
+	}
 	controllers.SuccessStr(c, cos, msg)
 
 	// if cos != nil {
@@ -196,5 +207,61 @@ func Billing(c *gin.Context) {
 func Balance(c *gin.Context) {
 	rs, _ := c.Get("_user")
 	user, _ := rs.(*models.UserModel)
+	controllers.SuccessStr(c, map[string]interface{}{"balance": user.GetUserBalance()}, "")
+}
+
+//苹果端
+func ApplePay(c *gin.Context) {
+	platform := c.GetHeader("platform")
+	if platform != "2" {
+		controllers.ErrorNotFound(c)
+		return
+	}
+
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
+	programs := c.PostForm("programs") //充值方案
+	prices := c.PostForm("price")      //充值金额
+	price, _ := strconv.ParseFloat(prices, 64)
+	appleOrderId := c.PostForm("orderid") //苹果充值id
+
+	if appleOrderId == "" || programs == "" || price <= 0 {
+		controllers.ErrorNotFound(c)
+		return
+	}
+
+	po := new(models.PayProgram)
+	models.DB.Table("pay_programs").Where("id = ?", programs).First(po)
+	if po.Id < 1 {
+		controllers.ErrorNotFound(c)
+		return
+	}
+
+	ood := new(models.Order)
+	models.DB.Model(&models.Order{}).Where("orderid = ?", appleOrderId).First(ood)
+	if ood.Id > 0 {
+		controllers.ErrorNoData(c, "The order already exists")
+		return
+	}
+
+	order := new(models.Order)
+	now := time.Now().Unix()
+	order.Addtime = now
+	order.Amount = price
+	order.Bi = po.Bi
+	order.Orderid = appleOrderId
+	order.Paytime = now
+	order.PayWay = 2
+	order.Pid = po.Id
+	order.Uid = user.Id
+	order.Mail = user.Mail
+	rbs := models.DB.Create(order)
+	if rbs.Error != nil {
+		controllers.ErrorNoData(c, "Failed to recharge")
+		return
+	}
+	if order.ChangeOrderStatus(1) == nil {
+		go user.ChangeRecharge(price)
+	}
 	controllers.SuccessStr(c, map[string]interface{}{"balance": user.GetUserBalance()}, "")
 }

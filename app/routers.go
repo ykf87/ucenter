@@ -71,6 +71,7 @@ func (this *AppClient) WebRouter() {
 			{
 				payRouters.GET("/lists", pays.Index)       //充值产品列表
 				payRouters.POST("", pays.Pay)              //充值
+				payRouters.POST("/apple", pays.ApplePay)   //苹果端充值
 				payRouters.POST("/check", pays.CheckOrder) //充值结果查询
 			}
 
