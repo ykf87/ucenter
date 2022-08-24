@@ -1,7 +1,9 @@
 package models
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 	_ "ucenter/app/config"
@@ -39,7 +41,7 @@ func init() {
 	OrderStatusMap = map[string]int{
 		"CREATED":               0,
 		"SAVED":                 2,
-		"APPROVED":              1,
+		"APPROVED":              -2,
 		"VOIDED":                -1,
 		"COMPLETED":             1,
 		"PAYER_ACTION_REQUIRED": 3,
@@ -81,14 +83,19 @@ func (this *Order) ListenOrder() {
 func (this *Order) FollowerStatus() error {
 	o, err := Paypal.GetOrderDetail(this.Orderid)
 	if err == nil {
+		ods, _ := json.Marshal(o)
 		if stts, ok := OrderStatusMap[o.Status]; ok {
 			if stts != this.Status {
 				ut, _ := strconv.Atoi(o.UpdateTime)
 				this.Paytime = int64(ut)
+				logs.Logger.Println(string(ods))
 				return this.ChangeOrderStatus(stts)
 			}
+		} else {
+			logs.Logger.Error(fmt.Sprintf("订单状态不存在!%s - %s", o.Status, string(ods)))
 		}
 	} else {
+		logs.Logger.Error(err)
 		return err
 	}
 	return errors.New("no update")
@@ -100,12 +107,17 @@ func (this *Order) ChangeOrderStatus(status int) error {
 		return errors.New("Order status not change")
 	}
 
+	paytime := this.Paytime
+	if paytime == 0 {
+		paytime = time.Now().Unix()
+	}
 	data := map[string]interface{}{
 		"status":  status,
 		"paytime": this.Paytime,
 	}
 	if DB.Table("orders").Where("id = ?", this.Id).Updates(data).Error == nil {
 		this.Status = status
+		this.Paytime = paytime
 	}
 	return nil
 }
