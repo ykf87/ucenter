@@ -612,7 +612,6 @@ func (this *UserModel) UserAfterLogin() map[string]interface{} {
 }
 
 func (this *UserModel) Cancellation() {
-	fmt.Println("sdfsddsffd", this.Id)
 	rs := DB.Table("users").Where("id = ?", this.Id).Updates(map[string]interface{}{"status": -1, "singleid": -1})
 	fmt.Println(rs.Error)
 }
@@ -635,12 +634,11 @@ func (this *UserModel) ChangeRecharge(recharge float64) {
 	} else {
 		this.Recharge += recharge
 	}
-
-	data := map[string]float64{
-		"recharges": this.Recharge,
-		"balance":   this.Recharge - this.Used,
+	data := map[string]interface{}{
+		"recharge": this.Recharge,
+		"balance":  this.Recharge - this.Used,
 	}
-	DB.Model(&UserModel{}).Updates(data)
+	DB.Table("users").Where("id = ?", this.Id).Updates(data)
 }
 
 //更改用户使用总额
