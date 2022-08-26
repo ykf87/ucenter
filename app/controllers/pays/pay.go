@@ -97,6 +97,8 @@ func CheckOrder(c *gin.Context) {
 		controllers.ErrorNoData(c, "Order does not exist")
 		return
 	}
+
+	fmt.Println("aaaaaaaaaa")
 	// if od.Status == 1 {
 	// 	controllers.SuccessStr(c, od, "Success")
 	// 	return
@@ -134,7 +136,7 @@ func CheckOrder(c *gin.Context) {
 		// 	}
 		// }
 	}
-
+	fmt.Println("----------")
 	controllers.SuccessStr(c, od, "")
 }
 

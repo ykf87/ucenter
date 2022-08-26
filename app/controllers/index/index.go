@@ -317,20 +317,20 @@ func Panics(c *gin.Context) {
 
 //订单成功回调地址
 func OrderSuccess(c *gin.Context) {
-	// orderid := c.Query("token")
-	// var err error
+	orderid := c.Query("token")
+	var err error
 
-	// order := new(models.Order)
-	// models.DB.Where("orderid = ?", orderid).First(order)
-	// if order.Id > 0 {
-	// 	go order.FollowerStatus()
-	// } else {
-	// 	err = errors.New("Order not found")
-	// }
-	// if err != nil {
-	// 	// c.HTML(200, "orderfaild.html", order)
-	// 	return
-	// }
+	order := new(models.Order)
+	models.DB.Where("orderid = ?", orderid).First(order)
+	if order.Id > 0 {
+		go order.FollowerStatus()
+	} else {
+		err = errors.New("Order not found")
+	}
+	if err != nil {
+		// c.HTML(200, "orderfaild.html", order)
+		return
+	}
 	// c.HTML(200, "ordersuccess.html", order)
 	c.JSON(200, gin.H{
 		"msg": "Success",
