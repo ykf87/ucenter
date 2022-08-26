@@ -98,7 +98,6 @@ func CheckOrder(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("aaaaaaaaaa")
 	// if od.Status == 1 {
 	// 	controllers.SuccessStr(c, od, "Success")
 	// 	return
@@ -114,7 +113,6 @@ func CheckOrder(c *gin.Context) {
 		// if od.FollowerStatus() == nil {
 		// 	go user.ChangeRecharge(0.0)
 		// }
-		fmt.Println("====")
 		go user.ChangeRecharge(0.0)
 	} else if od.Status == 0 && time.Now().Unix()-od.Addtime >= 420 { //订单未支付,七分钟后开启用户查询
 		if od.FollowerStatus() == nil {
@@ -138,7 +136,6 @@ func CheckOrder(c *gin.Context) {
 		// 	}
 		// }
 	}
-	fmt.Println("----------")
 	controllers.SuccessStr(c, od, "")
 }
 
