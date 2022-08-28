@@ -82,6 +82,7 @@ require (
 	github.com/oschwald/maxminddb-golang v1.9.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/plutov/paypal v2.0.5+incompatible // indirect
 	github.com/plutov/paypal/v4 v4.6.2 // indirect
 	github.com/qor/admin v1.2.0 // indirect
 	github.com/qor/assetfs v0.0.0-20170713023933-ff57fdc13a14 // indirect

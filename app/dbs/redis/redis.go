@@ -17,19 +17,19 @@ func Init(addr, pwd string, db int) error {
 		Password: pwd,
 		DB:       db,
 	})
-	key := "_tmp___"
-	err := rdb.Set(ctx, key, "a", time.Second*30).Err()
-	if err != nil {
-		return err
-	}
-	str, err := rdb.Get(ctx, key).Result()
-	if err != nil {
-		return err
-	}
-	if str != "a" {
-		return errors.New("获取内容失败，redis 可能链接不正常!")
-	}
-	rdb.Del(ctx, key)
+	// key := "_tmp___"
+	// err := rdb.Set(ctx, key, "a", time.Second*30).Err()
+	// if err != nil {
+	// 	return err
+	// }
+	// str, err := rdb.Get(ctx, key).Result()
+	// if err != nil {
+	// 	return err
+	// }
+	// if str != "a" {
+	// 	return errors.New("获取内容失败，redis 可能链接不正常!")
+	// }
+	// rdb.Del(ctx, key)
 	RDB = rdb
 	return nil
 }

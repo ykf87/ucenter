@@ -9,6 +9,7 @@ import (
 	"ucenter/app/config"
 	"ucenter/app/controllers"
 	"ucenter/app/funcs"
+	"ucenter/app/i18n"
 	"ucenter/models"
 
 	"github.com/gin-gonic/gin"
@@ -342,4 +343,60 @@ func CancleOrder(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"msg": "Error",
 	})
+}
+
+//html支付
+func Pay(c *gin.Context) {
+	langstr, _ := c.Get("_lang")
+	lang := langstr.(string)
+
+	user := models.GetUserFromRequest(c)
+
+	list := models.GetPayPriceLists()
+
+	c.HTML(200, "paypal.html", gin.H{
+		"title":  i18n.T(lang, "Payment"),
+		"amount": user.GetUserBalance(),
+		"list":   list,
+	})
+}
+
+//基础信息
+func Config(c *gin.Context) {
+	version := c.GetHeader("version")
+	platform := c.GetHeader("platform")
+	version = strings.ReplaceAll(version, ".", "")
+	version_code, _ := strconv.Atoi(version)
+
+	versions := models.GetVersions(platform)
+	lens := len(versions)
+	var canpayVersion *models.Version
+	var mustVersion *models.Version
+
+	if lens > 0 {
+		for _, v := range versions {
+			if v.Must == 1 && mustVersion == nil {
+				mustVersion = v
+			}
+			if v.Canpay == 1 && canpayVersion == nil {
+				canpayVersion = v
+			}
+		}
+	}
+	data := make(map[string]interface{})
+
+	if mustVersion != nil && version_code >= mustVersion.VersionCode {
+		data["must"] = 1
+		data["upurl"] = ""
+	} else {
+		data["must"] = 0
+		data["upurl"] = ""
+	}
+
+	if canpayVersion != nil && version_code >= canpayVersion.VersionCode {
+		data["canpay"] = 1
+	} else {
+		data["canpay"] = 0
+	}
+	controllers.SuccessStr(c, data, "")
 }

@@ -245,6 +245,8 @@ github.com/pkg/diff v0.0.0-20210226163009-20ebb0f2a09e/go.mod h1:pJLUxLENpZxwdsK
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+github.com/plutov/paypal v2.0.5+incompatible h1:i5ma4HiHO0MUvJGHaKkL2aqOj0B19q8WoJm1jgzQjlM=
+github.com/plutov/paypal v2.0.5+incompatible/go.mod h1:jOStyiXeDrJ9dHA/yVUB2ahyYPjd5rMXUZ4N7XM37nQ=
 github.com/plutov/paypal/v4 v4.6.2 h1:zxlgYbSkoHLB9CQO3ccqKl47vJ3U5g8vPDWmE22RIPs=
 github.com/plutov/paypal/v4 v4.6.2/go.mod h1:D56boafCRGcF/fEM0w282kj0fCDKIyrwOPX/Te1jCmw=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=

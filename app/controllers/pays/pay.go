@@ -50,6 +50,7 @@ func Pay(c *gin.Context) {
 	// 	logs.Logger.Error(err, " - 调用支付.")
 	// 	return
 	// }
+
 	orderid, reurl, err := p.Pay("USD", po.Price)
 	if err != nil {
 		controllers.ErrorNoData(c, "Illegal payments")

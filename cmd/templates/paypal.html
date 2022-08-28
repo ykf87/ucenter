@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width,height=device-height, user-scalable=no,initial-scale=1,minimum-scale=1, maximum-scale=1,target-densitydpi=device-dpi ">
+	<title>{{.title}}</title>
+	<style type="text/css">
+		.main{
+			width: 80%;
+			margin: 0 auto;
+		}
+	</style>
+	<script type="text/javascript"></script>
+</head>
+<body>
+	<div class="main">
+		<div class="balance">My Amount: {{ .amount }} Glod</div>
+	</div>
+	<div>
+		{{ range $k, $v := .list }}
+			{{$k}} {{$v}}
+		{{end}}
+	</div>
+</body>
+</html>

@@ -92,6 +92,8 @@ func (this *AppClient) WebRouter() {
 		mainGroup.GET("/search", index.Search)     //搜索用户
 		mainGroup.GET("/positive", index.Positive) //获取活跃用户列表
 		mainGroup.GET("/applangs", index.Applangs) //客户端多语言信息
+		mainGroup.GET("/pay", index.Pay)           //网页支付
+		mainGroup.GET("/configs", index.Config)    //统一请求信息
 
 	}
 
