@@ -1,6 +1,7 @@
 package paypal
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -85,6 +86,7 @@ func Client(lang string) (c *Pp, err error) {
 		err = errors.New("Please set Paypal config")
 		return
 	}
+
 	// rrs, errs := P.NewClient(cres.Appid, cres.Secret, false)
 	// if errs != nil {
 	// 	xlog.Error(errs)
@@ -101,7 +103,7 @@ func Client(lang string) (c *Pp, err error) {
 	cp.Lang = lang
 	cp.ReturnUrl = cres.ReturnUrl
 	cp.CancelUrl = cres.CancelUrl
-	cp.IsProd = true
+	cp.IsProd = false
 	cp.DebugSwitch = gopay.DebugOff
 
 	_, err = cp.GetAccessToken()
@@ -125,6 +127,7 @@ func (c *Pp) GetAccessToken() (token *AccessToken, err error) {
 	// // baseUrl = baseUrlProd
 	// // url     string
 	// )
+
 	if !c.IsProd {
 		baseUrl = baseUrlSandbox
 	}
@@ -273,6 +276,28 @@ func (c *Pp) Pay(currency string, price float64) (orderid string, urls string, e
 	// orderid = ""
 	// errs = errors.New("error")
 	return
+}
+
+//Capture
+func (c *Pp) Capture(token string) (*P.OrderDetail, error) {
+	client, err := P.NewClient(c.Clientid, c.Secret, true)
+	if err != nil {
+		fmt.Println("NewClient", err)
+		return nil, err
+	}
+	c.actk()
+
+	ctx := context.Background()
+	ppRsp, err := client.OrderCapture(ctx, token, nil)
+	if err != nil {
+		fmt.Println("OrderCapture", err)
+		return nil, err
+	}
+	if ppRsp.Code != P.Success {
+		fmt.Println("OrderCaptureCode不正常")
+		return nil, errors.New("order code error")
+	}
+	return ppRsp.Response, nil
 }
 
 //获取订单详情

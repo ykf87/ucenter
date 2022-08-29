@@ -111,10 +111,10 @@ func CheckOrder(c *gin.Context) {
 	// 	return
 	// }
 	if rightNow != "" {
-		// if od.FollowerStatus() == nil {
-		// 	go user.ChangeRecharge(0.0)
-		// }
-		go user.ChangeRecharge(0.0)
+		if od.FollowerStatus() == nil {
+			go user.ChangeRecharge(0.0)
+		}
+		// go user.ChangeRecharge(0.0)
 	} else if od.Status == 0 && time.Now().Unix()-od.Addtime >= 420 { //订单未支付,七分钟后开启用户查询
 		if od.FollowerStatus() == nil {
 			go user.ChangeRecharge(0.0)

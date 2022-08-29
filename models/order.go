@@ -101,6 +101,29 @@ func (this *Order) FollowerStatus() error {
 	return errors.New("no update")
 }
 
+//提交订单
+func (this *Order) CaptureOrder(orderid string) error {
+	o, err := Paypal.Capture(orderid)
+	if err != nil {
+		return err
+	}
+	ods, _ := json.Marshal(o)
+	if stts, ok := OrderStatusMap[o.Status]; ok {
+		if stts != this.Status {
+			ut, _ := strconv.Atoi(o.UpdateTime)
+			this.Paytime = int64(ut)
+			if ut < 1 {
+				this.Paytime = time.Now().Unix()
+			}
+			logs.Logger.Println(string(ods))
+			return this.ChangeOrderStatus(stts)
+		}
+	} else {
+		logs.Logger.Error(fmt.Sprintf("订单状态不存在!%s - %s", o.Status, string(ods)))
+	}
+	return nil
+}
+
 //统一的修改订单状态,禁止在其他修改
 func (this *Order) ChangeOrderStatus(status int) error {
 	if this.Status == status {

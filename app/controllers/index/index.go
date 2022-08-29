@@ -318,6 +318,7 @@ func Panics(c *gin.Context) {
 
 //订单成功回调地址
 func OrderSuccess(c *gin.Context) {
+
 	orderid := c.Query("token")
 	var err error
 
@@ -332,6 +333,13 @@ func OrderSuccess(c *gin.Context) {
 		// c.HTML(200, "orderfaild.html", order)
 		return
 	}
+
+	od := new(models.Order)
+	models.DB.Where("orderid = ?", orderid).First(od)
+	if od != nil && od.Id > 0 {
+		od.CaptureOrder(orderid)
+	}
+
 	// c.HTML(200, "ordersuccess.html", order)
 	c.JSON(200, gin.H{
 		"msg": "Success",
@@ -365,6 +373,12 @@ func Pay(c *gin.Context) {
 func Config(c *gin.Context) {
 	version := c.GetHeader("version")
 	platform := c.GetHeader("platform")
+	if platform == "android" {
+		platform = "1"
+	}
+	if version == "" {
+		version = "100"
+	}
 	version = strings.ReplaceAll(version, ".", "")
 	version_code, _ := strconv.Atoi(version)
 
@@ -372,6 +386,8 @@ func Config(c *gin.Context) {
 	lens := len(versions)
 	var canpayVersion *models.Version
 	var mustVersion *models.Version
+	data := make(map[string]interface{})
+	data["last"] = ""
 
 	if lens > 0 {
 		for _, v := range versions {
@@ -382,15 +398,13 @@ func Config(c *gin.Context) {
 				canpayVersion = v
 			}
 		}
+		data["last"] = versions[0]
 	}
-	data := make(map[string]interface{})
 
 	if mustVersion != nil && version_code >= mustVersion.VersionCode {
 		data["must"] = 1
-		data["upurl"] = ""
 	} else {
 		data["must"] = 0
-		data["upurl"] = ""
 	}
 
 	if canpayVersion != nil && version_code >= canpayVersion.VersionCode {

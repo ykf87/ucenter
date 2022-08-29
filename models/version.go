@@ -4,16 +4,17 @@ type Version struct {
 	Id          int64  `json:"id"`
 	VersionStr  string `json:"version_str"`
 	VersionCode int    `json:"version_code"`
-	Reamrk      string `json:"remark"`
+	Remark      string `json:"remark"`
+	Url         string `json:"url"`
 	Uptime      int64  `json:"-"`
 	Addtime     int64  `json:"-"`
-	Must        int    `json:"must"`
-	Canpay      int    `json:"canpay"`
+	Must        int    `json:"-"`
+	Canpay      int    `json:"-"`
 	Platform    int    `json:"-"`
 }
 
 func GetVersions(platform string) []*Version {
 	var lists []*Version
-	DB.Model(&Version{}).Where("platform = ?", platform).Order("id Desc").Find(&lists)
+	DB.Model(&Version{}).Where("platform = ? or platform = 0", platform).Order("id Desc").Find(&lists)
 	return lists
 }
