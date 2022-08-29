@@ -39,6 +39,7 @@ type PaymentConf struct {
 	Secret    string
 	ReturnUrl string
 	CancelUrl string
+	IsPro     int
 }
 
 type ConfigStruct struct {

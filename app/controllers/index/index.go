@@ -320,17 +320,19 @@ func Panics(c *gin.Context) {
 func OrderSuccess(c *gin.Context) {
 
 	orderid := c.Query("token")
+	// payid := c.Query("PayerID")
 	var err error
 
 	order := new(models.Order)
 	models.DB.Where("orderid = ?", orderid).First(order)
 	if order.Id > 0 {
-		go order.FollowerStatus()
+		// go order.FollowerStatus()
 	} else {
 		err = errors.New("Order not found")
 	}
 	if err != nil {
 		// c.HTML(200, "orderfaild.html", order)
+		controllers.ErrorNoData(c, "error")
 		return
 	}
 

@@ -103,7 +103,9 @@ func Client(lang string) (c *Pp, err error) {
 	cp.Lang = lang
 	cp.ReturnUrl = cres.ReturnUrl
 	cp.CancelUrl = cres.CancelUrl
-	cp.IsProd = false
+	if cres.IsPro == 1 {
+		cp.IsProd = true
+	}
 	cp.DebugSwitch = gopay.DebugOff
 
 	_, err = cp.GetAccessToken()
@@ -280,7 +282,7 @@ func (c *Pp) Pay(currency string, price float64) (orderid string, urls string, e
 
 //Capture
 func (c *Pp) Capture(token string) (*P.OrderDetail, error) {
-	client, err := P.NewClient(c.Clientid, c.Secret, true)
+	client, err := P.NewClient(c.Clientid, c.Secret, c.IsProd)
 	if err != nil {
 		fmt.Println("NewClient", err)
 		return nil, err
