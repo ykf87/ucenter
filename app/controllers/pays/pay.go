@@ -110,6 +110,7 @@ func CheckOrder(c *gin.Context) {
 	// 	logs.Logger.Error(err, " - 调用支付.")
 	// 	return
 	// }
+	od.CaptureOrder(orderid)
 	if rightNow != "" {
 		if od.FollowerStatus() == nil {
 			go user.ChangeRecharge(0.0)
