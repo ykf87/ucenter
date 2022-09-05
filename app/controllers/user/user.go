@@ -65,7 +65,7 @@ func Sign(c *gin.Context) {
 		return
 	}
 	reged := models.UserDeviceRowsRegs(deviceId)
-	if len(reged) >= 3 {
+	if len(reged) >= config.Config.DeviceAccounts {
 		controllers.ErrorNoData(c, "The maximum number of registrations has been reached")
 		return
 	}

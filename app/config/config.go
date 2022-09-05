@@ -65,6 +65,7 @@ type ConfigStruct struct {
 	Useoss           string `required:"true"`
 	Heterosexual     int    `default: 1` //对于用户搜索结果,是否仅显示异性
 	ShowPay          int    `default:0`  //是否开启支付
+	DeviceAccounts   int    `default:10` //单设备最高注册数量
 
 	DB []struct {
 		Type string

@@ -59,6 +59,7 @@ useim: "Im聊天组件,在下方im中定义"
 useoss: "文件存储组件,下方oss中定义"
 heterosexual: 搜索用户是否仅显示异性, 0表示搜索出所有性别,1表示排除和搜索账号相同性别
 showpay: 0
+deviceaccounts: 10
 timefmts:
   en:
     datetimefmt: "Jan 2, 2006 3:04 PM"
