@@ -384,35 +384,32 @@ func Config(c *gin.Context) {
 	version = strings.ReplaceAll(version, ".", "")
 	version_code, _ := strconv.Atoi(version)
 
-	versions := models.GetVersions(platform)
+	versions := models.GetVersions(platform, version_code)
 	lens := len(versions)
-	var canpayVersion *models.Version
-	var mustVersion *models.Version
 	data := make(map[string]interface{})
-	data["last"] = ""
+	data["last"] = nil
+	canpay := 0
+	must := 0
 
 	if lens > 0 {
+		hasLastVersion := false
 		for _, v := range versions {
-			if v.Must == 1 && mustVersion == nil {
-				mustVersion = v
+			if must == 0 && version_code < v.VersionCode && v.Must == 1 {
+				must = 1
 			}
-			if v.Canpay == 1 && canpayVersion == nil {
-				canpayVersion = v
+			if version_code == v.VersionCode {
+				canpay = v.Canpay
+			}
+			if hasLastVersion == false && v.VersionCode > version_code {
+				data["last"] = v
+				hasLastVersion = true
 			}
 		}
-		data["last"] = versions[0]
 	}
 
-	if mustVersion != nil && version_code >= mustVersion.VersionCode {
-		data["must"] = 1
-	} else {
-		data["must"] = 0
-	}
+	//must需放到外层,避免跳过必须更新版本
+	data["must"] = must
 
-	if canpayVersion != nil && version_code >= canpayVersion.VersionCode {
-		data["canpay"] = 1
-	} else {
-		data["canpay"] = 0
-	}
+	data["canpay"] = canpay
 	controllers.SuccessStr(c, data, "")
 }

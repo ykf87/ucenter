@@ -1,5 +1,9 @@
 package models
 
+import (
+	"time"
+)
+
 type Version struct {
 	Id          int64  `json:"id"`
 	VersionStr  string `json:"version_str"`
@@ -8,13 +12,14 @@ type Version struct {
 	Url         string `json:"url"`
 	Uptime      int64  `json:"-"`
 	Addtime     int64  `json:"-"`
-	Must        int    `json:"-"`
-	Canpay      int    `json:"-"`
+	Must        int    `json:"must"`
+	Canpay      int    `json:"canpay"`
 	Platform    int    `json:"-"`
 }
 
-func GetVersions(platform string) []*Version {
+func GetVersions(platform string, version_code int) []*Version {
 	var lists []*Version
-	DB.Model(&Version{}).Where("platform = ? or platform = 0", platform).Order("id Desc").Find(&lists)
+	now := time.Now().Unix()
+	DB.Model(&Version{}).Where("platform = ?", platform).Where("version_code >= ?", version_code).Where("uptime <= ?", now).Order("id Desc").Find(&lists)
 	return lists
 }
