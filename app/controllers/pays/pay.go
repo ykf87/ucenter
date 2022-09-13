@@ -6,6 +6,7 @@ import (
 	"time"
 	"ucenter/app/controllers"
 	"ucenter/app/logs"
+	"ucenter/app/payment/apple"
 
 	// "ucenter/app/payment"
 	"ucenter/models"
@@ -163,7 +164,7 @@ func Billing(c *gin.Context) {
 
 	cos := new(models.Consume)
 	now := time.Now().Unix()
-	lt := now - 80
+	lt := now - 120
 	models.DB.Where("uid = ?", user.Id).Where("connect_id = ?", interid).Where("status = 0").Where("uptime >= ?", lt).First(cos)
 	if cos.Id > 0 {
 		usetime := now - cos.Start
@@ -216,6 +217,7 @@ func Balance(c *gin.Context) {
 //苹果端
 func ApplePay(c *gin.Context) {
 	platform := c.GetHeader("platform")
+	fmt.Println("------------")
 	if platform != "2" {
 		controllers.ErrorNotFound(c)
 		return
@@ -227,11 +229,16 @@ func ApplePay(c *gin.Context) {
 	prices := c.PostForm("price")      //充值金额
 	price, _ := strconv.ParseFloat(prices, 64)
 	appleOrderId := c.PostForm("orderid") //苹果充值id
-
+	fmt.Println("------------")
 	if appleOrderId == "" || programs == "" || price <= 0 {
 		controllers.ErrorNotFound(c)
 		return
 	}
+
+	err := apple.VeryOrder(appleOrderId)
+	fmt.Println(err)
+	controllers.SuccessStr(c, nil, "success")
+	return
 
 	po := new(models.PayProgram)
 	models.DB.Table("pay_programs").Where("id = ?", programs).First(po)
