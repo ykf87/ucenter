@@ -217,7 +217,6 @@ func Balance(c *gin.Context) {
 //苹果端
 func ApplePay(c *gin.Context) {
 	platform := c.GetHeader("platform")
-	fmt.Println("------------")
 	if platform != "2" {
 		controllers.ErrorNotFound(c)
 		return
@@ -229,16 +228,16 @@ func ApplePay(c *gin.Context) {
 	prices := c.PostForm("price")      //充值金额
 	price, _ := strconv.ParseFloat(prices, 64)
 	appleOrderId := c.PostForm("orderid") //苹果充值id
-	fmt.Println("------------")
 	if appleOrderId == "" || programs == "" || price <= 0 {
 		controllers.ErrorNotFound(c)
 		return
 	}
 
-	err := apple.VeryOrder(appleOrderId)
-	fmt.Println(err)
-	controllers.SuccessStr(c, nil, "success")
-	return
+	odid, err := apple.VeryOrder(appleOrderId)
+	if err != nil && odid == "" {
+		controllers.ErrorNoData(c, "Error")
+		return
+	}
 
 	po := new(models.PayProgram)
 	models.DB.Table("pay_programs").Where("id = ?", programs).First(po)
@@ -248,7 +247,7 @@ func ApplePay(c *gin.Context) {
 	}
 
 	ood := new(models.Order)
-	models.DB.Model(&models.Order{}).Where("orderid = ?", appleOrderId).First(ood)
+	models.DB.Model(&models.Order{}).Where("orderid = ?", odid).First(ood)
 	if ood.Id > 0 {
 		controllers.ErrorNoData(c, "The order already exists")
 		return
@@ -257,9 +256,9 @@ func ApplePay(c *gin.Context) {
 	order := new(models.Order)
 	now := time.Now().Unix()
 	order.Addtime = now
-	order.Amount = price
+	order.Amount = po.Price
 	order.Bi = po.Bi
-	order.Orderid = appleOrderId
+	order.Orderid = odid
 	order.Paytime = now
 	order.PayWay = 2
 	order.Pid = po.Id
