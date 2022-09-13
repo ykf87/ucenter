@@ -37,7 +37,24 @@ func Like(c *gin.Context) {
 
 //用户喜欢列表
 func Liked(c *gin.Context) {
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
+	page, _ := strconv.Atoi(c.Query("page"))
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	langos, _ := c.Get("_lang")
+	lang := langos.(string)
+	timezones, _ := c.Get("_timezone")
+	timezone := timezones.(string)
 
+	list := models.GetUserLikedList(user.Id, nil, page, limit)
+	for _, v := range list {
+		u := models.GetUser(v.Likeid, "", "", "")
+		if u != nil && u.Id > 0 {
+			v.Info = u.Info(lang, timezone)
+		}
+	}
+
+	controllers.Success(c, list, &controllers.Msg{Str: "Success"})
 }
 
 //喜欢当前用户的列表

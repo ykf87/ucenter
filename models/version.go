@@ -15,6 +15,7 @@ type Version struct {
 	Must        int    `json:"must"`
 	Canpay      int    `json:"canpay"`
 	Platform    int    `json:"-"`
+	Audit       int    `json:"audit"`
 }
 
 func GetVersions(platform string, version_code int) []*Version {

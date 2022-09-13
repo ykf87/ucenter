@@ -2,13 +2,15 @@ package models
 
 import (
 	"time"
+	"ucenter/app/config"
 )
 
 type UserLikeModel struct {
-	Id      int64 `json:"id"`
-	Likeid  int64 `json:"likeid"`
-	Mutual  int64 `json:"mutual"`
-	Addtime int64 `json:"addtime"`
+	Id      int64                  `json:"id"`
+	Likeid  int64                  `json:"likeid"`
+	Mutual  int64                  `json:"mutual"`
+	Addtime int64                  `json:"addtime"`
+	Info    map[string]interface{} `json:"info" gorm:"-"`
 }
 
 //检查是否已经喜欢了对方
@@ -47,9 +49,15 @@ func UserLikeAdd(uid, likeid int64) bool {
 }
 
 //获取用户id喜欢的用户
-func GetUserLikedList(uid int64, inids []int64) []*UserLikeModel {
+func GetUserLikedList(uid int64, inids []int64, page, limit int) []*UserLikeModel {
 	var lks []*UserLikeModel
-	rs := DB.Table("user_likes").Where("id = ?", uid)
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 {
+		limit = config.Config.Limit
+	}
+	rs := DB.Table("user_likes").Where("id = ?", uid).Offset((page - 1) * limit).Limit(limit)
 	if inids != nil && len(inids) > 0 {
 		rs = rs.Where("likeid in ?", inids)
 	}

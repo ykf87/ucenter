@@ -213,6 +213,11 @@ func Search(c *gin.Context) {
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	rd := strings.Trim(c.Query("rand"), " ")
 
+	ageFrom, _ := strconv.Atoi(c.Query("agefrom"))
+	ageTo, _ := strconv.Atoi(c.Query("ageto"))
+	country, _ := strconv.Atoi(c.Query("country"))
+	temperament := c.Query("temperament")
+
 	langob, _ := c.Get("_lang")
 	timezones, _ := c.Get("_timezone")
 
@@ -222,7 +227,8 @@ func Search(c *gin.Context) {
 		ulids = append(ulids, user.Id)
 		userSex = user.Sex
 	}
-	r := models.GetUserList(page, limit, q, rd, ulids, userSex)
+
+	r := models.GetUserList(page, limit, q, rd, ulids, userSex, ageFrom, ageTo, country, temperament)
 	if r == nil || len(r) < 1 {
 		controllers.Resp(c, nil, nil, 404)
 	} else {
@@ -232,7 +238,7 @@ func Search(c *gin.Context) {
 			iids = append(iids, v.Id)
 		}
 		if user != nil {
-			nnvs := models.GetUserLikedList(user.Id, iids)
+			nnvs := models.GetUserLikedList(user.Id, iids, page, limit)
 			if nnvs != nil && len(nnvs) > 0 {
 				mmp := make(map[int64]bool)
 				for _, v := range nnvs {
@@ -397,7 +403,7 @@ func Config(c *gin.Context) {
 			if must == 0 && version_code < v.VersionCode && v.Must == 1 {
 				must = 1
 			}
-			if version_code == v.VersionCode {
+			if version_code == v.VersionCode && v.Audit == 0 {
 				canpay = v.Canpay
 			}
 			if hasLastVersion == false && v.VersionCode > version_code {
@@ -405,6 +411,9 @@ func Config(c *gin.Context) {
 				hasLastVersion = true
 			}
 		}
+	}
+	if config.Config.ShowPay == 0 {
+		canpay = 0
 	}
 
 	//must需放到外层,避免跳过必须更新版本

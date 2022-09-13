@@ -221,7 +221,7 @@ func GetUser(id int64, account, email, phone string) *UserModel {
 }
 
 //查找用户列表
-func GetUserList(page, limit int, q, rd string, noids []int64, searcherSex int) []*UserModel {
+func GetUserList(page, limit int, q, rd string, noids []int64, searcherSex int, ageFrom, ageTo, country int, temperament string) []*UserModel {
 	if page < 1 {
 		page = 1
 	}
@@ -240,6 +240,29 @@ func GetUserList(page, limit int, q, rd string, noids []int64, searcherSex int) 
 	if q != "" {
 		dbob = dbob.Where("nickname like ?", "%"+q+"%")
 	}
+
+	//年龄筛选
+	if ageFrom > 0 {
+		dbob = dbob.Where("age >= ?", ageFrom)
+	}
+	if ageTo > 0 {
+		dbob = dbob.Where("age <= ?", ageTo)
+	}
+	if country > 0 {
+		dbob = dbob.Where("country = ?", country)
+	}
+	if temperament != "" {
+		temperaments := strings.Split(temperament, ",")
+		var tps []int
+		for _, v := range temperaments {
+			tttt, _ := strconv.Atoi(v)
+			if tttt > 0 {
+				tps = append(tps, tttt)
+			}
+		}
+		dbob = dbob.Where("find_in_set(?, temperament)", tps)
+	}
+
 	if searcherSex > 0 && config.Config.Heterosexual == 1 {
 		dbob = dbob.Where("sex != ?", searcherSex)
 	}
@@ -369,7 +392,8 @@ func (this *UserModel) Info(lang, timezone string) map[string]interface{} {
 		}
 		if k == "birth" {
 			if v.Int() > 0 {
-				data[k] = this.FmtAddTime(lang, timezone)
+				data[k] = this.FmtAddTime(lang, timezone, v.Int())
+				// data["age"] = (time.Now().Unix() - v.Int()) / (365 * 86400)
 			} else {
 				data[k] = ""
 			}
@@ -576,7 +600,7 @@ func (this *UserModel) Abstract() map[string]interface{} {
 }
 
 //格式化时间
-func (this *UserModel) FmtAddTime(lang, timezone string) string {
+func (this *UserModel) FmtAddTime(lang, timezone string, time int64) string {
 	var fmt string
 	fmts, ok := config.Config.Timefmts[lang]
 	if ok {
@@ -584,7 +608,7 @@ func (this *UserModel) FmtAddTime(lang, timezone string) string {
 	} else {
 		fmt = config.Config.Datefmt
 	}
-	return carbon.SetTimezone(timezone).CreateFromTimestamp(this.Addtime).Carbon2Time().Format(fmt)
+	return carbon.SetTimezone(timezone).CreateFromTimestamp(time).Carbon2Time().Format(fmt)
 }
 
 //检查当前登录环境是否较上次有变动

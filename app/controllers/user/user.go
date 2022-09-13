@@ -783,7 +783,7 @@ func Invitees(c *gin.Context) {
 	var ddtt []map[string]interface{}
 	for _, v := range dt {
 		rs := v.Abstract()
-		rs["addtimefmt"] = v.FmtAddTime(lang, timezone)
+		rs["addtimefmt"] = v.FmtAddTime(lang, timezone, v.Addtime)
 		ddtt = append(ddtt, rs)
 	}
 	controllers.SuccessStr(c, map[string]interface{}{"list": ddtt, "count": count}, "Success")
