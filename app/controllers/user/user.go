@@ -184,15 +184,16 @@ func Login(c *gin.Context) {
 func Index(c *gin.Context) {
 	rs, _ := c.Get("_user")
 	user, _ := rs.(*models.UserModel)
+	meid := user.Id
 	langob, _ := c.Get("_lang")
 	lang := langob.(string)
 	timezones, _ := c.Get("_timezone")
 	timezone := timezones.(string)
 
-	id := c.Param("id")
-	if id != "" {
-		uid, _ := strconv.Atoi(id)
-		us := models.GetUser(int64(uid), "", "", "")
+	id, _ := strconv.Atoi(c.Param("id"))
+	uid := int64(id)
+	if id > 0 {
+		us := models.GetUser(uid, "", "", "")
 		if us == nil || us.Id < 1 {
 			controllers.ErrorNotFound(c)
 			return
@@ -210,6 +211,17 @@ func Index(c *gin.Context) {
 	info["albums"] = albums
 	info["inviurl"] = funcs.InviUrl(user.Invite)
 	info["isShowPay"] = config.Config.ShowPay
+	info["liked"] = 0
+	info["likeeach"] = 0
+
+	if id > 0 {
+		lks := models.CheckUserIsLiked(meid, uid)
+		if lks != nil && lks.Id > 0 {
+			info["liked"] = 1
+			info["likeeach"] = lks.Mutual
+		}
+	}
+
 	controllers.SuccessStr(c, info, "Success")
 	// controllers.Success(c, info, &controllers.Msg{Str: "Success"})
 }
