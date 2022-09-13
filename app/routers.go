@@ -62,10 +62,11 @@ func (this *AppClient) WebRouter() {
 			mustLoginRouter.POST("/imsigna", user.Signa) //Im签名
 
 			//喜欢相关
-			mustLoginRouter.POST("/like", userlikes.Like)   //喜欢一个人
-			mustLoginRouter.POST("/liked", userlikes.Liked) //用户喜欢列表
-			mustLoginRouter.POST("/liker", userlikes.Liker) //喜欢当前用户的列表
-			mustLoginRouter.POST("/likes", userlikes.Likes) //相互喜欢列表
+			mustLoginRouter.POST("/like", userlikes.Like)     //喜欢一个人
+			mustLoginRouter.POST("/liked", userlikes.Liked)   //用户喜欢列表
+			mustLoginRouter.POST("/liker", userlikes.Liker)   //喜欢当前用户的列表
+			mustLoginRouter.POST("/likes", userlikes.Likes)   //相互喜欢列表
+			mustLoginRouter.POST("/unlike", userlikes.Unlike) //取消喜欢
 
 			payRouters := mustLoginRouter.Group("/pay") //与支付相关
 			{

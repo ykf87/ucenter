@@ -66,3 +66,22 @@ func Liker(c *gin.Context) {
 func Likes(c *gin.Context) {
 
 }
+
+//取消喜欢
+func Unlike(c *gin.Context) {
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
+	// langos, _ := c.Get("_lang")
+	// lang := langos.(string)
+	// timezones, _ := c.Get("_timezone")
+	// timezone := timezones.(string)
+
+	id, _ := strconv.Atoi(c.PostForm("id"))
+
+	err := models.UnlikeUser(user.Id, id)
+	if err != nil {
+		controllers.ErrorNoData(c, err.Error())
+		return
+	}
+	controllers.SuccessStr(c, nil, "Success")
+}

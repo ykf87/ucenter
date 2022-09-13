@@ -67,3 +67,14 @@ func GetUserLikedList(uid int64, inids []int64, page, limit int) []*UserLikeMode
 	}
 	return lks
 }
+
+func UnlikeUser(uid int64, likeid int) error {
+	rs := DB.Table("user_likes").Where("id = ?", uid).Where("likeid = ?", likeid).Delete(&UserLikeModel{})
+	if rs.Error != nil {
+		return rs.Error
+	}
+
+	DB.Table("user_likes").Where("id = ?", likeid).Where("likeid = ?", uid).Update("mutual", 0)
+
+	return nil
+}
