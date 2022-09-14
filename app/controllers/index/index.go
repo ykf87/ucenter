@@ -241,7 +241,6 @@ func Search(c *gin.Context) {
 			if err == nil {
 				rsssss, err := json.Marshal(rssss)
 				if err == nil {
-					fmt.Println(string(rsssss))
 					if gjson.ParseBytes(rsssss).IsArray() == true {
 						for _, v := range gjson.ParseBytes(rsssss).Array() {
 							vm := v.Map()
@@ -257,7 +256,6 @@ func Search(c *gin.Context) {
 			contryIds = append(contryIds, int64(countryId))
 		}
 	}
-	fmt.Println(contryIds)
 
 	r := models.GetUserList(page, limit, q, rd, ulids, userSex, ageFrom, ageTo, contryIds, temperament)
 	if r == nil || len(r) < 1 {
