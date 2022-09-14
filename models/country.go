@@ -186,10 +186,11 @@ func GetCountryLists(lang, kv, filter, kvv string, page, limit int) (dts interfa
 		for _, v := range nds {
 			if kvv == "name" {
 				mps[v.Iso] = v.Name
+			} else if kvv == "id" {
+				mps[v.Iso] = v.Id
 			} else {
 				mps[v.Iso] = v.Phonecode
 			}
-
 		}
 		return mps, nil
 	}

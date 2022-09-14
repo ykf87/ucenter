@@ -221,7 +221,7 @@ func GetUser(id int64, account, email, phone string) *UserModel {
 }
 
 //查找用户列表
-func GetUserList(page, limit int, q, rd string, noids []int64, searcherSex int, ageFrom, ageTo, country int, temperament string) []*UserModel {
+func GetUserList(page, limit int, q, rd string, noids []int64, searcherSex int, ageFrom, ageTo int, country []int64, temperament string) []*UserModel {
 	if page < 1 {
 		page = 1
 	}
@@ -248,8 +248,8 @@ func GetUserList(page, limit int, q, rd string, noids []int64, searcherSex int, 
 	if ageTo > 0 {
 		dbob = dbob.Where("age <= ?", ageTo)
 	}
-	if country > 0 {
-		dbob = dbob.Where("country = ?", country)
+	if country != nil && len(country) > 0 {
+		dbob = dbob.Where("country in ?", country)
 	}
 	if temperament != "" {
 		temperaments := strings.Split(temperament, ",")

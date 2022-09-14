@@ -1,6 +1,7 @@
 package index
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -11,6 +12,8 @@ import (
 	"ucenter/app/funcs"
 	"ucenter/app/i18n"
 	"ucenter/models"
+
+	"github.com/tidwall/gjson"
 
 	"github.com/gin-gonic/gin"
 )
@@ -215,11 +218,14 @@ func Search(c *gin.Context) {
 
 	ageFrom, _ := strconv.Atoi(c.Query("agefrom"))
 	ageTo, _ := strconv.Atoi(c.Query("ageto"))
-	country, _ := strconv.Atoi(c.Query("country"))
+	countryStr := c.Query("country")
 	temperament := c.Query("temperament")
 
 	langob, _ := c.Get("_lang")
+	lang := langob.(string)
 	timezones, _ := c.Get("_timezone")
+
+	var contryIds []int64
 
 	var ulids []int64
 	var userSex int
@@ -228,7 +234,32 @@ func Search(c *gin.Context) {
 		userSex = user.Sex
 	}
 
-	r := models.GetUserList(page, limit, q, rd, ulids, userSex, ageFrom, ageTo, country, temperament)
+	if countryStr != "" {
+		countryId, _ := strconv.Atoi(countryStr)
+		if countryId < 1 {
+			rssss, err := models.GetCountryLists(lang, "", countryStr, "id", 1, 0)
+			if err == nil {
+				rsssss, err := json.Marshal(rssss)
+				if err == nil {
+					fmt.Println(string(rsssss))
+					if gjson.ParseBytes(rsssss).IsArray() == true {
+						for _, v := range gjson.ParseBytes(rsssss).Array() {
+							vm := v.Map()
+							if vm["id"].Exists() == true {
+								contryIds = append(contryIds, vm["id"].Int())
+							}
+						}
+					}
+
+				}
+			}
+		} else {
+			contryIds = append(contryIds, int64(countryId))
+		}
+	}
+	fmt.Println(contryIds)
+
+	r := models.GetUserList(page, limit, q, rd, ulids, userSex, ageFrom, ageTo, contryIds, temperament)
 	if r == nil || len(r) < 1 {
 		controllers.Resp(c, nil, nil, 404)
 	} else {
@@ -249,7 +280,7 @@ func Search(c *gin.Context) {
 					}
 				}
 				for _, v := range r {
-					nbs := v.Info(langob.(string), timezones.(string))
+					nbs := v.Info(lang, timezones.(string))
 					if sdfn, ok := mmp[v.Id]; ok {
 						if sdfn == true {
 							nbs["likeeach"] = "1"
@@ -265,7 +296,7 @@ func Search(c *gin.Context) {
 				}
 			} else {
 				for _, v := range r {
-					nbs := v.Info(langob.(string), timezones.(string))
+					nbs := v.Info(lang, timezones.(string))
 					nbs["liked"] = "0"
 					nbs["likeeach"] = "0"
 					lll = append(lll, nbs)
@@ -273,7 +304,7 @@ func Search(c *gin.Context) {
 			}
 		} else {
 			for _, v := range r {
-				nbs := v.Info(langob.(string), timezones.(string))
+				nbs := v.Info(lang, timezones.(string))
 				nbs["liked"] = "0"
 				nbs["likeeach"] = "0"
 				lll = append(lll, nbs)
