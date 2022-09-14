@@ -6,6 +6,7 @@ import (
 	"time"
 	"ucenter/app/controllers"
 	"ucenter/app/logs"
+	"ucenter/app/payment/apple"
 
 	// "ucenter/app/payment"
 	"ucenter/models"
@@ -163,7 +164,7 @@ func Billing(c *gin.Context) {
 
 	cos := new(models.Consume)
 	now := time.Now().Unix()
-	lt := now - 80
+	lt := now - 120
 	models.DB.Where("uid = ?", user.Id).Where("connect_id = ?", interid).Where("status = 0").Where("uptime >= ?", lt).First(cos)
 	if cos.Id > 0 {
 		usetime := now - cos.Start
@@ -227,9 +228,14 @@ func ApplePay(c *gin.Context) {
 	prices := c.PostForm("price")      //充值金额
 	price, _ := strconv.ParseFloat(prices, 64)
 	appleOrderId := c.PostForm("orderid") //苹果充值id
-
 	if appleOrderId == "" || programs == "" || price <= 0 {
 		controllers.ErrorNotFound(c)
+		return
+	}
+
+	odid, err := apple.VeryOrder(appleOrderId)
+	if err != nil && odid == "" {
+		controllers.ErrorNoData(c, "Error")
 		return
 	}
 
@@ -241,7 +247,7 @@ func ApplePay(c *gin.Context) {
 	}
 
 	ood := new(models.Order)
-	models.DB.Model(&models.Order{}).Where("orderid = ?", appleOrderId).First(ood)
+	models.DB.Model(&models.Order{}).Where("orderid = ?", odid).First(ood)
 	if ood.Id > 0 {
 		controllers.ErrorNoData(c, "The order already exists")
 		return
@@ -250,9 +256,9 @@ func ApplePay(c *gin.Context) {
 	order := new(models.Order)
 	now := time.Now().Unix()
 	order.Addtime = now
-	order.Amount = price
+	order.Amount = po.Price
 	order.Bi = po.Bi
-	order.Orderid = appleOrderId
+	order.Orderid = odid
 	order.Paytime = now
 	order.PayWay = 2
 	order.Pid = po.Id

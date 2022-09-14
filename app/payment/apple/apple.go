@@ -1,7 +1,9 @@
 package apple
 
 import (
+	"context"
 	"errors"
+	"strings"
 	"ucenter/app/logs"
 
 	"github.com/go-pay/gopay/apple"
@@ -11,14 +13,15 @@ import (
 const (
 	VeryUrl        = "https://buy.itunes.apple.com/verifyReceipt"
 	VeryUrlSendBox = "https://sandbox.itunes.apple.com/verifyReceipt"
-	PASSWORD       = ""
+	PASSWORD       = "e26f52cada2641fd88e2f53673e266ba"
 )
 
-func VeryOrder(receipt string) error {
-	rsp, err := apple.VerifyReceipt(VeryUrl, PASSWORD, receipt)
+func VeryOrder(receipt string) (string, error) {
+	ctx := context.Background()
+	rsp, err := apple.VerifyReceipt(ctx, VeryUrl, PASSWORD, receipt)
 	if err != nil {
 		xlog.Error(err)
-		return err
+		return "", err
 	}
 	/**
 	  response body:
@@ -26,20 +29,31 @@ func VeryOrder(receipt string) error {
 	*/
 
 	if rsp.Status == 21007 {
-		rsp, err = apple.VerifyReceipt(VeryUrlSendBox, PASSWORD, receipt)
+		rsp, err = apple.VerifyReceipt(ctx, VeryUrlSendBox, PASSWORD, receipt)
 		if err != nil {
 			xlog.Error(err)
-			return err
+			return "", err
 		}
 	}
 
 	if rsp.Receipt != nil {
-		xlog.Infof("receipt:%+v", rsp.Receipt)
-		if rsp.Status == 200 {
-			return nil
+		// b, _ := json.Marshal(rsp)
+		// fmt.Println(string(b))
+		// xlog.Infof("receipt:%+v", rsp.Receipt)
+		if rsp.Status == 0 {
+			var str []string
+			for _, v := range rsp.Receipt.InApp {
+				str = append(str, v.TransactionId)
+			}
+			return strings.Join(str, ","), nil
+		} else {
+			return "", errors.New("Status code is not 0")
 		}
 	} else {
+		// b, _ := json.Marshal(rsp)
+		// fmt.Println(string(b))
 		logs.Logger.Error("支付错误: ", receipt)
-		return errors.New("支付错误")
+		return "", errors.New("支付错误")
 	}
+	return "", errors.New("Error")
 }
