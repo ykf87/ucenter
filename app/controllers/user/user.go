@@ -198,7 +198,7 @@ func Index(c *gin.Context) {
 			controllers.ErrorNotFound(c)
 			return
 		}
-		go us.AddVisits()
+		go us.AddVisits(meid)
 		us.Visits = us.Visits + 1
 		user = us
 	}
@@ -822,4 +822,63 @@ func Cancellation(c *gin.Context) {
 	//修改删除关系网,发送告别邮件
 	bye.Send()
 	controllers.SuccessStr(c, nil, "Success")
+}
+
+//同城异性
+func Incity(c *gin.Context) {
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
+
+	if user.City < 1 {
+		controllers.ErrorNoData(c, "Please select you city")
+		return
+	}
+	if user.Sex != 1 && user.Sex != 2 {
+		controllers.ErrorNoData(c, "Please select you sex")
+		return
+	}
+	page, _ := strconv.Atoi(c.Query("page"))
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	lango, _ := c.Get("_lang")
+	lang := lango.(string)
+
+	timezoneo, _ := c.Get("_timezone")
+	timezone := timezoneo.(string)
+
+	uls, err := user.SameCity(page, limit)
+	if err != nil {
+		logs.Logger.Error(err)
+	}
+	var uuus []map[string]interface{}
+	if uls != nil && len(uls) > 0 {
+		for _, v := range uls {
+			uuus = append(uuus, v.Info(lang, timezone))
+		}
+	}
+	controllers.SuccessStr(c, uuus, "")
+}
+
+//访客列表
+func Visits(c *gin.Context) {
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
+
+	page, _ := strconv.Atoi(c.Query("page"))
+	limit, _ := strconv.Atoi(c.Query("limit"))
+
+	lango, _ := c.Get("_lang")
+	lang := lango.(string)
+
+	timezoneo, _ := c.Get("_timezone")
+	timezone := timezoneo.(string)
+
+	rrs, err := user.VisitLists(page, limit)
+	if err != nil {
+		logs.Logger.Error(err)
+	}
+	var dt []map[string]interface{}
+	for _, v := range rrs {
+		dt = append(dt, v.Info(lang, timezone))
+	}
+	controllers.SuccessStr(c, dt, "")
 }

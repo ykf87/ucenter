@@ -566,8 +566,14 @@ func (this *UserModel) temSet(lang string, strs []string) []*IdNameModel {
 }
 
 //增加访问量
-func (this *UserModel) AddVisits() {
+func (this *UserModel) AddVisits(id int64) {
 	DB.Table("users").Where("id = ?", this.Id).Update("visits", this.Visits+1)
+
+	vl := new(VisitList)
+	vl.Uid = this.Id
+	vl.VisitId = id
+	vl.Addtime = time.Now().Unix()
+	DB.Create(vl)
 }
 
 //注销账号,账号信息存储至其他表格,并删除user表内容
@@ -682,4 +688,45 @@ func (this *UserModel) ChangeUsed(used float64, balance float64) {
 		"balance": balance,
 	}
 	DB.Model(&UserModel{}).Updates(data)
+}
+
+//同城一行
+func (this *UserModel) SameCity(page, limit int) ([]*UserModel, error) {
+	var uls []*UserModel
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 {
+		limit = 10
+	}
+
+	var sex int
+	if this.Sex == 1 {
+		sex = 2
+	} else {
+		sex = 1
+	}
+
+	rs := DB.Table("users").Where("status = 1").Where("sex = ?", sex).Where("city = ?", this.City).Offset((page - 1) * limit).Limit(limit).Find(&uls)
+	if rs.Error != nil {
+		return nil, rs.Error
+	}
+	return uls, nil
+}
+
+//访客列表
+func (this *UserModel) VisitLists(page, limit int) ([]*UserModel, error) {
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 {
+		limit = 10
+	}
+
+	var vlist []*UserModel
+	rs := DB.Select("u.*").Table("visit_lists as vl").Joins("left join users as u on vl.visit_id = u.id").Where("vl.uid = ?", this.Id).Group("vl.visit_id").Order("vl.addtime DESC").Offset((page - 1) * limit).Limit(limit).Find(&vlist)
+	if rs.Error != nil {
+		return nil, rs.Error
+	}
+	return vlist, nil
 }

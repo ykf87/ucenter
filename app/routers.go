@@ -5,6 +5,7 @@ import (
 	"ucenter/app/controllers"
 	"ucenter/app/controllers/albums"
 	"ucenter/app/controllers/article"
+	"ucenter/app/controllers/gift"
 	"ucenter/app/controllers/index"
 	"ucenter/app/controllers/pays"
 	"ucenter/app/controllers/user"
@@ -51,13 +52,15 @@ func (this *AppClient) WebRouter() {
 				albumsAuters.POST("/exg", albums.AlbumsExg)          //相册公共私密互转
 			}
 
-			mustLoginRouter.GET("", user.Index)             //用户信息
-			mustLoginRouter.GET("/info/:id", user.Index)    //用户信息
+			mustLoginRouter.GET("", user.Index)             //登录用户信息
+			mustLoginRouter.GET("/info/:id", user.Index)    //查看其他用户信息
 			mustLoginRouter.GET("/invitee", user.Invitee)   //上级信息
 			mustLoginRouter.GET("/invitees", user.Invitees) //下级账号列表
 			// authorized.POST("/editer", user.Editer)             //修改信息-弃用
 			mustLoginRouter.POST("/editerbatch", user.EditBatch)     //个人信息批量修改
 			mustLoginRouter.POST("/cancellation", user.Cancellation) //注销账号
+			mustLoginRouter.GET("/incity", user.Incity)              //附近的人
+			mustLoginRouter.GET("/visits", user.Visits)              //访客列表
 
 			mustLoginRouter.POST("/imsigna", user.Signa) //Im签名
 
@@ -73,6 +76,7 @@ func (this *AppClient) WebRouter() {
 				payRouters.GET("/lists", pays.Index)       //充值产品列表
 				payRouters.POST("", pays.Pay)              //充值
 				payRouters.POST("/apple", pays.ApplePay)   //苹果端充值
+				payRouters.POST("/google", pays.GooglePay) //苹果端充值
 				payRouters.POST("/check", pays.CheckOrder) //充值结果查询
 			}
 
@@ -81,6 +85,12 @@ func (this *AppClient) WebRouter() {
 				consumerRouters.POST("/billing", pays.Billing) //计费
 				consumerRouters.GET("/balance", pays.Balance)  //查询余额
 			}
+		}
+
+		giftNoAuth := mainGroup.Group("/gift") //礼物相关
+		{
+			giftNoAuth.GET("", gift.GiftList)
+			giftNoAuth.Use(Auth()).POST("/send", gift.Send)
 		}
 
 		mainGroup.GET("/media/:path", index.Media)                 //静态内容,经过解密处理的返回,目的是加密存储一些敏感内容,并解密后显示

@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+	"strconv"
 	"time"
 	"ucenter/app/logs"
 )
@@ -41,5 +43,32 @@ func OpenConsume(uid int64, cid string, tp int, cost int64) *Consume {
 		return r
 	}
 	logs.Logger.Error(rs.Error)
+	return nil
+}
+
+//添加送礼记录
+func AddGiftHis(gift *Gift, senduid, getuid int64) error {
+	dt := new(Consume)
+	dt.Uid = senduid
+	dt.ConnectId = fmt.Sprintf("%d", getuid)
+	dt.Voice = 3
+	dt.Start = time.Now().Unix()
+	dt.Uptime = dt.Start
+	dt.End = dt.Start
+	dt.Usetime = 1
+	dt.Seccost = gift.Bi
+	dt.Cost = gift.Bi
+	dt.Status = 1
+	rs := DB.Create(dt)
+	if rs.Error != nil {
+		return rs.Error
+	}
+
+	us := GetUser(senduid, "", "", "")
+	if us != nil && us.Id > 0 {
+		bibibi, _ := strconv.ParseFloat(fmt.Sprintf("%d", gift.Bi), 64)
+		us.ChangeRecharge(bibibi)
+	}
+
 	return nil
 }

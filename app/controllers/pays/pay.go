@@ -274,3 +274,7 @@ func ApplePay(c *gin.Context) {
 	}
 	controllers.SuccessStr(c, map[string]interface{}{"balance": user.GetUserBalance()}, "")
 }
+
+func GooglePay(c *gin.Context) {
+
+}

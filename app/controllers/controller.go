@@ -17,6 +17,9 @@ func Success(c *gin.Context, data interface{}, msg *Msg) {
 }
 
 func SuccessStr(c *gin.Context, data interface{}, msg string, args ...interface{}) {
+	if msg == "" {
+		msg = "Success"
+	}
 	Resp(c, data, &Msg{Str: msg, Args: args}, 200)
 }
 
