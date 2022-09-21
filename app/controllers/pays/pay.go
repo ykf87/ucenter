@@ -20,10 +20,15 @@ func Index(c *gin.Context) {
 }
 
 func Pay(c *gin.Context) {
+	// body, _ := ioutil.ReadAll(c.Request.Body)
 	rs, _ := c.Get("_user")
 	user, _ := rs.(*models.UserModel)
 	id := c.PostForm("id")
 	lang, _ := c.Get("_lang")
+	if lang == "zh-cn" {
+		lang = "zh"
+	}
+	// fmt.Println(string(body), "\r\n---", id)
 
 	rrr := new(models.Order)
 	models.DB.Table("orders").Where("uid = ?", user.Id).Where("status = 0").First(rrr)
