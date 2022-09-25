@@ -281,5 +281,46 @@ func ApplePay(c *gin.Context) {
 }
 
 func GooglePay(c *gin.Context) {
+	payProId := c.PostForm("id")
 
+	po := new(models.PayProgram)
+	res := models.DB.Table("pay_programs").Where("id = ?", payProId).Find(po)
+	if res.Error != nil {
+		logs.Logger.Error(res.Error)
+		controllers.ErrorNoData(c, "")
+		return
+	}
+
+	oood := new(models.Order)
+	res = models.DB.Table("orders").Where("pay_way = 4").Where("status = 1").Order("id DESC").First(oood)
+	if res.Error == nil && oood != nil {
+		if (time.Now().Unix() - oood.Addtime) <= 60 {
+			controllers.ErrorNoData(c, "")
+			return
+		}
+	}
+
+	orderId := c.PostForm("google_order_id")
+
+	rs, _ := c.Get("_user")
+	user, _ := rs.(*models.UserModel)
+
+	order := new(models.Order)
+	now := time.Now().Unix()
+	order.Addtime = now
+	order.Amount = po.Price
+	order.Bi = po.Bi
+	order.Orderid = orderId
+	order.Paytime = now
+	order.PayWay = 4
+	order.Pid = po.Id
+	order.Uid = user.Id
+	order.Mail = user.Mail
+	order.Status = 1
+	rbs := models.DB.Create(order)
+	if rbs.Error != nil {
+		controllers.ErrorNoData(c, "Failed to recharge")
+		return
+	}
+	controllers.SuccessStr(c, map[string]interface{}{"balance": user.GetUserBalance()}, "")
 }
